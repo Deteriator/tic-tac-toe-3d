@@ -42,7 +42,7 @@ var getCubes = function () {
 
 var scene = new THREE.Scene();
 
- scene.fog=new THREE.Fog( 0xf7d9aa, 0.015, 160 );
+scene.fog=new THREE.Fog( 0xf7d9aa, 0.015, 160 );
 
 var axes = new THREE.AxisHelper(20);
 scene.add(axes);
@@ -108,6 +108,11 @@ var addLight = function () {
     scene.add(spotLight);
 }
 
+var updateColor = function (object) {
+    object.material.color = new THREE.Color(color.brown);
+};
+
+
 // EVENTS --------------------
 
 var clickHandler = function (evt) {
@@ -129,7 +134,10 @@ var clickHandler = function (evt) {
     vector.sub(SCENE.camera.position).normalize());
 
     var intersects = raycaster.intersectObjects(getCubes());
-    if(intersects[0]) console.log(intersects[0].object.name);
+    if(intersects[0]) console.log(intersects[0].object);
+    var selectedObject = intersects[0].object;
+    // intersects[0].object.material.transparent = true;
+    updateColor(selectedObject);
 
 };
 
