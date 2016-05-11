@@ -58,8 +58,8 @@ scene.add(sphere)
 
 // CAMERA
 
-camera.position.x = -30;
-camera.position.y = 40;
+camera.position.x = -40;
+camera.position.y = 60;
 camera.position.z = 30;
 
 camera.lookAt(scene.position);
