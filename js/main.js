@@ -28,12 +28,26 @@ gui.add(controls, 'camZ', 0, 100);
 
 // ---------------------------------
 
+var getCubes = function () {
+    var cubes = [];
+    scene.children.forEach(function(item) {
+        if(item.name.slice(0, 4) === "cube") {
+            cubes.push(item);
+        }
+    });
+    return cubes;
+}
+
+// ---------------------------------
+
 var scene = new THREE.Scene();
 
  scene.fog=new THREE.Fog( 0xf7d9aa, 0.015, 160 );
 
 var axes = new THREE.AxisHelper(20);
 scene.add(axes);
+
+// RENDER
 
 var addCamera = function () {
     SCENE.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100)
@@ -112,14 +126,11 @@ var clickHandler = function (evt) {
     vector = vector.unproject(SCENE.camera);
 
     var raycaster = new THREE.Raycaster(SCENE.camera.position,
-        vector.sub(SCENE.camera.position).normalize());
+    vector.sub(SCENE.camera.position).normalize());
 
+    var intersects = raycaster.intersectObjects(getCubes());
 
-
-
-    var intersects = raycaster.intersectObjects(scene.children);
-
-    console.log(intersects);
+    console.log(intersects[0].object.name);
 
 
 
