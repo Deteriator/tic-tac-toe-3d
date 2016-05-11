@@ -1,10 +1,17 @@
+// GAME VARS
 
-var scene = new THREE.Scene();
+var color = {};
+color.red = 0xf25346;
+color.white = 0xd8d0d1;
+color.brown = 0x59332e;
+color.pink = 0xF5986E;
+color.brownDark = 0x23190f;
+color.blue = 0x68c3c0;
 
-// dev
+var OBJ = {};
+var SCENE = {};
 
-var axes = new THREE.AxisHelper(20);
-scene.add(axes);
+// ---------------------------
 
 var controls = new function () {
     this.rotationSpeed = 0;
@@ -19,65 +26,81 @@ gui.add(controls, 'camX', -100, 0);
 gui.add(controls, 'camY', 0, 100);
 gui.add(controls, 'camZ', 0, 100);
 
+// ---------------------------------
 
-var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100)
-camera.position.x = -30;
-camera.position.y = 60;
-camera.position.z = 30;
-camera.lookAt(scene.position);
+var scene = new THREE.Scene();
 
+ scene.fog=new THREE.Fog( 0xf7d9aa, 0.015, 160 );
 
-var renderer = new THREE.WebGLRenderer();
-renderer.setClearColor(new THREE.Color(0xffffff, 1.0));
-renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.shadowMap.enabled = true;
+var axes = new THREE.AxisHelper(20);
+scene.add(axes);
 
-// ADD PLANE
+var addCamera = function () {
+    SCENE.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100)
+    SCENE.camera.position.x = -30;
+    SCENE.camera.position.y = 60;
+    SCENE.camera.position.z = 30;
+    SCENE.camera.lookAt(scene.position);
+}
 
-var planeGeo = new THREE.PlaneGeometry(50, 50);
-var planeMat = new THREE.MeshLambertMaterial({color: 0xEEEEEE});
-var plane = new THREE.Mesh(planeGeo, planeMat);
-plane.receiveShadow = true;
+var addRenderer = function () {
+    SCENE.renderer = new THREE.WebGLRenderer({alpha: true, antialias: true});
+    SCENE.renderer.setSize(window.innerWidth, window.innerHeight);
+    SCENE.renderer.shadowMap.enabled = true;
+}
 
-plane.rotation.x = -0.5 * Math.PI;
-plane.position.x = 0;
-plane.position.y = 0;
-plane.position.z = 0;
+var addPlane = function () {
+    var planeGeo = new THREE.PlaneGeometry(50, 50);
+    var planeMat = new THREE.MeshLambertMaterial({color: color.blue});
+    var plane = new THREE.Mesh(planeGeo, planeMat);
+    plane.receiveShadow = true;
 
-scene.add(plane);
+    plane.rotation.x = -0.5 * Math.PI;
+    plane.position.x = 0;
+    plane.position.y = 0;
+    plane.position.z = 0;
 
-var cubeGeo = new THREE.BoxGeometry(4, 4, 4);
-var cubeMat = new THREE.MeshLambertMaterial({color: 0xff0000});
-var cube = new THREE.Mesh(cubeGeo, cubeMat);
-cube.castShadow = true;
-scene.add(cube);
+    scene.add(plane);
+};
 
-cube.position.x = -20;
-cube.position.y = 10;
-cube.position.z = 10;
+var addCube = function () {
+    var cubeGeo = new THREE.BoxGeometry(5, 5, 5);
+    var cubeMat = new THREE.MeshLambertMaterial({color: color.red});
+    OBJ.cube = new THREE.Mesh(cubeGeo, cubeMat);
+    OBJ.cube.castShadow = true;
+    OBJ.cube.position.x = -20;
+    OBJ.cube.position.y = 10;
+    OBJ.cube.position.z = 10;
+    scene.add(OBJ.cube);
+};
 
-// CAMERA
+var addLight = function () {
+    var spotLight = new THREE.SpotLight( 0xffffff );
+    spotLight.position.set( -40, 60, -10 );
+    spotLight.castShadow = true;
+    scene.add(spotLight);
+}
 
-// LIGHT
-var spotLight = new THREE.SpotLight( 0xffffff );
-spotLight.position.set( -40, 60, -10 );
-spotLight.castShadow = true;
-
-scene.add(spotLight);
+var loop = function () {
+    OBJ.cube.rotation.x += controls.rotationSpeed;
+    OBJ.cube.rotation.z += controls.rotationSpeed;
+    OBJ.cube.position.x += controls.rotationSpeed;
+    SCENE.camera.position.x = controls.camX;
+    SCENE.camera.position.y = controls.camY;
+    SCENE.camera.position.z = controls.camZ;
+    requestAnimationFrame(loop);
+    SCENE.renderer.render(scene, SCENE.camera);
+}
 
 var renderScene = function () {
-
-    cube.rotation.x += controls.rotationSpeed;
-    cube.rotation.z += controls.rotationSpeed;
-    cube.position.x += controls.rotationSpeed;
-    camera.position.x = controls.camX;
-    camera.position.y = controls.camY;
-    camera.position.z = controls.camZ;
-
-    requestAnimationFrame(renderScene);
-    renderer.render(scene, camera);
+    addLight();
+    addCamera();
+    addRenderer();
+    addPlane();
+    addCube();
+    loop();
 }
 
 renderScene();
 
-document.getElementById('gameWrapper').appendChild(renderer.domElement);
+document.getElementById('gameWrapper').appendChild(SCENE.renderer.domElement);
