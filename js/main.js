@@ -63,16 +63,24 @@ var addPlane = function () {
     scene.add(plane);
 };
 
-var addCube = function () {
+var addCube = function (i) {
     var cubeGeo = new THREE.BoxGeometry(5, 5, 5);
     var cubeMat = new THREE.MeshLambertMaterial({color: color.red});
     OBJ.cube = new THREE.Mesh(cubeGeo, cubeMat);
     OBJ.cube.castShadow = true;
-    OBJ.cube.position.x = -20;
+    OBJ.cube.position.x = -14;
     OBJ.cube.position.y = 10;
-    OBJ.cube.position.z = 10;
+    OBJ.cube.position.z = -4 + (i * 8);
+    OBJ.cube.name = 'cube-' + (scene.children.length - 3); 
     scene.add(OBJ.cube);
 };
+
+var addRow = function () {
+    for (var i = 0; i < 3; i += 1) {
+        addCube(i);
+    }
+}
+
 
 var addLight = function () {
     var spotLight = new THREE.SpotLight( 0xffffff );
@@ -97,7 +105,7 @@ var renderScene = function () {
     addCamera();
     addRenderer();
     addPlane();
-    addCube();
+    addRow();
     loop();
 }
 
