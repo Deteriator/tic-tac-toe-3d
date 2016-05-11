@@ -38,7 +38,6 @@ cube.castShadow = true;
 cube.position.x = -4;
 cube.position.y = 3;
 cube.position.z = 0;
-
 scene.add(cube);
 
 // SPHERE
@@ -71,7 +70,12 @@ spotLight.position.set(-40, 60, -10);
 spotLight.castShadow = true;
 scene.add(spotLight);
 
-
 //  END
+
+var renderScene = function () {
+    requestAnimationFrame(renderScene);
+    renderer.render(scene, camera);
+}
+
 document.getElementById('gameWrapper').appendChild(renderer.domElement);
-renderer.render(scene, camera);
+renderScene();
