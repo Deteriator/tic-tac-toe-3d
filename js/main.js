@@ -18,7 +18,7 @@ var controls = new function () {
     this.camX = -30;
     this.camY = 60;
     this.camZ = 30;
-}
+} 
 
 var gui = new dat.GUI();
 gui.add(controls, 'rotationSpeed', 0, 1);
@@ -63,21 +63,27 @@ var addPlane = function () {
     scene.add(plane);
 };
 
-var addCube = function (i) {
+var addCube = function (w, h) {
     var cubeGeo = new THREE.BoxGeometry(5, 5, 5);
     var cubeMat = new THREE.MeshLambertMaterial({color: color.red});
     OBJ.cube = new THREE.Mesh(cubeGeo, cubeMat);
     OBJ.cube.castShadow = true;
-    OBJ.cube.position.x = -14;
+    OBJ.cube.position.x = -14 + (h * 8);
     OBJ.cube.position.y = 10;
-    OBJ.cube.position.z = -4 + (i * 8);
-    OBJ.cube.name = 'cube-' + (scene.children.length - 3); 
+    OBJ.cube.position.z = -4 + (w * 8);
+    OBJ.cube.name = 'cube-' + (scene.children.length - 3);
     scene.add(OBJ.cube);
 };
 
-var addRow = function () {
-    for (var i = 0; i < 3; i += 1) {
-        addCube(i);
+var addRow = function (h) {
+    for (var w = 0; w < 3; w += 1) {
+        addCube(w, h);
+    }
+}
+
+var addGrid = function () {
+    for (var h = 0; h < 3; h += 1) {
+        addRow(h);
     }
 }
 
@@ -105,7 +111,7 @@ var renderScene = function () {
     addCamera();
     addRenderer();
     addPlane();
-    addRow();
+    addGrid();
     loop();
 }
 
