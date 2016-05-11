@@ -1,2 +1,3 @@
 #TIC-TAC-TOE 3D
-TTT in 3D mate!
+
+Tic-Tac-Toe in 3D.
