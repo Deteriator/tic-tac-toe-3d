@@ -18,7 +18,7 @@ var controls = new function () {
     this.camX = -30;
     this.camY = 60;
     this.camZ = 30;
-} 
+}
 
 var gui = new dat.GUI();
 gui.add(controls, 'rotationSpeed', 0, 1);
@@ -87,13 +87,44 @@ var addGrid = function () {
     }
 }
 
-
 var addLight = function () {
     var spotLight = new THREE.SpotLight( 0xffffff );
     spotLight.position.set( -40, 60, -10 );
     spotLight.castShadow = true;
     scene.add(spotLight);
 }
+
+// EVENTS --------------------
+
+var clickHandler = function (evt) {
+
+// 1. First, a vector is created based on the position that
+// we've clicked on, on the screen.
+// 2. Next, with the unprojectVector function we convert the
+//clicked position on the screen, to coordinates in our Three.js scene.
+// 3. Next, we use a THREE.Raycaster object to send out a ray
+// into the world from the position we've clicked on, on the screen.
+
+    var vector = new THREE.Vector3(
+        (event.clientX / window.innerWidth ) * 2 - 1,
+       -(event.clientY / window.innerHeight ) * 2 + 1, 0.5);
+
+    vector = vector.unproject(SCENE.camera);
+
+    var raycaster = new THREE.Raycaster(SCENE.camera.position,
+        vector.sub(SCENE.camera.position).normalize());
+
+
+
+
+    var intersects = raycaster.intersectObjects(scene.children);
+
+    console.log(intersects);
+
+
+
+
+};
 
 var loop = function () {
     OBJ.cube.rotation.x += controls.rotationSpeed;
@@ -115,6 +146,8 @@ var renderScene = function () {
     loop();
 }
 
+
 renderScene();
 
 document.getElementById('gameWrapper').appendChild(SCENE.renderer.domElement);
+document.addEventListener('mousedown', clickHandler, false);
