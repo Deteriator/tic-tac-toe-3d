@@ -129,11 +129,7 @@ var clickHandler = function (evt) {
     vector.sub(SCENE.camera.position).normalize());
 
     var intersects = raycaster.intersectObjects(getCubes());
-
-    console.log(intersects[0].object.name);
-
-
-
+    if(intersects[0]) console.log(intersects[0].object.name);
 
 };
 
