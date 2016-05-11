@@ -1,5 +1,12 @@
-// GAME VARS
+// MODEL GLOBALS
 
+var board = { turn: 'o', cells: [null, null, null, null, null, null, null, null, null]}
+
+// VIEW GLOBALS
+
+var OBJ = {};
+var SCENE = {};
+var RENDER = {};
 var color = {};
 color.red = 0xf25346;
 color.white = 0xd8d0d1;
@@ -8,9 +15,8 @@ color.pink = 0xF5986E;
 color.brownDark = 0x23190f;
 color.blue = 0x68c3c0;
 
-var OBJ = {};
-var SCENE = {};
-
+// ---------------------------
+// DEV ***********************
 // ---------------------------
 
 var controls = new function () {
@@ -21,6 +27,7 @@ var controls = new function () {
 }
 
 var gui = new dat.GUI();
+
 gui.add(controls, 'rotationSpeed', 0, 1);
 gui.add(controls, 'camX', -100, 0);
 gui.add(controls, 'camY', 0, 100);
@@ -43,7 +50,7 @@ var getCubes = function () {
 var scene = new THREE.Scene();
 
 scene.fog=new THREE.Fog( 0xf7d9aa, 0.015, 160 );
-
+//
 var axes = new THREE.AxisHelper(20);
 scene.add(axes);
 
@@ -68,12 +75,11 @@ var addPlane = function () {
     var planeMat = new THREE.MeshLambertMaterial({color: color.blue});
     var plane = new THREE.Mesh(planeGeo, planeMat);
     plane.receiveShadow = true;
-
+    plane.rotation.x = -0.5 * Math.PI;
     plane.rotation.x = -0.5 * Math.PI;
     plane.position.x = 0;
     plane.position.y = 0;
     plane.position.z = 0;
-
     scene.add(plane);
 };
 
@@ -82,9 +88,9 @@ var addCube = function (w, h) {
     var cubeMat = new THREE.MeshLambertMaterial({color: color.red});
     OBJ.cube = new THREE.Mesh(cubeGeo, cubeMat);
     OBJ.cube.castShadow = true;
-    OBJ.cube.position.x = -14 + (h * 8);
+    OBJ.cube.position.x = -13 + (h * 8);
     OBJ.cube.position.y = 10;
-    OBJ.cube.position.z = -4 + (w * 8);
+    OBJ.cube.position.z = -4.5 + (w * 8);
     OBJ.cube.name = 'cube-' + (scene.children.length - 3);
     scene.add(OBJ.cube);
 };
@@ -112,17 +118,16 @@ var updateColor = function (object) {
     object.material.color = new THREE.Color(color.brown);
 };
 
-
 // EVENTS --------------------
 
 var clickHandler = function (evt) {
 
-// 1. First, a vector is created based on the position that
-// we've clicked on, on the screen.
-// 2. Next, with the unprojectVector function we convert the
-//clicked position on the screen, to coordinates in our Three.js scene.
-// 3. Next, we use a THREE.Raycaster object to send out a ray
-// into the world from the position we've clicked on, on the screen.
+    // 1. First, a vector is created based on the position that
+    // we've clicked on, on the screen.
+    // 2. Next, with the unprojectVector function we convert the
+    //clicked position on the screen, to coordinates in our Three.js scene.
+    // 3. Next, we use a THREE.Raycaster object to send out a ray
+    // into the world from the position we've clicked on, on the screen.
 
     var vector = new THREE.Vector3(
         (event.clientX / window.innerWidth ) * 2 - 1,
