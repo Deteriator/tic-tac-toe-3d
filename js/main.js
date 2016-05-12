@@ -63,12 +63,59 @@ var updateModel = function (model, boxId) {
     var newModel = model;
     // update here
     newModel.boxes[boxId] = newModel.turn;
+
+    if(isWin(newModel)) {
+        console.log('Winner: ' + newModel.turn);
+    }
     if(newModel.turn === 'x') {
         newModel.turn = 'o';
     } else {
         newModel.turn = 'x';
     }
+    
     return newModel;
+}
+
+var isWin = function (model) {
+
+    var topLeft = model.boxes[0];
+    var topMid = model.boxes[1];
+    var topRight = model.boxes[2];
+    var midLeft = model.boxes[3];
+    var midMid = model.boxes[4];
+    var midRight = model.boxes[5];
+    var botLeft = model.boxes[6];
+    var botMid = model.boxes[7];
+    var botRight = model.boxes[8];
+
+    if ((topLeft !== null) && (topMid !== null) && (topRight !== null)) {
+        if((topLeft === topMid) && (topMid === topRight)) return true;
+    };
+    if ((midLeft !== null) && (midMid !== null) && (midRight !== null)) {
+        if((midLeft === midMid) && (midMid === midRight)) return true;
+    };
+    if ((botLeft !== null) && (botMid !== null) && (botRight !== null)) {
+        if((botLeft === botMid) && (botMid === botRight)) return true;
+    };
+    // // VERTICAL
+    if ((topLeft !== null) && (midLeft !== null) && (botLeft !== null)) {
+        if((topLeft === midLeft) && (midLeft === botLeft)) return true;
+    };
+    if ((topMid!== null) && (midMid!== null) && (botMid!== null)) {
+        if((topMid=== midMid) && (midMid=== botMid)) return true;
+    };
+    if ((topRight !== null) && (midRight !== null) && (botRight !== null)) {
+        if((topRight === midRight) && (midRight === botRight)) return true;
+    };
+    // // CROSS
+    if ((topLeft !== null) && (midMid !== null) && (botRight !== null)) {
+        if((topLeft === midMid) && (midMid === botRight)) return true;
+    };
+    if ((topRight !== null) && (midMid !== null) && (botLeft !== null)) {
+        if((topRight === midMid) && (midMid === botLeft)) return true;
+    };
+
+    return false;
 }
 
 // RENDER
@@ -135,11 +182,11 @@ var updateColor = function (object) {
     object.material.color = new THREE.Color(color.brown);
 };
 
+
 var updateRender = function (model) {
 
     //get cubes from scene childeren
     //update attributes based on model
-
     // cell array
     scene.children.forEach(function(object) {
         if(object.name.slice(0, 4) === "cube") {
