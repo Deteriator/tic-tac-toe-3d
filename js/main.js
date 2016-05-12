@@ -1,6 +1,9 @@
 // MODEL GLOBALS
 
-var board = { turn: 'o', cells: [null, null, null, null, null, null, null, null, null]}
+var board = {};
+    board.turn = 'o';
+    board.boxes = [null, null, null, null, null, null, null, null, null];
+    board.active = true;
 
 // VIEW GLOBALS
 
@@ -8,12 +11,12 @@ var OBJ = {};
 var SCENE = {};
 var RENDER = {};
 var color = {};
-color.red = 0xf25346;
-color.white = 0xd8d0d1;
-color.brown = 0x59332e;
-color.pink = 0xF5986E;
-color.brownDark = 0x23190f;
-color.blue = 0x68c3c0;
+    color.red = 0xf25346;
+    color.white = 0xd8d0d1;
+    color.brown = 0x59332e;
+    color.pink = 0xF5986E;
+    color.brownDark = 0x23190f;
+    color.blue = 0x68c3c0;
 
 // ---------------------------
 // DEV ***********************
@@ -53,6 +56,20 @@ scene.fog=new THREE.Fog( 0xf7d9aa, 0.015, 160 );
 //
 var axes = new THREE.AxisHelper(20);
 scene.add(axes);
+
+// MODEL
+
+var updateModel = function (model, boxId) {
+    var newModel = model;
+    // update here
+    newModel.boxes[boxId] = newModel.turn;
+    if(newModel.turn === 'x') {
+        newModel.turn = 'o';
+    } else {
+        newModel.turn = 'x';
+    }
+    return newModel;
+}
 
 // RENDER
 
@@ -118,6 +135,30 @@ var updateColor = function (object) {
     object.material.color = new THREE.Color(color.brown);
 };
 
+var updateRender = function (model) {
+
+    //get cubes from scene childeren
+    //update attributes based on model
+
+    // cell array
+    scene.children.forEach(function(object) {
+        if(object.name.slice(0, 4) === "cube") {
+            // add a color to the cube if there is one in the model
+            // if there isnt leave it alone
+            var cubeId = object.name.slice(5, object.name.length);
+            var cubeData = model.boxes[cubeId];
+            if(cubeData !== null) {
+                if(cubeData === 'x') {
+                    object.material.color = new THREE.Color(color.pink);
+                } else {
+                    object.material.color = new THREE.Color(color.brown);
+                }
+            }
+
+        }
+    })
+}
+
 // EVENTS --------------------
 
 var clickHandler = function (evt) {
@@ -139,10 +180,22 @@ var clickHandler = function (evt) {
     vector.sub(SCENE.camera.position).normalize());
 
     var intersects = raycaster.intersectObjects(getCubes());
-    if(intersects[0]) console.log(intersects[0].object);
+    var selectedCubeId = intersects[0].object.name.slice(5, 6);
+    if(intersects[0]) console.log(selectedCubeId);
     var selectedObject = intersects[0].object;
     // intersects[0].object.material.transparent = true;
     updateColor(selectedObject);
+    var newModel = updateModel(board, selectedCubeId);
+    console.log(newModel);
+    updateRender(newModel);
+
+    // updateModel(model, selectedObjectNumber);
+        // returns newModel
+
+    // updateRender(model)
+            // render -> cells
+            // render -> current turn
+            // render -> win
 
 };
 
