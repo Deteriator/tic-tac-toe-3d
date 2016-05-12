@@ -6,7 +6,7 @@ Design inspired by: [Karim Maaloul's 'Aviator' Animation](http://tympanus.net/co
 
 ---
 
-Pseudocode: 
+Pseudocode:
 
 <pre></code>
 // I have cube id's which i can use to refer to via scene.children
@@ -25,11 +25,17 @@ Pseudocode:
 
 // model
 
-/*
+
 {
     turn: 'o',
     cells: [null, null, 'o', null, null, null, null, null, null]
 }
-*/
+
 </code>
 </pre>
+
+
+Instead of "changes happen anywhere at anytime"
+You can then say "all requested changes pass into and are verified and executed through this one workflow function"
+
+So now a humble "click" doesn't change anything. It just tells update what it wants to change and update thinks about it and takes it from there.
