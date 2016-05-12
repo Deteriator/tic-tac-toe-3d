@@ -38,22 +38,28 @@ gui.add(controls, 'camZ', 0, 100);
 
 // ---------------------------------
 
-var getCubes = function () {
-    var cubes = [];
-    scene.children.forEach(function(item) {
-        if(item.name.slice(0, 4) === "cube") {
-            cubes.push(item);
+
+var getObjectsByName = function (sceneObject, name) {
+    var objects = [];
+    sceneObject.children.forEach(function(item) {
+        var slicedName;
+        if(item.name) {
+            slicedName = item.name.slice(0, item.name.indexOf('-'));
+            if(slicedName === name) {
+                objects.push(item);
+            }
         }
     });
-    return cubes;
+    return objects;
 }
 
 // ---------------------------------
 
-var scene = new THREE.Scene();
+// SCENE
 
-scene.fog=new THREE.Fog( 0xf7d9aa, 0.015, 160 );
-//
+var scene = new THREE.Scene();
+scene.fog = new THREE.Fog( 0xf7d9aa, 0.015, 160 );
+
 // var axes = new THREE.AxisHelper(20);
 // scene.add(axes);
 
@@ -146,10 +152,6 @@ var addPlane = function () {
     scene.add(plane);
 };
 
-var addSea = function () {
-
-}
-
 var addCube = function (w, h) {
     var cubeGeo = new THREE.BoxGeometry(5, 5, 5);
     var cubeMat = new THREE.MeshLambertMaterial({color: color.red});
@@ -158,8 +160,17 @@ var addCube = function (w, h) {
     OBJ.cube.position.x = -13 + (h * 8);
     OBJ.cube.position.y = 10;
     OBJ.cube.position.z = -4.5 + (w * 8);
-                                                            // this is an important cube
-    OBJ.cube.name = 'cube-' + (scene.children.length - 2);  // i need to find the first 3 elements that arent a three.
+    // WE need to find all the elements that arent cubes
+    // the problem is there may be a dynamic amount of nonCubes
+    // being added to the scene.children array
+    // i need to find something that won't break
+        // things that i assume are not solid
+            // - scene.children.length its possible for it to change at anytime
+            // also this is being added
+        // solid
+            // addCube l
+            // lets build it and find out
+    OBJ.cube.name = 'cube-' + (scene.children.length - 2);
     scene.add(OBJ.cube);
 };
 
@@ -218,7 +229,6 @@ var animateObjects = function (objects, model, callback) {
 }
 
 var updateRender = function (model) {
-
     //get cubes from scene childeren
     //update attributes based on model
     // cell array
@@ -254,28 +264,22 @@ var clickHandler = function (evt) {
     var vector = new THREE.Vector3(
         (event.clientX / window.innerWidth ) * 2 - 1,
        -(event.clientY / window.innerHeight ) * 2 + 1, 0.5);
-
     vector = vector.unproject(SCENE.camera);
 
     var raycaster = new THREE.Raycaster(SCENE.camera.position,
     vector.sub(SCENE.camera.position).normalize());
 
-    var intersects = raycaster.intersectObjects(getCubes());
+
+    // getCubes() --> gets
+    var intersects = raycaster.intersectObjects(getObjectsByName(scene, 'cube'));
     var selectedCubeId = intersects[0].object.name.slice(5, 6);
     if(intersects[0]) console.log(selectedCubeId);
     var selectedObject = intersects[0].object;
+
+
     var newModel = updateModel(board, selectedCubeId);
     console.log(newModel);
     updateRender(newModel);
-
-    // updateModel(model, selectedObjectNumber);
-        // returns newModel
-
-    // updateRender(model)
-            // render -> cells
-            // render -> current turn
-            // render -> win
-
 };
 
 var loop = function () {
@@ -297,6 +301,7 @@ var renderScene = function () {
     addPlane();
     addGrid();
     loop();
+    getObjectsByName(scene, 'cube');
 }
 
 
