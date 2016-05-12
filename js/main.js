@@ -4,6 +4,7 @@ var board = {};
     board.turn = 'o';
     board.boxes = [null, null, null, null, null, null, null, null, null];
     board.active = true;
+    board.end = false;
 
 // VIEW GLOBALS
 var OBJ = {};
@@ -73,7 +74,7 @@ var updateModel = function (model, boxId) {
 
     if(isWin(newModel)) {
         console.log('Winner: ' + newModel.turn);
-        model.active = false;
+        model.end = true;
     }
 
     if(newModel.turn === 'x') {
@@ -228,8 +229,18 @@ var updateCubeColor = function (sceneObject, model) {
 
 var updateRender = function (sceneObject, model) {
 
-    updateCubeColor(sceneObject, model);
+    // because i update the model before rendering
+    // i'm not rendering on the winning move which
+    // deactivates the board
 
+    // possible solution
+        // two switches in the model
+            // model.active
+                // would be wrapped on render function
+            // model.end
+                // would be wrapped on other events
+
+    updateCubeColor(sceneObject, model);
 }
 
 // EVENTS --------------------
