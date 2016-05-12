@@ -67,22 +67,23 @@ scene.fog = new THREE.Fog( 0xf7d9aa, 0.015, 160 );
 // MODEL
 var updateModel = function (model, boxId) {
     var newModel = model;
-
+    console.log(newModel);
     if (newModel.boxes[boxId] === null) {
+
         newModel.boxes[boxId] = newModel.turn;
-    }
 
-    if(isWin(newModel)) {
-        console.log('Winner: ' + newModel.turn);
-        model.end = true;
-    }
+        if(isWin(newModel)) {
+            console.log('Winner: ' + newModel.turn);
+            model.end = true;
+        }
 
-    if(newModel.turn === 'x') {
-        newModel.turn = 'o';
-    } else {
-        newModel.turn = 'x';
+        if(newModel.turn === 'x') {
+            newModel.turn = 'o';
+        } else {
+            newModel.turn = 'x';
+        }
     }
-
+    
     return newModel;
 }
 
@@ -286,6 +287,7 @@ var clickHandler = function (evt) {
     }
 
     updateRender(scene, newModel);
+    console.log(newModel);
 
 };
 
