@@ -6,7 +6,6 @@ var board = {};
     board.active = true;
 
 // VIEW GLOBALS
-
 var OBJ = {};
 var SCENE = {};
 var RENDER = {};
@@ -17,6 +16,7 @@ var color = {};
     color.pink = 0xF5986E;
     color.brownDark = 0x23190f;
     color.blue = 0x68c3c0;
+
 
 // ---------------------------
 // DEV ***********************
@@ -54,8 +54,8 @@ var scene = new THREE.Scene();
 
 scene.fog=new THREE.Fog( 0xf7d9aa, 0.015, 160 );
 //
-var axes = new THREE.AxisHelper(20);
-scene.add(axes);
+// var axes = new THREE.AxisHelper(20);
+// scene.add(axes);
 
 // MODEL
 var updateModel = function (model, boxId) {
@@ -147,6 +147,7 @@ var addPlane = function () {
 };
 
 var addSea = function () {
+
 }
 
 var addCube = function (w, h) {
@@ -157,7 +158,8 @@ var addCube = function (w, h) {
     OBJ.cube.position.x = -13 + (h * 8);
     OBJ.cube.position.y = 10;
     OBJ.cube.position.z = -4.5 + (w * 8);
-    OBJ.cube.name = 'cube-' + (scene.children.length - 3);
+                                                            // this is an important cube
+    OBJ.cube.name = 'cube-' + (scene.children.length - 2);  // i need to find the first 3 elements that arent a three.
     scene.add(OBJ.cube);
 };
 
