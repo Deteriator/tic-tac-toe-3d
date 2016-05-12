@@ -65,29 +65,93 @@ scene.fog = new THREE.Fog( 0xf7d9aa, 0.015, 160 );
 // scene.add(axes);
 
 // MODEL
+
 var updateModel = function (model, boxId) {
     var newModel = model;
     console.log(newModel);
+
     if (newModel.boxes[boxId] === null) {
 
-        newModel.boxes[boxId] = newModel.turn;
+        if(newModel.active) { // if model active
 
-        if(isWin(newModel)) {
-            console.log('Winner: ' + newModel.turn);
-            model.end = true;
-        }
+            // updateModel: box
 
-        if(newModel.turn === 'x') {
-            newModel.turn = 'o';
-        } else {
-            newModel.turn = 'x';
+            newModel.boxes[boxId] = newModel.turn;
+
+            // ifGameOver deactivate model
+
+            if(isWin(newModel)) {
+                console.log('Winner: ' + newModel.turn);
+                newModel.active = false;
+            }
+
+            // updateModel: turn
+
+            if(newModel.turn === 'x') {
+                newModel.turn = 'o';
+            } else {
+                newModel.turn = 'x';
+            }
+
+        } else { // if the model has been deactivated
+
         }
     }
-    
+
     return newModel;
 }
 
 var isWin = function (model) {
+
+    var drawCounter;
+    var topLeft = model.boxes[0];
+    var topMid = model.boxes[1];
+    var topRight = model.boxes[2];
+    var midLeft = model.boxes[3];
+    var midMid = model.boxes[4];
+    var midRight = model.boxes[5];
+    var botLeft = model.boxes[6];
+    var botMid = model.boxes[7];
+    var botRight = model.boxes[8];
+
+    if ((topLeft !== null) && (topMid !== null) && (topRight !== null)) {
+        if((topLeft === topMid) && (topMid === topRight)) return true;
+    };
+    if ((midLeft !== null) && (midMid !== null) && (midRight !== null)) {
+        if((midLeft === midMid) && (midMid === midRight)) return true;
+    };
+    if ((botLeft !== null) && (botMid !== null) && (botRight !== null)) {
+        if((botLeft === botMid) && (botMid === botRight)) return true;
+    };
+    // // VERTICAL
+    if ((topLeft !== null) && (midLeft !== null) && (botLeft !== null)) {
+        if((topLeft === midLeft) && (midLeft === botLeft)) return true;
+    };
+    if ((topMid!== null) && (midMid!== null) && (botMid!== null)) {
+        if((topMid=== midMid) && (midMid=== botMid)) return true;
+    };
+    if ((topRight !== null) && (midRight !== null) && (botRight !== null)) {
+        if((topRight === midRight) && (midRight === botRight)) return true;
+    };
+    // // CROSS
+    if ((topLeft !== null) && (midMid !== null) && (botRight !== null)) {
+        if((topLeft === midMid) && (midMid === botRight)) return true;
+    };
+    if ((topRight !== null) && (midMid !== null) && (botLeft !== null)) {
+        if((topRight === midMid) && (midMid === botLeft)) return true;
+    };
+
+    for (var i = 0; i < model.boxes.length; i += 1) {
+        if (model.boxes[i] !== null) drawCounter += 1;
+        if (drawCounter === model.boxes.length) {
+            console.log('draw!'); 
+        }
+    }
+
+    return false;
+}
+
+var checkState = function (model) {
 
     var topLeft = model.boxes[0];
     var topMid = model.boxes[1];
@@ -225,7 +289,7 @@ var updateCubeColor = function (sceneObject, model) {
             }
 
         }
-    })
+    });
 }
 
 var updateRender = function (sceneObject, model) {
