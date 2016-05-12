@@ -58,7 +58,6 @@ var axes = new THREE.AxisHelper(20);
 scene.add(axes);
 
 // MODEL
-
 var updateModel = function (model, boxId) {
     var newModel = model;
     // update here
@@ -72,7 +71,7 @@ var updateModel = function (model, boxId) {
     } else {
         newModel.turn = 'x';
     }
-    
+
     return newModel;
 }
 
@@ -147,6 +146,9 @@ var addPlane = function () {
     scene.add(plane);
 };
 
+var addSea = function () {
+}
+
 var addCube = function (w, h) {
     var cubeGeo = new THREE.BoxGeometry(5, 5, 5);
     var cubeMat = new THREE.MeshLambertMaterial({color: color.red});
@@ -182,6 +184,36 @@ var updateColor = function (object) {
     object.material.color = new THREE.Color(color.brown);
 };
 
+var rotateCube = function (model, object) {
+    //in the loop function
+        // this function will check all scene objects
+        // if it is matched with a value then it will rotate
+
+    // if supposed to be rotating
+    // then
+        // += the property
+    // else
+        // = set the property
+
+    if(object.name.slice(0, 4) === "cube") {
+        var cubeId = object.name.slice(5, object.name.length);
+        var cubeData = model.boxes[cubeId];
+        if(cubeData !== null) {
+            object.rotation.x += 0.01 * Math.random();
+            object.rotation.z += 0.01 * Math.random();
+        } else {
+
+        }
+
+    }
+
+}
+
+var animateObjects = function (objects, model, callback) {
+    objects.forEach(function(object) {
+        callback(model, object);
+    })
+}
 
 var updateRender = function (model) {
 
@@ -230,8 +262,6 @@ var clickHandler = function (evt) {
     var selectedCubeId = intersects[0].object.name.slice(5, 6);
     if(intersects[0]) console.log(selectedCubeId);
     var selectedObject = intersects[0].object;
-    // intersects[0].object.material.transparent = true;
-    updateColor(selectedObject);
     var newModel = updateModel(board, selectedCubeId);
     console.log(newModel);
     updateRender(newModel);
@@ -253,6 +283,7 @@ var loop = function () {
     SCENE.camera.position.x = controls.camX;
     SCENE.camera.position.y = controls.camY;
     SCENE.camera.position.z = controls.camZ;
+    animateObjects(scene.children, board, rotateCube);
     requestAnimationFrame(loop);
     SCENE.renderer.render(scene, SCENE.camera);
 }
