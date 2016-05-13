@@ -5,6 +5,7 @@ var board = {};
     board.boxes = [null, null, null, null, null, null, null, null, null];
     board.active = true;
     board.end = false;
+    board.winPos = [];
 
 // VIEW GLOBALS
 var OBJ = {};
@@ -68,42 +69,37 @@ scene.fog = new THREE.Fog( 0xf7d9aa, 0.015, 160 );
 
 var updateModel = function (model, boxId) {
     var newModel = model;
-    console.log(newModel);
-
     if (newModel.boxes[boxId] === null) {
-
         if(newModel.active) { // if model active
-
             // updateModel: box
-
             newModel.boxes[boxId] = newModel.turn;
-
             // ifGameOver deactivate model
-
-            if(isWin(newModel) === 'draw' || isWin(newModel) === 'win') {
+            if(isWin(newModel).state === 'draw') {
                 newModel.active = false;
             }
-
+            if(isWin(newModel).state === 'win') {
+                newModel.active = false;
+                newModel.winPos = isWin(newModel).winPositions;
+            }
             // updateModel: turn
-
             if(newModel.turn === 'x') {
                 newModel.turn = 'o';
             } else {
                 newModel.turn = 'x';
             }
-
         } else { // if the model has been deactivated
-
         }
     }
-
     return newModel;
 }
+
+
+//  THE MODEL SHOULD HAVE DATA FOR A WIN ANIMATION
+//      - save winning coordinates in model
 
 var isWin = function (model) {
 
     var drawCounter = 0;
-
     var topLeft = model.boxes[0];
     var topMid = model.boxes[1];
     var topRight = model.boxes[2];
@@ -115,40 +111,37 @@ var isWin = function (model) {
     var botRight = model.boxes[8];
 
     if ((topLeft !== null) && (topMid !== null) && (topRight !== null)) {
-        if((topLeft === topMid) && (topMid === topRight)) return 'win';
+        if((topLeft === topMid) && (topMid === topRight)) return {state: 'win', winPositions: [0, 1, 2]};
     };
     if ((midLeft !== null) && (midMid !== null) && (midRight !== null)) {
-        if((midLeft === midMid) && (midMid === midRight)) return 'win';
+        if((midLeft === midMid) && (midMid === midRight)) return {state: 'win', winPositions: [2, 3, 4]};
     };
     if ((botLeft !== null) && (botMid !== null) && (botRight !== null)) {
-        if((botLeft === botMid) && (botMid === botRight)) return 'win';
+        if((botLeft === botMid) && (botMid === botRight)) return {state: 'win', winPositions: [5, 6, 7]};
     };
     // // VERTICAL
     if ((topLeft !== null) && (midLeft !== null) && (botLeft !== null)) {
-        if((topLeft === midLeft) && (midLeft === botLeft)) return 'win';
+        if((topLeft === midLeft) && (midLeft === botLeft)) return {state: 'win', winPositions: [0, 3, 6]};
     };
     if ((topMid!== null) && (midMid!== null) && (botMid!== null)) {
-        if((topMid=== midMid) && (midMid=== botMid)) return 'win';
+        if((topMid=== midMid) && (midMid=== botMid)) return {state: 'win', winPositions: [1, 4, 7]};
     };
     if ((topRight !== null) && (midRight !== null) && (botRight !== null)) {
-        if((topRight === midRight) && (midRight === botRight)) return 'win';
+        if((topRight === midRight) && (midRight === botRight)) return {state: 'win', winPositions: [2, 5, 8]};
     };
     // // CROSS
     if ((topLeft !== null) && (midMid !== null) && (botRight !== null)) {
-        if((topLeft === midMid) && (midMid === botRight)) return 'win';
+        if((topLeft === midMid) && (midMid === botRight)) return {state: 'win', winPositions: [0, 4, 8]};
     };
     if ((topRight !== null) && (midMid !== null) && (botLeft !== null)) {
-        if((topRight === midMid) && (midMid === botLeft)) return 'win';
+        if((topRight === midMid) && (midMid === botLeft)) return {state: 'win', winPositions: [2, 4, 6]};
     };
 
 
     for (var i = 0; i < model.boxes.length; i += 1) {
-        // console.log('loop!')
         if (model.boxes[i] !== null) drawCounter += 1;
-        // console.log(drawCounter);
-        console.log('drawCounter: ' + drawCounter + ' model.length: ' + model.boxes.length);
         if (drawCounter === (model.boxes.length)) {
-            return 'draw';
+            return {state: 'draw', winPositions: [0, 1, 2]};
         }
 
     }
@@ -260,6 +253,23 @@ var updateColor = function (object) {
     object.material.color = new THREE.Color(color.brown);
 };
 
+// I want the mode to update all animating objects
+// right now I have a rotateCube() function of animateFunctions
+// listening for changes in the model
+// you should have a animateFunction as a a 'gateway' for all you ranimations
+
+/*
+
+function animateObjects(scene, model) {
+    rotateCubes(scene, model);
+    sinkCubes(scene, model);
+}
+
+// basically a bunch of if statements in each of the functions and will
+// if's are just checking the mode
+
+*/
+
 var rotateCube = function (model, object) {
     if(object.name.slice(0, 4) === "cube") {
         var cubeId = object.name.slice(5, object.name.length);
@@ -269,18 +279,31 @@ var rotateCube = function (model, object) {
             object.rotation.z += 0.01 * Math.random();
             object.rotation.y += 0.01 * Math.random();
         } else {
+        }
+    }
+};
 
+var sinkCube = function (model, object) {
+    // which cubes should i sink?
+    var winPosArr = model.winPos;
+    if(winPosArr.length >= 3) {
+        // select those cubes
+        var matchLength = 0;
+        winPosArr.forEach(function(pos) {
+            var winCubeName = 'cube-' + pos;
+            if(winCubeName !== object.name) {
+                matchLength += 1;
+            }
+        });
+
+        if(matchLength === winPosArr.length) {
+            // console.log('Moving ' + object.name);
+            object.position.y -= 0.2;
         }
     }
 }
 
-var animateObjects = function (objects, model, callback) {
-    objects.forEach(function(object) {
-        callback(model, object);
-    })
-}
-
-var updateCubeColor = function (sceneObject, model) {
+var changeCubeColor = function (sceneObject, model) {
     sceneObject.children.forEach(function(object) {
         if(object.name.slice(0, 4) === "cube") {
             var cubeId = object.name.slice(5, object.name.length);
@@ -295,10 +318,21 @@ var updateCubeColor = function (sceneObject, model) {
 
         }
     });
-}
+};
+
+
+var animateObjects = function (sceneObject, model, callback) {
+    sceneObject.forEach(function(object) {
+        callback(model, object);
+    })
+};
+
+var animateObjects2 = function () {
+
+};
 
 var updateRender = function (sceneObject, model) {
-    updateCubeColor(sceneObject, model);
+    changeCubeColor(sceneObject, model);
 }
 
 // EVENTS --------------------
@@ -342,10 +376,7 @@ var clickHandler = function (evt) {
     } else if (false) {
         // same same
     }
-
     updateRender(scene, newModel);
-    console.log(newModel);
-
 };
 
 var loop = function () {
@@ -356,6 +387,7 @@ var loop = function () {
     SCENE.camera.position.y = controls.camY;
     SCENE.camera.position.z = controls.camZ;
     animateObjects(scene.children, board, rotateCube);
+    animateObjects(getObjectsByName(scene, 'cube'), board, sinkCube);
     requestAnimationFrame(loop);
     SCENE.renderer.render(scene, SCENE.camera);
 }
