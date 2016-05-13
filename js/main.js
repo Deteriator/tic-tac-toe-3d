@@ -80,8 +80,7 @@ var updateModel = function (model, boxId) {
 
             // ifGameOver deactivate model
 
-            if(isWin(newModel)) {
-                console.log('Winner: ' + newModel.turn);
+            if(isWin(newModel) === 'draw' || isWin(newModel) === 'win') {
                 newModel.active = false;
             }
 
@@ -103,7 +102,8 @@ var updateModel = function (model, boxId) {
 
 var isWin = function (model) {
 
-    var drawCounter;
+    var drawCounter = 0;
+
     var topLeft = model.boxes[0];
     var topMid = model.boxes[1];
     var topRight = model.boxes[2];
@@ -115,37 +115,42 @@ var isWin = function (model) {
     var botRight = model.boxes[8];
 
     if ((topLeft !== null) && (topMid !== null) && (topRight !== null)) {
-        if((topLeft === topMid) && (topMid === topRight)) return true;
+        if((topLeft === topMid) && (topMid === topRight)) return 'win';
     };
     if ((midLeft !== null) && (midMid !== null) && (midRight !== null)) {
-        if((midLeft === midMid) && (midMid === midRight)) return true;
+        if((midLeft === midMid) && (midMid === midRight)) return 'win';
     };
     if ((botLeft !== null) && (botMid !== null) && (botRight !== null)) {
-        if((botLeft === botMid) && (botMid === botRight)) return true;
+        if((botLeft === botMid) && (botMid === botRight)) return 'win';
     };
     // // VERTICAL
     if ((topLeft !== null) && (midLeft !== null) && (botLeft !== null)) {
-        if((topLeft === midLeft) && (midLeft === botLeft)) return true;
+        if((topLeft === midLeft) && (midLeft === botLeft)) return 'win';
     };
     if ((topMid!== null) && (midMid!== null) && (botMid!== null)) {
-        if((topMid=== midMid) && (midMid=== botMid)) return true;
+        if((topMid=== midMid) && (midMid=== botMid)) return 'win';
     };
     if ((topRight !== null) && (midRight !== null) && (botRight !== null)) {
-        if((topRight === midRight) && (midRight === botRight)) return true;
+        if((topRight === midRight) && (midRight === botRight)) return 'win';
     };
     // // CROSS
     if ((topLeft !== null) && (midMid !== null) && (botRight !== null)) {
-        if((topLeft === midMid) && (midMid === botRight)) return true;
+        if((topLeft === midMid) && (midMid === botRight)) return 'win';
     };
     if ((topRight !== null) && (midMid !== null) && (botLeft !== null)) {
-        if((topRight === midMid) && (midMid === botLeft)) return true;
+        if((topRight === midMid) && (midMid === botLeft)) return 'win';
     };
 
+
     for (var i = 0; i < model.boxes.length; i += 1) {
+        // console.log('loop!')
         if (model.boxes[i] !== null) drawCounter += 1;
-        if (drawCounter === model.boxes.length) {
-            console.log('draw!'); 
+        // console.log(drawCounter);
+        console.log('drawCounter: ' + drawCounter + ' model.length: ' + model.boxes.length);
+        if (drawCounter === (model.boxes.length)) {
+            return 'draw';
         }
+
     }
 
     return false;
@@ -293,18 +298,6 @@ var updateCubeColor = function (sceneObject, model) {
 }
 
 var updateRender = function (sceneObject, model) {
-
-    // because i update the model before rendering
-    // i'm not rendering on the winning move which
-    // deactivates the board
-
-    // possible solution
-        // two switches in the model
-            // model.active
-                // would be wrapped on render function
-            // model.end
-                // would be wrapped on other events
-
     updateCubeColor(sceneObject, model);
 }
 
