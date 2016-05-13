@@ -149,47 +149,6 @@ var isWin = function (model) {
     return false;
 }
 
-var checkState = function (model) {
-
-    var topLeft = model.boxes[0];
-    var topMid = model.boxes[1];
-    var topRight = model.boxes[2];
-    var midLeft = model.boxes[3];
-    var midMid = model.boxes[4];
-    var midRight = model.boxes[5];
-    var botLeft = model.boxes[6];
-    var botMid = model.boxes[7];
-    var botRight = model.boxes[8];
-
-    if ((topLeft !== null) && (topMid !== null) && (topRight !== null)) {
-        if((topLeft === topMid) && (topMid === topRight)) return true;
-    };
-    if ((midLeft !== null) && (midMid !== null) && (midRight !== null)) {
-        if((midLeft === midMid) && (midMid === midRight)) return true;
-    };
-    if ((botLeft !== null) && (botMid !== null) && (botRight !== null)) {
-        if((botLeft === botMid) && (botMid === botRight)) return true;
-    };
-    // // VERTICAL
-    if ((topLeft !== null) && (midLeft !== null) && (botLeft !== null)) {
-        if((topLeft === midLeft) && (midLeft === botLeft)) return true;
-    };
-    if ((topMid!== null) && (midMid!== null) && (botMid!== null)) {
-        if((topMid=== midMid) && (midMid=== botMid)) return true;
-    };
-    if ((topRight !== null) && (midRight !== null) && (botRight !== null)) {
-        if((topRight === midRight) && (midRight === botRight)) return true;
-    };
-    // // CROSS
-    if ((topLeft !== null) && (midMid !== null) && (botRight !== null)) {
-        if((topLeft === midMid) && (midMid === botRight)) return true;
-    };
-    if ((topRight !== null) && (midMid !== null) && (botLeft !== null)) {
-        if((topRight === midMid) && (midMid === botLeft)) return true;
-    };
-
-    return false;
-}
 
 // RENDER
 
