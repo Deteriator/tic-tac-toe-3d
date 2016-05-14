@@ -67,6 +67,15 @@ scene.fog = new THREE.Fog( 0xf7d9aa, 0.015, 160 );
 
 // MODEL
 
+var resetModel = function (model) {
+    model.turn = 'o';
+    model.boxes = [null, null, null, null, null, null, null, null, null];
+    model.active = true;
+    model.cutscene = false;
+    model.end = false;
+    model.winPos = [];
+}
+
 var updateModel = function (model, boxId) {
     var newModel = model;
     if (newModel.boxes[boxId] === null) {
@@ -79,24 +88,11 @@ var updateModel = function (model, boxId) {
             }
 
             // win condition
-
             if(isWin(newModel).state === 'win') {
                 newModel.active = false;
                 newModel.winPos = isWin(newModel).winPositions;
                 newModel.cutscene = 'sink';
             }
-
-
-            // game reset
-
-            // if the win state is win and the cubes a finished syncing then
-            // rise the cubes than activate the board
-
-            // here i have a bunch of events that change and update the model
-
-            //maybe the update function should be listening to animations
-
-
             // updateModel: turn
             if(newModel.turn === 'x') {
                 newModel.turn = 'o';
@@ -106,9 +102,9 @@ var updateModel = function (model, boxId) {
         } else { // if the model has been deactivated
         }
     }
+
     return newModel;
 }
-
 
 var updateAnimationModel = function (model) {
     // if objects hit certain critiera, then update the model being fed to it
@@ -132,17 +128,15 @@ var updateAnimationModel = function (model) {
             if (object.position.y <= -4) {
                 sinkCounter += 1;
             }
-
             // if risen, turn cutscene to false
-            if (object.position.y > 10) {
+            if (object.position.y > 10 && model.cutscene !== "sink") {
                 riseCounter += 1;
             }
+
 
         }
         // other objects to come
     });
-
-    console.log(riseCounter);
 
     if(sinkCounter === cubeAmount) {
         model.cutscene = 'rise';
@@ -151,18 +145,11 @@ var updateAnimationModel = function (model) {
 
     if (riseCounter === cubeAmount) {
         model.cutscene = false;
+        model.active = true;
     }
-
-
-
-
 
     return newModel;
 }
-
-
-//  THE MODEL SHOULD HAVE DATA FOR A WIN ANIMATION
-//      - save winning coordinates in model
 
 var isWin = function (model) {
 
@@ -205,7 +192,6 @@ var isWin = function (model) {
         if((topRight === midMid) && (midMid === botLeft)) return {state: 'win', winPositions: [2, 4, 6]};
     };
 
-
     for (var i = 0; i < model.boxes.length; i += 1) {
         if (model.boxes[i] !== null) drawCounter += 1;
         if (drawCounter === (model.boxes.length)) {
@@ -216,7 +202,6 @@ var isWin = function (model) {
 
     return false;
 }
-
 
 // RENDER
 
@@ -305,7 +290,6 @@ var sinkCube = function (model, cube) {
                     matchLength += 1;
                 }
             });
-
             // THE 'NON WIN CUBES'
             if(matchLength === winPosArr.length) {
                 if (cube.position.y >= -4) {
