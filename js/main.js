@@ -118,7 +118,10 @@ var updateAnimationModel = function (model) {
             // if that - cutscene = 'rise'
             // if that - cutscene = 'crazy'
     var newModel = model;
-    var sinkCounter = 0;
+    var cubeAmount = getObjectsByName(scene, 'cube').length;
+    var sinkCounter = 0, riseCounter = 0;
+
+
     scene.children.forEach(function(object){
         // cube objects
         if (object.name.slice(0, object.name.indexOf('-')) === 'cube') {
@@ -127,13 +130,29 @@ var updateAnimationModel = function (model) {
             if (object.position.y <= -4) {
                 sinkCounter += 1;
             }
+
+            // if risen, turn cutscene to false
+            if (object.position.y >= 10.000000000000001) {
+                riseCounter += 1;
+            }
+
         }
         // other objects to come
     });
 
-    if(sinkCounter === getObjectsByName(scene, 'cube').length) {
+    console.log(riseCounter);
+
+    if(sinkCounter === cubeAmount) {
         model.cutscene = 'rise';
     }
+
+    if (riseCounter === cubeAmount) {
+        model.cutscene = false;
+    }
+
+
+
+
 
     return newModel;
 }
@@ -286,20 +305,24 @@ var sinkCube = function (model, cube) {
             });
             if(matchLength === winPosArr.length) { // sink
                 // console.log('Moving ' + cube.name);
-                cube.position.y -= 0.1 * Math.random() + 0.1;
-                if (cube.position.y >= -4) {
 
+                if (cube.position.y >= -4) {
+                    cube.position.y -= 0.1 * Math.random() + 0.1;
                 }
             } else {
-                // RISE
+                // SINK WIN CUBES
                 if (cube.position.y >= -4) {
                     cube.position.y -= 0.1 * Math.random();
                 }
             }
         }
-    } else if (model.cutscene === 'rise') {
-        cube.position.y +=  0.1 * Math.random() + 0.1;
-    } else if (model.cutscene === false) {
+    }
+
+    if (model.cutscene === 'rise') {
+        cube.position.y += 0.1 * Math.random();
+    }
+
+    if (model.cutscene === false) {
         cube.position.y = 10;
     }
 }
