@@ -86,6 +86,7 @@ var updateModel = function (model, boxId) {
                 newModel.cutscene = 'sink';
             }
 
+
             // game reset
 
             // if the win state is win and the cubes a finished syncing then
@@ -117,6 +118,7 @@ var updateAnimationModel = function (model) {
             // if this - cutscene = 'sink'
             // if that - cutscene = 'rise'
             // if that - cutscene = 'crazy'
+
     var newModel = model;
     var cubeAmount = getObjectsByName(scene, 'cube').length;
     var sinkCounter = 0, riseCounter = 0;
@@ -132,7 +134,7 @@ var updateAnimationModel = function (model) {
             }
 
             // if risen, turn cutscene to false
-            if (object.position.y >= 10.000000000000001) {
+            if (object.position.y > 10) {
                 riseCounter += 1;
             }
 
@@ -144,6 +146,7 @@ var updateAnimationModel = function (model) {
 
     if(sinkCounter === cubeAmount) {
         model.cutscene = 'rise';
+        model.boxes = [null, null, null, null, null, null, null, null, null];
     }
 
     if (riseCounter === cubeAmount) {
@@ -295,7 +298,6 @@ var sinkCube = function (model, cube) {
             // 1. SINK THE 'NON-WIN' CUBES FIRST
             // if the current cube is not any of the names in the win
             // position than sink the cube
-
             var matchLength = 0;
             winPosArr.forEach(function(pos) {
                 var winCubeName = 'cube-' + pos;
@@ -303,12 +305,13 @@ var sinkCube = function (model, cube) {
                     matchLength += 1;
                 }
             });
-            if(matchLength === winPosArr.length) { // sink
-                // console.log('Moving ' + cube.name);
 
+            // THE 'NON WIN CUBES'
+            if(matchLength === winPosArr.length) {
                 if (cube.position.y >= -4) {
                     cube.position.y -= 0.1 * Math.random() + 0.1;
                 }
+            // THE WIN CUBES
             } else {
                 // SINK WIN CUBES
                 if (cube.position.y >= -4) {
@@ -318,12 +321,18 @@ var sinkCube = function (model, cube) {
         }
     }
 
+    // if all cubes are sinked rotate them to the
+    // original position
     if (model.cutscene === 'rise') {
         cube.position.y += 0.1 * Math.random();
+        cube.rotation.x = 0;
+        cube.rotation.z = 0;
+        cube.rotation.y = 0;
+        cube.material.color = new THREE.Color(color.red);
     }
 
     if (model.cutscene === false) {
-        cube.position.y = 10;
+
     }
 }
 
