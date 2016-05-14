@@ -4,6 +4,7 @@ var board = {};
     board.turn = 'o';
     board.boxes = [null, null, null, null, null, null, null, null, null];
     board.active = true;
+    board.cutscene = false;
     board.end = false;
     board.winPos = [];
 
@@ -39,7 +40,6 @@ gui.add(controls, 'camY', 0, 100);
 gui.add(controls, 'camZ', 0, 100);
 
 // ---------------------------------
-
 
 var getObjectsByName = function (sceneObject, name) {
     var objects = [];
@@ -77,10 +77,25 @@ var updateModel = function (model, boxId) {
             if(isWin(newModel).state === 'draw') {
                 newModel.active = false;
             }
+
+            // win condition
+
             if(isWin(newModel).state === 'win') {
                 newModel.active = false;
                 newModel.winPos = isWin(newModel).winPositions;
+                newModel.cutscene = 'sink';
             }
+
+            // game reset
+
+            // if the win state is win and the cubes a finished syncing then
+            // rise the cubes than activate the board
+
+            // here i have a bunch of events that change and update the model
+
+            //maybe the update function should be listening to animations
+
+
             // updateModel: turn
             if(newModel.turn === 'x') {
                 newModel.turn = 'o';
@@ -110,14 +125,15 @@ var isWin = function (model) {
     var botMid = model.boxes[7];
     var botRight = model.boxes[8];
 
+
     if ((topLeft !== null) && (topMid !== null) && (topRight !== null)) {
         if((topLeft === topMid) && (topMid === topRight)) return {state: 'win', winPositions: [0, 1, 2]};
     };
     if ((midLeft !== null) && (midMid !== null) && (midRight !== null)) {
-        if((midLeft === midMid) && (midMid === midRight)) return {state: 'win', winPositions: [2, 3, 4]};
+        if((midLeft === midMid) && (midMid === midRight)) return {state: 'win', winPositions: [3, 4, 5]};
     };
     if ((botLeft !== null) && (botMid !== null) && (botRight !== null)) {
-        if((botLeft === botMid) && (botMid === botRight)) return {state: 'win', winPositions: [5, 6, 7]};
+        if((botLeft === botMid) && (botMid === botRight)) return {state: 'win', winPositions: [6, 7, 8]};
     };
     // // VERTICAL
     if ((topLeft !== null) && (midLeft !== null) && (botLeft !== null)) {
@@ -212,25 +228,7 @@ var updateColor = function (object) {
     object.material.color = new THREE.Color(color.brown);
 };
 
-// I want the mode to update all animating objects
-// right now I have a rotateCube() function of animateFunctions
-// listening for changes in the model
-// you should have a animateFunction as a a 'gateway' for all you ranimations
-
-/*
-
-function animateObjects(scene, model) {
-    rotateCubes(scene, model);
-    sinkCubes(scene, model);
-}
-
-// basically a bunch of if statements in each of the functions and will
-// if's are just checking the mode
-
-*/
-
 var rotateCube = function (model, object) {
-    if(object.name.slice(0, 4) === "cube") {
         var cubeId = object.name.slice(5, object.name.length);
         var cubeData = model.boxes[cubeId];
         if(cubeData !== null) {
@@ -239,28 +237,42 @@ var rotateCube = function (model, object) {
             object.rotation.y += 0.01 * Math.random();
         } else {
         }
-    }
 };
 
-var sinkCube = function (model, object) {
-    // which cubes should i sink?
-    var winPosArr = model.winPos;
-    if(winPosArr.length >= 3) {
-        // select those cubes
-        var matchLength = 0;
-        winPosArr.forEach(function(pos) {
-            var winCubeName = 'cube-' + pos;
-            if(winCubeName !== object.name) {
-                matchLength += 1;
-            }
-        });
+var sinkCube = function (model, cube) {
+    if(model.cutscene === 'sink') {
+        var winPosArr = model.winPos;
+        if(winPosArr.length >= 3) {
+            // 1. SINK THE 'NON-WIN' CUBES FIRST
+            // if the current cube is not any of the names in the win
+            // position than sink the cube
 
-        if(matchLength === winPosArr.length) {
-            // console.log('Moving ' + object.name);
-            object.position.y -= 0.2;
+            var matchLength = 0;
+            winPosArr.forEach(function(pos) {
+                var winCubeName = 'cube-' + pos;
+                if(winCubeName !== cube.name) {
+                    matchLength += 1;
+                }
+            });
+            if(matchLength === winPosArr.length) { // sink
+                // console.log('Moving ' + cube.name);
+                cube.position.y -= 0.1 * Math.random() + 0.1;
+                if (cube.position.y >= -4) {
+
+                }
+            } else {
+                // RISE
+                if (cube.position.y >= -4) {
+                    cube.position.y -= 0.1 * Math.random();
+                }
+            }
         }
+    } else if (model.cutscene === 'reveal') {
+        cube.position.y +=  0.1 * Math.random() + 0.1;
     }
 }
+
+
 
 var changeCubeColor = function (sceneObject, model) {
     sceneObject.children.forEach(function(object) {
@@ -286,8 +298,9 @@ var animateObjects = function (sceneObject, model, callback) {
     })
 };
 
-var animateObjects2 = function () {
-
+var runAnimations = function () {
+    animateObjects(getObjectsByName(scene, 'cube'), board, rotateCube);
+    animateObjects(getObjectsByName(scene, 'cube'), board, sinkCube);
 };
 
 var updateRender = function (sceneObject, model) {
@@ -329,6 +342,7 @@ var clickHandler = function (evt) {
     if (intersectCube.length !== 0) {
         selectedCubeId = intersectCube[0].object.name.slice(5, 6);
         selectedObject = intersectCube[0].object;
+        console.log(selectedCubeId);
         newModel = updateModel(board, selectedCubeId);
     } else if (false) {
         // if clicked on another element, do something
@@ -345,8 +359,7 @@ var loop = function () {
     SCENE.camera.position.x = controls.camX;
     SCENE.camera.position.y = controls.camY;
     SCENE.camera.position.z = controls.camZ;
-    animateObjects(scene.children, board, rotateCube);
-    animateObjects(getObjectsByName(scene, 'cube'), board, sinkCube);
+    runAnimations();
     requestAnimationFrame(loop);
     SCENE.renderer.render(scene, SCENE.camera);
 }
