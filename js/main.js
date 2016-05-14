@@ -109,6 +109,36 @@ var updateModel = function (model, boxId) {
 }
 
 
+var updateAnimationModel = function (model) {
+    // if objects hit certain critiera, then update the model being fed to it
+
+    // constantly listening to scene.children
+        // scene.children.forEach();
+            // if this - cutscene = 'sink'
+            // if that - cutscene = 'rise'
+            // if that - cutscene = 'crazy'
+    var newModel = model;
+    var sinkCounter = 0;
+    scene.children.forEach(function(object){
+        // cube objects
+        if (object.name.slice(0, object.name.indexOf('-')) === 'cube') {
+
+            // if sunk, then turn 'rise' switch on
+            if (object.position.y <= -4) {
+                sinkCounter += 1;
+            }
+        }
+        // other objects to come
+    });
+
+    if(sinkCounter === getObjectsByName(scene, 'cube').length) {
+        model.cutscene = 'rise';
+    }
+
+    return newModel;
+}
+
+
 //  THE MODEL SHOULD HAVE DATA FOR A WIN ANIMATION
 //      - save winning coordinates in model
 
@@ -267,12 +297,12 @@ var sinkCube = function (model, cube) {
                 }
             }
         }
-    } else if (model.cutscene === 'reveal') {
+    } else if (model.cutscene === 'rise') {
         cube.position.y +=  0.1 * Math.random() + 0.1;
+    } else if (model.cutscene === false) {
+        cube.position.y = 10;
     }
 }
-
-
 
 var changeCubeColor = function (sceneObject, model) {
     sceneObject.children.forEach(function(object) {
@@ -291,16 +321,17 @@ var changeCubeColor = function (sceneObject, model) {
     });
 };
 
-
 var animateObjects = function (sceneObject, model, callback) {
     sceneObject.forEach(function(object) {
         callback(model, object);
     })
 };
 
-var runAnimations = function () {
-    animateObjects(getObjectsByName(scene, 'cube'), board, rotateCube);
-    animateObjects(getObjectsByName(scene, 'cube'), board, sinkCube);
+
+var updateAnimation = function (model) {
+    var newModel = updateAnimationModel(model);
+    animateObjects(getObjectsByName(scene, 'cube'), model, rotateCube);
+    animateObjects(getObjectsByName(scene, 'cube'), model, sinkCube);
 };
 
 var updateRender = function (sceneObject, model) {
@@ -359,7 +390,7 @@ var loop = function () {
     SCENE.camera.position.x = controls.camX;
     SCENE.camera.position.y = controls.camY;
     SCENE.camera.position.z = controls.camZ;
-    runAnimations();
+    updateAnimation(board);
     requestAnimationFrame(loop);
     SCENE.renderer.render(scene, SCENE.camera);
 }
