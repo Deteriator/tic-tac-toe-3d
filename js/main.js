@@ -1,129 +1,132 @@
 // MODEL GLOBALS
 
-var board = {};
-    board.turn = 'o';
-    board.boxes = [null, null, null, null, null, null, null, null, null];
-    board.active = true;
-    board.cutscene = false;
-    board.end = false;
-    board.winPos = [];
+const playerO = 'o'
+const playerX = 'x'
+
+
+// board constructor
+const createBoard = () => {
+  return {
+    turn        : playerO,
+    boxes       : (new Array(9)).fill(null), //cooool.
+    active      : true,
+    cutscene    : false,
+    end         : false,
+    winPos      : [],
+  }
+}
+
+
+// board creator
+const board = createBoard()
+
 
 // VIEW GLOBALS
-var OBJ = {};
-var SCENE = {};
-var RENDER = {};
-var color = {};
-    color.red = 0xf25346;
-    color.white = 0xd8d0d1;
-    color.brown = 0x59332e;
-    color.pink = 0xF5986E;
-    color.brownDark = 0x23190f;
-    color.blue = 0x68c3c0;
-
+const OBJ = {}
+const SCENE = {}
+const RENDER = {}
+const color = {
+  red         : 0xf25346,
+  white       : 0xd8d0d1,
+  brown       : 0x59332e,
+  pink        : 0xF5986E,
+  brownDark   : 0x23190f,
+  blue        : 0x68c3c0,
+}
 
 // ---------------------------
 // DEV ***********************
 // ---------------------------
 
-var controls = new function () {
-    this.rotationSpeed = 0;
-    this.camX = -30;
-    this.camY = 60;
-    this.camZ = 30;
+const controls = new function () {
+    this.rotationSpeed = 0
+    this.camX = -30
+    this.camY = 60
+    this.camZ = 30
 }
 
-var gui = new dat.GUI();
 
-gui.add(controls, 'rotationSpeed', 0, 1);
-gui.add(controls, 'camX', -100, 0);
-gui.add(controls, 'camY', 0, 100);
-gui.add(controls, 'camZ', 0, 100);
+const gui = new dat.GUI();
+[ [ 'rotationSpeed', 0, 1 ]
+, [ 'camX', -100, 0 ]
+, [ 'camY', 0, 100 ]
+, [ 'camZ', 0, 100 ]
+]
+.forEach( ([prop, low, high]) => {          // I didnt know you could do this.
+    gui.add( controls, prop, low, high );   // I guess gui.add only runs once and thats it
+})                                          // the only thing that is run again is the instance of
+                                            // the GUI itself
+
 
 // ---------------------------------
 
-var getObjectsByName = function (sceneObject, name) {
-    var objects = [];
-    sceneObject.children.forEach(function(item) {
-        var slicedName;
-        if(item.name) {
-            slicedName = item.name.slice(0, item.name.indexOf('-'));
-            if(slicedName === name) {
-                objects.push(item);
-            }
-        }
-    });
-    return objects;
+const getObjectsByName = (sceneObject, name) => {  // OFCOURSE! UGH! NICE!
+    return sceneObject.children.filter(item => {   // this is nice
+      if (!item.name) { return false }
+      return item.name.split('-')[0] === name
+    })
 }
 
 // ---------------------------------
 
 // SCENE
 
-var scene = new THREE.Scene();
+const scene = new THREE.Scene();
 scene.fog = new THREE.Fog( 0xf7d9aa, 0.015, 160 );
 
 // var axes = new THREE.AxisHelper(20);
-// scene.add(axes); 
+// scene.add(axes);
 
 // MODEL
 
-var resetModel = function (model) {
-    model.turn = 'o';
-    model.boxes = [null, null, null, null, null, null, null, null, null];
-    model.active = true;
-    model.cutscene = false;
-    model.end = false;
-    model.winPos = [];
+const resetModel = (model) => {
+    model = createBoard()
 }
 
-var updateModel = function (model, boxId) {
-    var newModel = model;
-    if (newModel.boxes[boxId] === null) {
-        if(newModel.active) { // if model active
-            // updateModel: box
-            newModel.boxes[boxId] = newModel.turn;
-            // ifGameOver deactivate model
-            if(isWin(newModel).state === 'draw') {
-                newModel.active = false;
-            }
-
-            // win condition
-            if(isWin(newModel).state === 'win') {
-                newModel.active = false;
-                newModel.winPos = isWin(newModel).winPositions;
-                newModel.cutscene = 'sink';
-            }
-            // updateModel: turn
-            if(newModel.turn === 'x') {
-                newModel.turn = 'o';
-            } else {
-                newModel.turn = 'x';
-            }
-        } else { // if the model has been deactivated
-        }
+const updateModel = (model, boxId) => {
+    var model = model
+    // Ignore if box already clicked or game not active
+    if (model.boxes[boxId] !== null || !model.active) {
+      return model
     }
 
-    return newModel;
+    // updateModel: box
+    model.boxes[boxId] = model.turn;
+
+    // ifGameOver deactivate model
+    if ( isWin(model).state === 'draw' ) {
+        model.active = false
+        return model
+    }
+
+    // win condition
+    if ( isWin(model).state === 'win' ) {
+        model.active = false
+        model.winPos = isWin(model).winPositions
+        model.cutscene = 'sink'
+        return model
+    }
+
+    // updateModel: turn
+    if( model.turn === playerX ) {
+        model.turn = playerO
+    } else {
+        model.turn = playerX
+    }
+
+    return model;
 }
 
-var updateAnimationModel = function (model) {
-    // if objects hit certain critiera, then update the model being fed to it
-
-    // constantly listening to scene.children
-        // scene.children.forEach();
-            // if this - cutscene = 'sink'
-            // if that - cutscene = 'rise'
-            // if that - cutscene = 'crazy'
+const updateAnimationModel = (model) => {
 
     var newModel = model;
     var cubeAmount = getObjectsByName(scene, 'cube').length;
     var sinkCounter = 0, riseCounter = 0;
 
 
-    scene.children.forEach(function(object){
+    scene.children.forEach((object) => {
         // cube objects
         if (object.name.slice(0, object.name.indexOf('-')) === 'cube') {
-
             // if sunk, then turn 'rise' switch on
             if (object.position.y <= -4) {
                 sinkCounter += 1;
@@ -132,8 +135,6 @@ var updateAnimationModel = function (model) {
             if (object.position.y > 10 && model.cutscene !== "sink") {
                 riseCounter += 1;
             }
-
-
         }
         // other objects to come
     });
@@ -151,7 +152,7 @@ var updateAnimationModel = function (model) {
     return newModel;
 }
 
-var isWin = function (model) {
+const isWin = (model) => {
 
     var drawCounter = 0;
     var topLeft = model.boxes[0];
@@ -205,7 +206,7 @@ var isWin = function (model) {
 
 // RENDER
 
-var addCamera = function () {
+const addCamera = () => {
     SCENE.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100)
     SCENE.camera.position.x = -30;
     SCENE.camera.position.y = 60;
@@ -213,13 +214,13 @@ var addCamera = function () {
     SCENE.camera.lookAt(scene.position);
 };
 
-var addRenderer = function () {
+const addRenderer = () => {
     SCENE.renderer = new THREE.WebGLRenderer({alpha: true, antialias: true});
     SCENE.renderer.setSize(window.innerWidth, window.innerHeight);
     SCENE.renderer.shadowMap.enabled = true;
 };
 
-var addPlane = function () {
+const addPlane = () => {
     var planeGeo = new THREE.PlaneGeometry(50, 50);
     var planeMat = new THREE.MeshLambertMaterial({color: color.blue});
     var plane = new THREE.Mesh(planeGeo, planeMat);
@@ -232,7 +233,7 @@ var addPlane = function () {
     scene.add(plane);
 };
 
-var addGrid = function () {
+const addGrid = () => {
     var cubeId = 0;
     for (var h = 0; h < 3; h += 1) {
         for (var w = 0; w < 3; w += 1) {
@@ -242,7 +243,7 @@ var addGrid = function () {
     }
 };
 
-var addCube = function (w, h, cubeId) {
+const addCube = (w, h, cubeId) => {
     var cubeGeo = new THREE.BoxGeometry(5, 5, 5);
     var cubeMat = new THREE.MeshLambertMaterial({color: color.red});
     OBJ.cube = new THREE.Mesh(cubeGeo, cubeMat);
@@ -254,18 +255,18 @@ var addCube = function (w, h, cubeId) {
     scene.add(OBJ.cube);
 }
 
-var addLight = function () {
+const addLight = () => {
     var spotLight = new THREE.SpotLight( 0xffffff );
     spotLight.position.set( -40, 60, -10 );
     spotLight.castShadow = true;
     scene.add(spotLight);
 }
 
-var updateColor = function (object) {
+const updateColor = (object) => {
     object.material.color = new THREE.Color(color.brown);
 };
 
-var rotateCube = function (model, object) {
+const rotateCube = (model, object) => {
         var cubeId = object.name.slice(5, object.name.length);
         var cubeData = model.boxes[cubeId];
         if(cubeData !== null) {
@@ -276,7 +277,7 @@ var rotateCube = function (model, object) {
         }
 };
 
-var sinkCube = function (model, cube) {
+const sinkCube = (model, cube) => {
     if(model.cutscene === 'sink') {
         var winPosArr = model.winPos;
         if(winPosArr.length >= 3) {
@@ -320,13 +321,13 @@ var sinkCube = function (model, cube) {
     }
 }
 
-var changeCubeColor = function (sceneObject, model) {
+const changeCubeColor = (sceneObject, model) => {
     sceneObject.children.forEach(function(object) {
         if(object.name.slice(0, 4) === "cube") {
             var cubeId = object.name.slice(5, object.name.length);
             var cubeData = model.boxes[cubeId];
             if(cubeData !== null) {
-                if(cubeData === 'x') {
+                if(cubeData === playerX) {
                     object.material.color = new THREE.Color(color.pink);
                 } else {
                     object.material.color = new THREE.Color(color.brown);
@@ -337,26 +338,26 @@ var changeCubeColor = function (sceneObject, model) {
     });
 };
 
-var animateObjects = function (sceneObject, model, callback) {
-    sceneObject.forEach(function(object) {
+const animateObjects = (sceneObject, model, callback) => {
+    sceneObject.forEach((object) => {
         callback(model, object);
     })
 };
 
 
-var updateAnimation = function (model) {
+const updateAnimation = (model) => {
     var newModel = updateAnimationModel(model);
     animateObjects(getObjectsByName(scene, 'cube'), model, rotateCube);
     animateObjects(getObjectsByName(scene, 'cube'), model, sinkCube);
 };
 
-var updateRender = function (sceneObject, model) {
+const updateRender = (sceneObject, model) => {
     changeCubeColor(sceneObject, model);
 }
 
 // EVENTS --------------------
 
-var clickHandler = function (evt) {
+const clickHandler = (evt) => {
     // vector is created based on the position that
     // we've clicked on, on the screen.
 
@@ -399,7 +400,7 @@ var clickHandler = function (evt) {
     updateRender(scene, newModel);
 };
 
-var loop = function () {
+var loop = () => {
     OBJ.cube.rotation.x += controls.rotationSpeed;
     OBJ.cube.rotation.z += controls.rotationSpeed;
     OBJ.cube.position.x += controls.rotationSpeed;
@@ -411,7 +412,7 @@ var loop = function () {
     SCENE.renderer.render(scene, SCENE.camera);
 }
 
-var renderScene = function () {
+var renderScene = () => {
     addLight();
     addCamera();
     addRenderer();

@@ -1,80 +1,65 @@
 // MODEL GLOBALS
 
-const playerO = 'o'
-const playerX = 'x'
-
-
-// board constructor
-const createBoard = () => {
-  return {
-    turn        : playerO,
-    boxes       : (new Array(9)).fill(null), //cooool.
-    active      : true,
-    cutscene    : false,
-    end         : false,
-    winPos      : [],
-  }
-}
-
-
-// board creator
-const board = createBoard()
-
+var board = {};
+    board.turn = 'o';
+    board.boxes = [null, null, null, null, null, null, null, null, null];
+    board.active = true;
+    board.cutscene = false;
+    board.end = false;
+    board.winPos = [];
 
 // VIEW GLOBALS
-const OBJ = {}
-const SCENE = {}
-const RENDER = {}
-const color = {
-  red         : 0xf25346,
-  white       : 0xd8d0d1,
-  brown       : 0x59332e,
-  pink        : 0xF5986E,
-  brownDark   : 0x23190f,
-  blue        : 0x68c3c0,
-}
-
+var OBJ = {};
+var SCENE = {};
+var RENDER = {};
+var color = {};
+    color.red = 0xf25346;
+    color.white = 0xd8d0d1;
+    color.brown = 0x59332e;
+    color.pink = 0xF5986E;
+    color.brownDark = 0x23190f;
+    color.blue = 0x68c3c0;
 
 
 // ---------------------------
 // DEV ***********************
 // ---------------------------
 
-const controls = new function () {
-    this.rotationSpeed = 0
-    this.camX = -30
-    this.camY = 60
-    this.camZ = 30
+var controls = new function () {
+    this.rotationSpeed = 0;
+    this.camX = -30;
+    this.camY = 60;
+    this.camZ = 30;
 }
 
+var gui = new dat.GUI();
 
-
-const gui = new dat.GUI();
-[ [ 'rotationSpeed', 0, 1 ]
-, [ 'camX', -100, 0 ]
-, [ 'camY', 0, 100 ]
-, [ 'camZ', 0, 100 ]
-]
-.forEach( ([prop, low, high]) => {          // I didnt know you could do this.
-    gui.add( controls, prop, low, high );   // I guess gui.add only runs once and thats it
-})                                          // the only thing that is run again is the instance of
-                                            // the GUI itself
-
+gui.add(controls, 'rotationSpeed', 0, 1);
+gui.add(controls, 'camX', -100, 0);
+gui.add(controls, 'camY', 0, 100);
+gui.add(controls, 'camZ', 0, 100);
 
 // ---------------------------------
 
-const getObjectsByName = (sceneObject, name) => {  // OFCOURSE! UGH! NICE!
-    return sceneObject.children.filter(item => {   // this is nice
-      if (!item.name) { return false }
-      return item.name.split('-')[0] === name
-    })
+var getObjectsByName = function (sceneObject, name) {
+    var objects = [];
+    sceneObject.children.forEach(function(item) {
+        var slicedName;
+        if(item.name) {
+            slicedName = item.name.slice(0, item.name.indexOf('-'));
+            if(slicedName === name) {
+                objects.push(item);
+            }
+        }
+    });
+    return objects;
 }
 
 // ---------------------------------
 
 // SCENE
 
-const scene = new THREE.Scene();
+var scene = new THREE.Scene();
 scene.fog = new THREE.Fog( 0xf7d9aa, 0.015, 160 );
 
 // var axes = new THREE.AxisHelper(20);
@@ -82,73 +67,43 @@ scene.fog = new THREE.Fog( 0xf7d9aa, 0.015, 160 );
 
 // MODEL
 
-const resetModel = (model) => {
-    model = createBoard()
+var resetModel = function (model) {
+    model.turn = 'o';
+    model.boxes = [null, null, null, null, null, null, null, null, null];
+    model.active = true;
+    model.cutscene = false;
+    model.end = false;
+    model.winPos = [];
 }
 
-// var updateModel = function (model, boxId) {
-//     var newModel = model;
-//     if (newModel.boxes[boxId] === null) {
-//         if(newModel.active) { // if model active
-//             // updateModel: box
-//             newModel.boxes[boxId] = newModel.turn;
-//             // ifGameOver deactivate model
-//             if(isWin(newModel).state === 'draw') {
-//                 newModel.active = false;
-//             }
-//
-//             // win condition
-//             if(isWin(newModel).state === 'win') {
-//                 newModel.active = false;
-//                 newModel.winPos = isWin(newModel).winPositions;
-//                 newModel.cutscene = 'sink';
-//             }
-//             // updateModel: turn
-//             if(newModel.turn === playerX) {
-//                 newModel.turn = playerO;
-//             } else {
-//                 newModel.turn = playerX;
-//             }
-//         } else { // if the model has been deactivated
-//         }
-//     }
-//
-//     return newModel;
-// }
+var updateModel = function (model, boxId) {
+    var newModel = model;
+    if (newModel.boxes[boxId] === null) {
+        if(newModel.active) { // if model active
+            // updateModel: box
+            newModel.boxes[boxId] = newModel.turn;
+            // ifGameOver deactivate model
+            if(isWin(newModel).state === 'draw') {
+                newModel.active = false;
+            }
 
-
-const updateModel = (model, boxId) => {
-    var model = model
-    // Ignore if box already clicked or game not active
-    if (model.boxes[boxId] !== null || !model.active) {
-      return model
+            // win condition
+            if(isWin(newModel).state === 'win') {
+                newModel.active = false;
+                newModel.winPos = isWin(newModel).winPositions;
+                newModel.cutscene = 'sink';
+            }
+            // updateModel: turn
+            if(newModel.turn === 'x') {
+                newModel.turn = 'o';
+            } else {
+                newModel.turn = 'x';
+            }
+        } else { // if the model has been deactivated
+        }
     }
 
-    // updateModel: box
-    model.boxes[boxId] = model.turn;
-
-    // ifGameOver deactivate model
-    if ( isWin(model).state === 'draw' ) {
-        model.active = false
-        return model
-    }
-
-    // win condition
-    if ( isWin(model).state === 'win' ) {
-        model.active = false
-        model.winPos = isWin(model).winPositions
-        model.cutscene = 'sink'
-        return model
-    }
-
-    // updateModel: turn
-    if( model.turn === playerX ) {
-        model.turn = playerO
-    } else {
-        model.turn = playerX
-    }
-
-    return model;
+    return newModel;
 }
 
 var updateAnimationModel = function (model) {
@@ -371,7 +326,7 @@ var changeCubeColor = function (sceneObject, model) {
             var cubeId = object.name.slice(5, object.name.length);
             var cubeData = model.boxes[cubeId];
             if(cubeData !== null) {
-                if(cubeData === playerX) {
+                if(cubeData === 'x') {
                     object.material.color = new THREE.Color(color.pink);
                 } else {
                     object.material.color = new THREE.Color(color.brown);
