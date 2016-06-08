@@ -1,8 +1,17 @@
-console.log('bundling!'); 
+import React from 'react'
+import ReactDOM from 'react-dom'
 
-// const app = () => {
-//     return <div> hi </div>;
-// }
-//
-//
-// ReactDOM.render(app, document.getElementById('master'))
+
+class App extends React.Component {
+    constructor() {
+        super();
+    }
+
+    render () {
+        return <div id="gameWrapper"></div>
+    }
+}
+
+
+
+ReactDOM.render(<App /> , document.getElementById('master'))

@@ -7,13 +7,12 @@ Design inspired by: [Karim Maaloul's 'Aviator' Animation](http://tympanus.net/co
 
 ### Run it
 
-Make sure you have node installed on your computer first. Then run this commands inside the project folder:
+Make sure you have node installed on your computer first. Then run these commands inside the project folder:
 
 ```
 npm install
 gulp
 node app.js
-
 ```
 
 
