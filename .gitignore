@@ -1,0 +1,4 @@
+node_modules/**
+data/**
+fixture/**
+.DS_Store

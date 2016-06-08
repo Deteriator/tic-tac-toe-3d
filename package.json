@@ -1,0 +1,22 @@
+{
+  "name": "tic-tac-toe-3d",
+  "version": "0.2.0",
+  "description": "Tic Tac Toe in Three.js",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/doloreel/tic-tac-toe-3d.git"
+  },
+  "author": "Jeremy Arimado",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/doloreel/tic-tac-toe-3d/issues"
+  },
+  "homepage": "https://github.com/doloreel/tic-tac-toe-3d#readme",
+  "dependencies": {
+    "express": "^4.13.4"
+  }
+}
