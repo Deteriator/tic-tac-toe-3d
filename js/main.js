@@ -25,6 +25,7 @@ const board = createBoard()
 const OBJ = {}
 const SCENE = {}
 const RENDER = {}
+
 const color = {
   red         : 0xf25346,
   white       : 0xd8d0d1,
@@ -47,21 +48,23 @@ const controls = new function () {
 
 
 const gui = new dat.GUI();
+
 [ [ 'rotationSpeed', 0, 1 ]
 , [ 'camX', -100, 0 ]
 , [ 'camY', 0, 100 ]
 , [ 'camZ', 0, 100 ]
 ]
-.forEach( ([prop, low, high]) => {          // I didnt know you could do this.
-    gui.add( controls, prop, low, high );   // I guess gui.add only runs once and thats it
-})                                          // the only thing that is run again is the instance of
-                                            // the GUI itself
+.forEach( ([prop, low, high]) => {
+    gui.add( controls, prop, low, high );
+})
+
 
 
 // ---------------------------------
+// UTIL
 
-const getObjectsByName = (sceneObject, name) => {  // OFCOURSE! UGH! NICE!
-    return sceneObject.children.filter(item => {   // this is nice
+const getObjectsByName = (sceneObject, name) => {
+    return sceneObject.children.filter(item => {
       if (!item.name) { return false }
       return item.name.split('-')[0] === name
     })
@@ -237,7 +240,7 @@ const addGrid = () => {
     var cubeId = 0;
     for (var h = 0; h < 3; h += 1) {
         for (var w = 0; w < 3; w += 1) {
-            addCube(w, h, cubeId)
+            addCube(w, h, cubeId);
             cubeId += 1;
         }
     }
