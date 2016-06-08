@@ -1,4 +1,5 @@
 node_modules/**
 data/**
 fixture/**
+public/js/bundle.js
 .DS_Store

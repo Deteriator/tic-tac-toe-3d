@@ -1,8 +1,20 @@
-#TIC-TAC-TOE 3D
+#TIC TAC TOE 3D
 
 My first Three.js game!
 
 Design inspired by: [Karim Maaloul's 'Aviator' Animation](http://tympanus.net/codrops/2016/04/26/the-aviator-animating-basic-3d-scene-threejs/)
+
+
+### Run it
+
+Make sure you have node installed on your computer first. Then run this commands inside the project folder:
+
+```
+npm install
+gulp
+node app.js
+
+```
 
 
 ---
