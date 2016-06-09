@@ -1,14 +1,17 @@
 // MODEL GLOBALS
 
+// recieve socket information here
+// mobile
+//
+
 const playerO = 'o'
 const playerX = 'x'
-
 
 // board constructor
 const createBoard = () => {
   return {
     turn        : playerO,
-    boxes       : (new Array(9)).fill(null), //cooool.
+    boxes       : (new Array(9)).fill(null),
     active      : true,
     cutscene    : false,
     end         : false,
@@ -16,15 +19,14 @@ const createBoard = () => {
   }
 }
 
-
 // board creator
 const board = createBoard()
-
 
 // VIEW GLOBALS
 const OBJ = {}
 const SCENE = {}
 const RENDER = {}
+var scene;
 
 const color = {
   red         : 0xf25346,
@@ -46,19 +48,18 @@ const controls = new function () {
     this.camZ = 30
 }
 
+const createGUIHelper = () => {
+    const gui = new dat.GUI();
 
-const gui = new dat.GUI();
-
-[ [ 'rotationSpeed', 0, 1 ]
-, [ 'camX', -100, 0 ]
-, [ 'camY', 0, 100 ]
-, [ 'camZ', 0, 100 ]
-]
-.forEach( ([prop, low, high]) => {
-    gui.add( controls, prop, low, high );
-})
-
-
+    [ [ 'rotationSpeed', 0, 1 ]
+    , [ 'camX', -100, 0 ]
+    , [ 'camY', 0, 100 ]
+    , [ 'camZ', 0, 100 ]
+    ]
+    .forEach( ([prop, low, high]) => {
+        gui.add( controls, prop, low, high );
+    })
+};
 
 // ---------------------------------
 // UTIL
@@ -71,14 +72,6 @@ const getObjectsByName = (sceneObject, name) => {
 }
 
 // ---------------------------------
-
-// SCENE
-
-const scene = new THREE.Scene();
-scene.fog = new THREE.Fog( 0xf7d9aa, 0.015, 160 );
-
-// var axes = new THREE.AxisHelper(20);
-// scene.add(axes);
 
 // MODEL
 
@@ -347,20 +340,19 @@ const animateObjects = (sceneObject, model, callback) => {
     })
 };
 
-
 const updateAnimation = (model) => {
     var newModel = updateAnimationModel(model);
     animateObjects(getObjectsByName(scene, 'cube'), model, rotateCube);
     animateObjects(getObjectsByName(scene, 'cube'), model, sinkCube);
 };
 
-const updateRender = (sceneObject, model) => {
+const updateRender3D = (sceneObject, model) => {
     changeCubeColor(sceneObject, model);
 }
 
 // EVENTS --------------------
 
-const clickHandler = (evt) => {
+const clickHandler3D = (evt) => {
     // vector is created based on the position that
     // we've clicked on, on the screen.
 
@@ -400,10 +392,10 @@ const clickHandler = (evt) => {
     } else if (false) {
         // same same
     }
-    updateRender(scene, newModel);
+    updateRender3D(scene, newModel);
 };
 
-var loop = () => {
+var loop3D = () => {
     OBJ.cube.rotation.x += controls.rotationSpeed;
     OBJ.cube.rotation.z += controls.rotationSpeed;
     OBJ.cube.position.x += controls.rotationSpeed;
@@ -411,21 +403,46 @@ var loop = () => {
     SCENE.camera.position.y = controls.camY;
     SCENE.camera.position.z = controls.camZ;
     updateAnimation(board);
-    requestAnimationFrame(loop);
+    requestAnimationFrame(loop3D);
     SCENE.renderer.render(scene, SCENE.camera);
 }
 
-var renderScene = () => {
+var renderScene3D = () => {
     addLight();
     addCamera();
     addRenderer();
     addPlane();
     addGrid();
-    loop();
+    loop3D();
     getObjectsByName(scene, 'cube');
 }
 
-renderScene();
+const init3D = () => {
+    scene = new THREE.Scene();
+    scene.fog = new THREE.Fog( 0xf7d9aa, 0.015, 160 );
+    renderScene3D();
+    document
+        .getElementById('gameWrapper')
+        .appendChild(SCENE.renderer.domElement);
+    document
+        .addEventListener('mousedown', clickHandler3D, false);
+    createGUIHelper();
+}
 
-document.getElementById('gameWrapper').appendChild(SCENE.renderer.domElement);
-document.addEventListener('mousedown', clickHandler, false);
+// init3D();
+
+// -----------------------------------------------------------------------------
+// *****************************************************************************
+// 2D GAME *********************************************************************
+// *****************************************************************************
+// -----------------------------------------------------------------------------
+
+
+
+
+
+
+const init2D = () => {
+
+    var container = document.createElement('div')
+}
