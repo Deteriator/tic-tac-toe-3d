@@ -60,7 +60,7 @@ const updateModel = (model, boxId) => {
 }
 
 const isWin = (model) => {
-
+    console.log(model.boxes);
     var drawCounter = 0;
     var topLeft = model.boxes[0];
     var topMid = model.boxes[1];
@@ -71,6 +71,28 @@ const isWin = (model) => {
     var botLeft = model.boxes[6];
     var botMid = model.boxes[7];
     var botRight = model.boxes[8];
+
+    var winStates = [[0, 1, 2],
+                     [3, 4, 5],
+                     [6, 7, 8],
+                     [0, 3, 6],
+                     [1, 4, 7],
+                     [2, 5, 8],
+                     [0, 4, 8],
+                     [2, 4, 6]]
+
+    winStates.forEach(function(state){
+        // loop through win states
+        // check to see if the win states are satisified
+        // append to a counter
+        state.forEach(function(pos) {
+            var currentBox = model.boxes[pos];
+            
+        })
+
+        // if its 3 then then a win state has been found
+    })
+
 
 
     if ((topLeft !== null) && (topMid !== null) && (topRight !== null)) {
@@ -428,7 +450,7 @@ const init3D = () => {
     createGUIHelper();
 }
 
-// init3D();
+init3D();
 
 // -----------------------------------------------------------------------------
 // *****************************************************************************
@@ -451,12 +473,12 @@ const initDOMBoard = () => {
                 box.id = "r" + rowIndex + "-c" + boxIndex;
                 box.innerHTML = "box"
             rowNode.appendChild(box);
-        })
-    })
+        });
+    });
 }
 
 const init2D = () => {
     initDOMBoard();
 }
 
-init2D();
+// init2D();
