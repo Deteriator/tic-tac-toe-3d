@@ -229,7 +229,7 @@ const addPlane = () => {
     scene.add(plane);
 };
 
-const addGrid = () => {
+const addGrid3D = () => {
     var cubeId = 0;
     for (var h = 0; h < 3; h += 1) {
         for (var w = 0; w < 3; w += 1) {
@@ -412,7 +412,7 @@ var renderScene3D = () => {
     addCamera();
     addRenderer();
     addPlane();
-    addGrid();
+    addGrid3D();
     loop3D();
     getObjectsByName(scene, 'cube');
 }
@@ -440,9 +440,32 @@ const init3D = () => {
 
 
 
+const initDOMBoard = () => {
+
+    var boardTemplate = [[null,null,null],[null,null,null],[null,null,null]];
+    var gameWrapper = document.getElementById('gameWrapper')
+    var container2D = document.createElement('div');
+        container2D.innerHTML = "Hello!";
+
+    boardTemplate.forEach(function(row, rowIndex) {
+        var currentRow = document.createElement('div');
+        var rowNode = gameWrapper.appendChild(currentRow);
+        row.forEach(function(box, boxIndex){
+            var box = document.createElement('div');
+                box.id = "r" + rowIndex + "-c" + boxIndex;
+                box.innerHTML = "box"
+            rowNode.appendChild(box);
+        })
+    })
+}
 
 
 const init2D = () => {
 
-    var container = document.createElement('div')
+    initDOMBoard();
+
+
+
 }
+
+init2D();
