@@ -1,8 +1,9 @@
-// MODEL GLOBALS
+// -----------------------------------------------------------------------------
+// *****************************************************************************
+// MODEL ***********************************************************************
+// *****************************************************************************
+// -----------------------------------------------------------------------------
 
-// recieve socket information here
-// mobile
-//
 
 const playerO = 'o'
 const playerX = 'x'
@@ -19,61 +20,7 @@ const createBoard = () => {
   }
 }
 
-// board creator
 const board = createBoard()
-
-// VIEW GLOBALS
-const OBJ = {}
-const SCENE = {}
-const RENDER = {}
-var scene;
-
-const color = {
-  red         : 0xf25346,
-  white       : 0xd8d0d1,
-  brown       : 0x59332e,
-  pink        : 0xF5986E,
-  brownDark   : 0x23190f,
-  blue        : 0x68c3c0,
-}
-
-// ---------------------------
-// DEV ***********************
-// ---------------------------
-
-const controls = new function () {
-    this.rotationSpeed = 0
-    this.camX = -30
-    this.camY = 60
-    this.camZ = 30
-}
-
-const createGUIHelper = () => {
-    const gui = new dat.GUI();
-
-    [ [ 'rotationSpeed', 0, 1 ]
-    , [ 'camX', -100, 0 ]
-    , [ 'camY', 0, 100 ]
-    , [ 'camZ', 0, 100 ]
-    ]
-    .forEach( ([prop, low, high]) => {
-        gui.add( controls, prop, low, high );
-    })
-};
-
-// ---------------------------------
-// UTIL
-
-const getObjectsByName = (sceneObject, name) => {
-    return sceneObject.children.filter(item => {
-      if (!item.name) { return false }
-      return item.name.split('-')[0] === name
-    })
-}
-
-// ---------------------------------
-
-// MODEL
 
 const resetModel = (model) => {
     model = createBoard()
@@ -111,41 +58,6 @@ const updateModel = (model, boxId) => {
     }
 
     return model;
-}
-
-const updateAnimationModel = (model) => {
-
-    var newModel = model;
-    var cubeAmount = getObjectsByName(scene, 'cube').length;
-    var sinkCounter = 0, riseCounter = 0;
-
-
-    scene.children.forEach((object) => {
-        // cube objects
-        if (object.name.slice(0, object.name.indexOf('-')) === 'cube') {
-            // if sunk, then turn 'rise' switch on
-            if (object.position.y <= -4) {
-                sinkCounter += 1;
-            }
-            // if risen, turn cutscene to false
-            if (object.position.y > 10 && model.cutscene !== "sink") {
-                riseCounter += 1;
-            }
-        }
-        // other objects to come
-    });
-
-    if(sinkCounter === cubeAmount) {
-        model.cutscene = 'rise';
-        model.boxes = [null, null, null, null, null, null, null, null, null];
-    }
-
-    if (riseCounter === cubeAmount) {
-        model.cutscene = false;
-        model.active = true;
-    }
-
-    return newModel;
 }
 
 const isWin = (model) => {
@@ -200,7 +112,96 @@ const isWin = (model) => {
     return false;
 }
 
-// RENDER
+
+// -----------------------------------------------------------------------------
+// *****************************************************************************
+// 3D GAME *********************************************************************
+// *****************************************************************************
+// -----------------------------------------------------------------------------
+
+const OBJ = {}
+const SCENE = {}
+const RENDER = {}
+var scene;
+
+const color = {
+  red         : 0xf25346,
+  white       : 0xd8d0d1,
+  brown       : 0x59332e,
+  pink        : 0xF5986E,
+  brownDark   : 0x23190f,
+  blue        : 0x68c3c0,
+}
+
+// DEV *************************************************************************
+
+const controls = new function () {
+    this.rotationSpeed = 0
+    this.camX = -30
+    this.camY = 60
+    this.camZ = 30
+}
+
+const createGUIHelper = () => {
+    const gui = new dat.GUI();
+
+    [ [ 'rotationSpeed', 0, 1 ]
+    , [ 'camX', -100, 0 ]
+    , [ 'camY', 0, 100 ]
+    , [ 'camZ', 0, 100 ]
+    ]
+    .forEach( ([prop, low, high]) => {
+        gui.add( controls, prop, low, high );
+    })
+};
+
+// UTIL ************************************************************************
+
+const getObjectsByName = (sceneObject, name) => {
+    return sceneObject.children.filter(item => {
+      if (!item.name) { return false }
+      return item.name.split('-')[0] === name
+    })
+}
+
+// ANIMATION MODEL *************************************************************
+
+const updateAnimationModel = (model) => {
+
+    var newModel = model;
+    var cubeAmount = getObjectsByName(scene, 'cube').length;
+    var sinkCounter = 0, riseCounter = 0;
+
+
+    scene.children.forEach((object) => {
+        // cube objects
+        if (object.name.slice(0, object.name.indexOf('-')) === 'cube') {
+            // if sunk, then turn 'rise' switch on
+            if (object.position.y <= -4) {
+                sinkCounter += 1;
+            }
+            // if risen, turn cutscene to false
+            if (object.position.y > 10 && model.cutscene !== "sink") {
+                riseCounter += 1;
+            }
+        }
+        // other objects to come
+    });
+
+    if(sinkCounter === cubeAmount) {
+        model.cutscene = 'rise';
+        model.boxes = [null, null, null, null, null, null, null, null, null];
+    }
+
+    if (riseCounter === cubeAmount) {
+        model.cutscene = false;
+        model.active = true;
+    }
+
+    return newModel;
+}
+
+// RENDER **********************************************************************
 
 const addCamera = () => {
     SCENE.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100)
@@ -350,7 +351,7 @@ const updateRender3D = (sceneObject, model) => {
     changeCubeColor(sceneObject, model);
 }
 
-// EVENTS --------------------
+// EVENTS **********************************************************************
 
 const clickHandler3D = (evt) => {
     // vector is created based on the position that
@@ -458,7 +459,6 @@ const initDOMBoard = () => {
         })
     })
 }
-
 
 const init2D = () => {
 
