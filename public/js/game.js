@@ -63,7 +63,6 @@ const updateModel = (model, boxId) => {
 }
 
 const isWin = (model) => {
-    console.log(model.boxes);
     var drawCounter = 0;
     var topLeft = model.boxes[0];
     var topMid = model.boxes[1];
@@ -460,13 +459,31 @@ const init3D = () => {
 // *****************************************************************************
 // -----------------------------------------------------------------------------
 
+// RENDER **********************************************************************
+
+
+
+const updateBox = (currentPlay, id) => {
+    // with the box id and current
+    // if x do this to id
+    // if y do that to id
+}
+
+const updateRender2D = (model) => {
+    var updatedModel = model.boxes;
+    updatedModel.forEach((currentPlay, index) => {
+        if(!currentPlay) return;
+        updateBox(currentPlay, index);
+    });
+}
+
 // addListener()
-// returns callback to be run in a forEach
+// eventually you want to only add event listeners to things that are
+// active
 
 const addListener = (action, callback) => {
     return (node, i) => {
-        // eventually you want to only add event listeners to things that are
-        // active
+
         node.addEventListener(action, callback);
     }
 }
@@ -482,8 +499,8 @@ const forEachElementByClass = (className, callback) => {
 const boxClick = (event) => {
     var clickedNode = event.target;
     var clickedId = clickedNode.dataset.box;
-    clickedNode.className += " selected";
     updateModel(board, clickedId);
+    updateRender2D(board);
 }
 
 const initDOMBoard = () => {
