@@ -1,3 +1,6 @@
+
+const ArrforEachProto = Array.prototype.forEach;
+
 // -----------------------------------------------------------------------------
 // *****************************************************************************
 // MODEL ***********************************************************************
@@ -458,13 +461,19 @@ const init3D = () => {
 // -----------------------------------------------------------------------------
 
 
-const addListeners = function () {
-
+const addListener = (action, callback) => {
+    return (node, i) => {
+        node.addEventListener(action, callback);
+    }
 }
 
-// add listeners to each box 
+const forEachElementByClass = (className, callback) => {
+    var boxNodes = document.getElementsByClassName(className);
+    return ArrforEachProto.apply(boxNodes, [callback]);
+}
 
 const initDOMBoard = () => {
+
     var boardTemplate = [[null,null,null],[null,null,null],[null,null,null]];
     var gameWrapper = document.getElementById('gameWrapper')
     var container2D = document.createElement('div');
@@ -487,6 +496,8 @@ const initDOMBoard = () => {
 
 const init2D = () => {
     initDOMBoard();
+    forEachElementByClass('box', addListener('click', () => console.log('hi')));
+
 }
 
 init2D();
