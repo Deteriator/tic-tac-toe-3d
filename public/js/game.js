@@ -72,27 +72,26 @@ const isWin = (model) => {
     var botMid = model.boxes[7];
     var botRight = model.boxes[8];
 
-    var winStates = [[0, 1, 2],
-                     [3, 4, 5],
-                     [6, 7, 8],
-                     [0, 3, 6],
-                     [1, 4, 7],
-                     [2, 5, 8],
-                     [0, 4, 8],
-                     [2, 4, 6]]
-
-    winStates.forEach(function(state){
-        // loop through win states
-        // check to see if the win states are satisified
-        // append to a counter
-        state.forEach(function(pos) {
-            var currentBox = model.boxes[pos];
-            
-        })
-
-        // if its 3 then then a win state has been found
-    })
-
+    // var winStates = [[0, 1, 2],
+    //                  [3, 4, 5],
+    //                  [6, 7, 8],
+    //                  [0, 3, 6],
+    //                  [1, 4, 7],
+    //                  [2, 5, 8],
+    //                  [0, 4, 8],
+    //                  [2, 4, 6]]
+    //
+    // winStates.forEach(function(state){
+    //     // loop through win states
+    //     // check to see if the win states are satisified
+    //     // append to a counter
+    //     state.forEach(function(pos) {
+    //         var currentBox = model.boxes[pos];
+    //
+    //     })
+    //
+    //     // if its 3 then then a win state has been found
+    // })
 
 
     if ((topLeft !== null) && (topMid !== null) && (topRight !== null)) {
@@ -450,7 +449,7 @@ const init3D = () => {
     createGUIHelper();
 }
 
-init3D();
+// init3D();
 
 // -----------------------------------------------------------------------------
 // *****************************************************************************
@@ -458,8 +457,14 @@ init3D();
 // *****************************************************************************
 // -----------------------------------------------------------------------------
 
-const initDOMBoard = () => {
 
+const addListeners = function () {
+
+}
+
+// add listeners to each box 
+
+const initDOMBoard = () => {
     var boardTemplate = [[null,null,null],[null,null,null],[null,null,null]];
     var gameWrapper = document.getElementById('gameWrapper')
     var container2D = document.createElement('div');
@@ -467,11 +472,14 @@ const initDOMBoard = () => {
 
     boardTemplate.forEach(function(row, rowIndex) {
         var currentRow = document.createElement('div');
+            currentRow.className = "row"
         var rowNode = gameWrapper.appendChild(currentRow);
         row.forEach(function(box, boxIndex){
             var box = document.createElement('div');
-                box.id = "r" + rowIndex + "-c" + boxIndex;
-                box.innerHTML = "box"
+                var idString = "r" + rowIndex + "-c" + boxIndex
+                box.id = idString;
+                box.className = "box";
+                box.innerHTML = "box [" + idString + "]"
             rowNode.appendChild(box);
         });
     });
@@ -481,4 +489,4 @@ const init2D = () => {
     initDOMBoard();
 }
 
-// init2D();
+init2D();

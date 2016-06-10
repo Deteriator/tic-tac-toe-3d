@@ -10,3 +10,16 @@ body {
 	overflow: hidden;
 	background: linear-gradient(#e4e0ba, #f7d9aa);
 }
+
+/* 2D styles */
+
+.row {
+    border: 1px solid red;
+    display: flex;
+}
+
+.box {
+    border: 1px solid green;
+    width: 100;
+    flex-grow: 1; 
+}
