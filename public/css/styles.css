@@ -20,6 +20,10 @@ body {
 
 .box {
     border: 1px solid green;
-    width: 100;
-    flex-grow: 1; 
+    height: 100px;
+    flex-grow: 1;
+}
+
+.selected {
+    background: #ccc; 
 }

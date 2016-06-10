@@ -461,8 +461,15 @@ const init3D = () => {
 // -----------------------------------------------------------------------------
 
 
+
+
+// addListener()
+// returns callback to be run in a forEach
+
 const addListener = (action, callback) => {
     return (node, i) => {
+        // eventually you want to only add event listeners to things that are
+        // active
         node.addEventListener(action, callback);
     }
 }
@@ -472,12 +479,23 @@ const forEachElementByClass = (className, callback) => {
     return ArrforEachProto.apply(boxNodes, [callback]);
 }
 
+// EVENTS **********************************************************************
+
+
+const boxClick = (event) => {
+    var clickedNode = event.target;
+    debugger;
+    clickedNode.className += " selected";
+    // updateModel(model, )
+}
+
 const initDOMBoard = () => {
 
     var boardTemplate = [[null,null,null],[null,null,null],[null,null,null]];
     var gameWrapper = document.getElementById('gameWrapper')
     var container2D = document.createElement('div');
         container2D.innerHTML = "Hello!";
+    var boxId = 0;
 
     boardTemplate.forEach(function(row, rowIndex) {
         var currentRow = document.createElement('div');
@@ -485,10 +503,14 @@ const initDOMBoard = () => {
         var rowNode = gameWrapper.appendChild(currentRow);
         row.forEach(function(box, boxIndex){
             var box = document.createElement('div');
-                var idString = "r" + rowIndex + "-c" + boxIndex
+                var idString = "r" + rowIndex + "-c" + boxIndex + "-i" + boxId;
                 box.id = idString;
                 box.className = "box";
-                box.innerHTML = "box [" + idString + "]"
+                box.innerHTML = "box [" + idString + "]";
+                box.dataset.column  = rowIndex;
+                box.dataset.row = boxIndex;
+                box.dataset.box = boxId;
+                boxId += 1;
             rowNode.appendChild(box);
         });
     });
@@ -496,7 +518,7 @@ const initDOMBoard = () => {
 
 const init2D = () => {
     initDOMBoard();
-    forEachElementByClass('box', addListener('click', () => console.log('hi')));
+    forEachElementByClass('box', addListener('click', boxClick));
 
 }
 
