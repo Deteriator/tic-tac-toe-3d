@@ -460,9 +460,6 @@ const init3D = () => {
 // *****************************************************************************
 // -----------------------------------------------------------------------------
 
-
-
-
 // addListener()
 // returns callback to be run in a forEach
 
@@ -484,9 +481,9 @@ const forEachElementByClass = (className, callback) => {
 
 const boxClick = (event) => {
     var clickedNode = event.target;
-    debugger;
+    var clickedId = clickedNode.dataset.box;
     clickedNode.className += " selected";
-    // updateModel(model, )
+    updateModel(board, clickedId);
 }
 
 const initDOMBoard = () => {
