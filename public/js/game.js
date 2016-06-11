@@ -1,5 +1,7 @@
 
 const ArrforEachProto = Array.prototype.forEach;
+const gameWrapper = document.getElementById('gameWrapper');
+
 
 // -----------------------------------------------------------------------------
 // *****************************************************************************
@@ -443,15 +445,12 @@ const init3D = () => {
     scene = new THREE.Scene();
     scene.fog = new THREE.Fog( 0xf7d9aa, 0.015, 160 );
     renderScene3D();
-    document
-        .getElementById('gameWrapper')
-        .appendChild(SCENE.renderer.domElement);
-    document
-        .addEventListener('mousedown', clickHandler3D, false);
+    gameWrapper.appendChild(SCENE.renderer.domElement);
+    document.addEventListener('mousedown', clickHandler3D, false);
     createGUIHelper();
 }
 
-// init3D();
+
 
 // -----------------------------------------------------------------------------
 // *****************************************************************************
@@ -461,32 +460,36 @@ const init3D = () => {
 
 // RENDER **********************************************************************
 
+const renderState = (model, domNode) => {
+    var gameState = document.createElement('div');
+        gameStateString = " "
+        gameStateString += ', ' + model.turn
+        gameStateString += ', ' + model.boxes
+        gameStateString += ', ' + model.active
+        gameStateString += ', ' + model.cutscene
+        gameStateString += ', ' + model.end
+        gameStateString += ', ' + model.winPos
+        gameState.innerHTML = gameStateString;
+    gameWrapper.appendChild(gameState);
+}
+
 const renderBox = (currentPlay, id, domNode) => {
-    // with the box id and current
-    // if x do this to id
-    // if y do that to id
     console.log(currentPlay, id);
-
     var box = document.createElement('div');
-    // var idString = "r" + rowIndex + "-c" + boxIndex + "-i" + boxId;
     box.className = "box";
-    box.innerHTML = "box";
+    box.innerHTML = currentPlay ? currentPlay : "box";
     box.dataset.box = id;
-
     domNode.appendChild(box);
 }
 
 const render2D = (model, domNode) => {
-    var model = model.boxes;
+    var currentPositions = model.boxes;
     domNode.innerHTML = '';
-    model.forEach((currentPlay, index) => {
+    currentPositions.forEach((currentPlay, index) => {
         renderBox(currentPlay, index, domNode);
     });
+    renderState(model, domNode);
 }
-
-// addListener()
-// eventually you want to only add event listeners to things that are
-// active
 
 const addListener = (action, callback) => {
     return (node, i) => {
@@ -501,22 +504,29 @@ const forEachElementByClass = (className, callback) => {
 
 // EVENTS **********************************************************************
 
-const boxClick = (gameNode) => {
+const boxClick = (model, gameNode) => {
+    console.log(model, gameNode);
     return (event) => {
-        var clickedNode = event.target;
-        var clickedId = clickedNode.dataset.box;
-        updateModel(board, clickedId);
-        render2D(board, gameNode);
-        forEachElementByClass('box', addListener('click', boxClick(gameNode)));
+        var clickedId = event.target.dataset.box;
+        updateModel(model, clickedId);
+        render2D(model, gameNode);
+        forEachElementByClass('box',
+            addListener('click', boxClick(model, gameNode)));
     }
 }
 
 const init2D = () => {
-    var gameWrapper = document.getElementById('gameWrapper');
     var game2D = document.createElement('div')
         gameWrapper.appendChild(game2D);
     render2D(board, game2D);
-    forEachElementByClass('box', addListener('click', boxClick(game2D)));
+    forEachElementByClass('box', addListener('click', boxClick(board, game2D)));
 }
 
+// -----------------------------------------------------------------------------
+// *****************************************************************************
+// INIT ************************************************************************
+// *****************************************************************************
+// -----------------------------------------------------------------------------
+
+// init3D();
 init2D();
