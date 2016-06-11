@@ -3,7 +3,6 @@ var socket = io();
 
 const ArrforEachProto = Array.prototype.forEach;
 const createNode = document.createElement;
-
 const gameWrapper = document.getElementById('gameWrapper');
 
 
@@ -28,6 +27,7 @@ const createBoard = () => {
     winPos      : [],
     gameID      : '',
     gameType    : '',
+    games       : [],
   }
 }
 
@@ -589,7 +589,6 @@ const renderGameList = () => {
 }
 
 const initScreen = () => {
-
     renderGameTypeScreen();
 
     $(document).on('click', '#single', (e) => {
@@ -605,7 +604,13 @@ const initScreen = () => {
 
     $(document).on('click', "#createGame", (e) => {
         // initialise a 3D or 2D game
+        socket.emit('connect:game', 'game1');
         initGame();
+    });
+
+    socket.on('gamelist:added', (data) => {
+        console.log('gamelist:added,', data)
+        board.games.push(data);
     });
 }
 
