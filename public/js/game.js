@@ -1,4 +1,6 @@
 
+// var socket = io();
+
 const ArrforEachProto = Array.prototype.forEach;
 const gameWrapper = document.getElementById('gameWrapper');
 
@@ -463,8 +465,7 @@ const init3D = () => {
 const renderState = (model, domNode) => {
     var gameState = document.createElement('div');
         gameStateString = " "
-        gameStateString += ', ' + model.turn
-        gameStateString += ', ' + model.boxes
+        gameStateString += model.turn
         gameStateString += ', ' + model.active
         gameStateString += ', ' + model.cutscene
         gameStateString += ', ' + model.end
@@ -512,6 +513,7 @@ const boxClick = (model, gameNode) => {
         render2D(model, gameNode);
         forEachElementByClass('box',
             addListener('click', boxClick(model, gameNode)));
+
     }
 }
 
