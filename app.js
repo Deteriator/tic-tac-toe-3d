@@ -29,6 +29,6 @@ io.on('connection', (socket) => {
     console.log("socket connection established: " + socket.id);
 })
 
-app.listen(app.get('port'), () => {
+http.listen(app.get('port'), () => {
     console.log('express started on ' + app.get('port'));
 });

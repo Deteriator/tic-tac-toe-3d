@@ -1,5 +1,5 @@
 
-// var socket = io();
+var socket = io();
 
 const ArrforEachProto = Array.prototype.forEach;
 const gameWrapper = document.getElementById('gameWrapper');
