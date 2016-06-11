@@ -65,7 +65,6 @@ io.on('connection', (socket) => {
         })
     });
 
-
 });
 
 http.listen(app.get('port'), () => {

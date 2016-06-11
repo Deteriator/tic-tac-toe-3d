@@ -583,9 +583,12 @@ const renderGameList = () => {
     $(gameWrapper).append('<h2> GAME LIST </h2>')
     $(gameWrapper).append('<span id="createGame"> Start your game </span>')
     $(gameWrapper).append($gameListUL)
-    $gameListUL.append('<li> some open game </li> ')
-    $gameListUL.append('<li> some open game </li> ')
-    $gameListUL.append('<li> some open game </li> ')
+
+    board.games.forEach((gameId) => {
+        $gameListUL.append('<li> game id: ' + gameId + ' </li> ');
+    })
+
+
 }
 
 const generateID = () => {
