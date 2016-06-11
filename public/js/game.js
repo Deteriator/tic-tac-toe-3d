@@ -579,15 +579,16 @@ const renderGameTypeScreen = () => {
 
 const renderGameList = () => {
     var $gameListUL = $('<ul>')
-    $(gameWrapper).html('');
+    $(gameWrapper).html('')
     $(gameWrapper).append('<h2> GAME LIST </h2>')
+    $(gameWrapper).append('<span id="createGame"> Start your game </span>')
     $(gameWrapper).append($gameListUL)
-    $gameListUL.append('<li> some open game </li> ');
-    $gameListUL.append('<li> some open game </li> ');
-    $gameListUL.append('<li> some open game </li> ');
+    $gameListUL.append('<li> some open game </li> ')
+    $gameListUL.append('<li> some open game </li> ')
+    $gameListUL.append('<li> some open game </li> ')
 }
 
-const init = () => {
+const initScreen = () => {
 
     renderGameTypeScreen();
 
@@ -602,6 +603,19 @@ const init = () => {
         renderGameList();
     });
 
+    $(document).on('click', "#createGame", (e) => {
+        // initialise a 3D or 2D game
+        initGame();
+    });
+}
+
+const initGame = () => {
+    var windowWidth = $(window).width();
+    if(windowWidth <= 800) {
+        init2D();
+    } else {
+        init3D();
+    }
 }
 
 // -----------------------------------------------------------------------------
@@ -611,7 +625,4 @@ const init = () => {
 // -----------------------------------------------------------------------------
 
 
-
-init();
-// init3D();
-// init2D();
+initScreen();
