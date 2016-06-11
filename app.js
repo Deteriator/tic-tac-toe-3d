@@ -48,8 +48,22 @@ io.on('connection', (socket) => {
     });
 
     socket.on('disconnect:game', function(gameID) {
-        socket.leave(gameID);
+        socket.leave(gameID, () => {
+            console.log('leaving');
+            var gameIdIndex = currentRooms.indexOf(gameID);
+            currentRooms.splice(gameIdIndex, 1);
+            io.emit('gamelist:removed', gameID);
+        });
     })
+
+    socket.on('disconnect', function () {
+        console.log('disconnected');
+        currentRooms.forEach((room) => {
+            // possible bug when leaving a room the current socket is not a
+            // part of.
+            socket.leave(room);
+        })
+    });
 
 
 });
