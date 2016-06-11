@@ -513,7 +513,7 @@ const boxClick = (model, gameNode) => {
         render2D(model, gameNode);
         forEachElementByClass('box',
             addListener('click', boxClick(model, gameNode)));
-
+        socket.emit('2d:click:id', clickedId);
     }
 }
 

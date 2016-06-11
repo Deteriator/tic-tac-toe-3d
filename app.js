@@ -27,6 +27,7 @@ app.use((err, req, res, next) => {
 
 io.on('connection', (socket) => {
     console.log("socket connection established: " + socket.id);
+    socket.on('2d:click:id', (data) => { console.log(data) })
 })
 
 http.listen(app.get('port'), () => {
