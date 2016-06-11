@@ -2,7 +2,10 @@
 var socket = io();
 
 const ArrforEachProto = Array.prototype.forEach;
+const createNode = document.createElement;
+
 const gameWrapper = document.getElementById('gameWrapper');
+
 
 
 // -----------------------------------------------------------------------------
@@ -23,6 +26,7 @@ const createBoard = () => {
     cutscene    : false,
     end         : false,
     winPos      : [],
+    gameID      : '',
   }
 }
 
@@ -395,6 +399,13 @@ const socketHandler3D = (data) => {
         // recieve mark x data
         // mark x on board
 
+    // CASES ----------------------
+
+    // 3d to 2d socket
+
+    // 2 DESKTOP CLIENTS
+
+    // >2 connected client
     var newModel = updateModel(board, data);
     updateRender3D(scene, newModel);
 }
@@ -466,6 +477,7 @@ var renderScene3D = () => {
 }
 
 const init3D = () => {
+    gameWrapper.innerHTML = "";
     scene = new THREE.Scene();
     scene.fog = new THREE.Fog( 0xf7d9aa, 0.015, 160 );
     renderScene3D();
@@ -477,8 +489,6 @@ const init3D = () => {
         socketHandler3D(data);
     })
 }
-
-
 
 // -----------------------------------------------------------------------------
 // *****************************************************************************
@@ -544,6 +554,7 @@ const boxClick = (model, gameNode) => {
 }
 
 const init2D = () => {
+    gameWrapper.innerHTML = "";
     var game2D = document.createElement('div')
         gameWrapper.appendChild(game2D);
     render2D(board, game2D);
@@ -552,9 +563,37 @@ const init2D = () => {
 
 // -----------------------------------------------------------------------------
 // *****************************************************************************
+// HOME ************************************************************************
+// *****************************************************************************
+// -----------------------------------------------------------------------------
+
+const init = () => {
+
+
+
+
+    // add the 'start' game function
+    // render a list of open games
+    // add a 'join' a game function
+    var gameOptions = createNode('ul');
+        gameList.className = "gameList";
+    var singleLI = createNode('li');
+        singleLI.innerHTML = "PLAY ALONE"
+    var multiLI = createNode('li');
+        multiLI.innerHTML = "Play with somebody";
+    a
+
+
+}
+
+// -----------------------------------------------------------------------------
+// *****************************************************************************
 // INIT ************************************************************************
 // *****************************************************************************
 // -----------------------------------------------------------------------------
+
+
+
 
 // init3D();
 // init2D();
