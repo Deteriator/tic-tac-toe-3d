@@ -27,6 +27,7 @@ const createBoard = () => {
     end         : false,
     winPos      : [],
     gameID      : '',
+    gameType    : '',
   }
 }
 
@@ -567,22 +568,39 @@ const init2D = () => {
 // *****************************************************************************
 // -----------------------------------------------------------------------------
 
+const renderGameTypeScreen = () => {
+    gameType = $('<div>');
+    gameType.addClass('gameType');
+    gameType.html('<h2> GAME TYPE DIV </h2> ');
+    gameType.append('<li id="single"> ALONE </li> ');
+    gameType.append('<li id="multi"> TOGETHER </li> ');
+    $(gameWrapper).append(gameType);
+}
+
+const renderGameList = () => {
+    var $gameListUL = $('<ul>')
+    $(gameWrapper).html('');
+    $(gameWrapper).append('<h2> GAME LIST </h2>')
+    $(gameWrapper).append($gameListUL)
+    $gameListUL.append('<li> some open game </li> ');
+    $gameListUL.append('<li> some open game </li> ');
+    $gameListUL.append('<li> some open game </li> ');
+}
+
 const init = () => {
 
+    renderGameTypeScreen();
 
+    $(document).on('click', '#single', (e) => {
+        board.gameType = "single";
+        // INIT game with single player
+    });
 
-
-    // add the 'start' game function
-    // render a list of open games
-    // add a 'join' a game function
-    var gameOptions = createNode('ul');
-        gameList.className = "gameList";
-    var singleLI = createNode('li');
-        singleLI.innerHTML = "PLAY ALONE"
-    var multiLI = createNode('li');
-        multiLI.innerHTML = "Play with somebody";
-    a
-
+    $(document).on('click', '#multi', (e) => {
+        board.gameType = "multi";
+        // render game list screen
+        renderGameList();
+    });
 
 }
 
@@ -594,6 +612,6 @@ const init = () => {
 
 
 
-
+init();
 // init3D();
 // init2D();

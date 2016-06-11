@@ -1,9 +1,8 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-
+import { hashHistory, Router, Route, Redirect, Link } from 'react-router';
 
 class App extends React.Component {
-
     constructor() {
         super();
     }
@@ -25,3 +24,6 @@ const Game = () => {
 }
 
 ReactDOM.render(<App/> , document.getElementById('master'))
+
+// using react would be
+    //
