@@ -378,6 +378,28 @@ const updateRender3D = (sceneObject, model) => {
 
 // EVENTS **********************************************************************
 
+// What we need to do is listen for click events from the DOM version
+//
+
+const socketHandler3D = (data) => {
+
+    // origin client event
+        // mark x on thing
+        // emit x to server
+
+    // server
+        // recieve data
+        // emit to clients
+
+    // dest client event
+        // recieve mark x data
+        // mark x on board
+
+    var newModel = updateModel(board, data);
+    updateRender3D(scene, newModel);
+}
+
+
 const clickHandler3D = (evt) => {
     // vector is created based on the position that
     // we've clicked on, on the screen.
@@ -450,6 +472,10 @@ const init3D = () => {
     gameWrapper.appendChild(SCENE.renderer.domElement);
     document.addEventListener('mousedown', clickHandler3D, false);
     createGUIHelper();
+
+    socket.on('game:play', (data) => {
+        socketHandler3D(data);
+    })
 }
 
 
@@ -531,4 +557,4 @@ const init2D = () => {
 // -----------------------------------------------------------------------------
 
 // init3D();
-init2D();
+// init2D();

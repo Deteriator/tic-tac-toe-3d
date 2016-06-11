@@ -27,8 +27,11 @@ app.use((err, req, res, next) => {
 
 io.on('connection', (socket) => {
     console.log("socket connection established: " + socket.id);
-    socket.on('2d:click:id', (data) => { console.log(data) })
-})
+    socket.on('2d:click:id', (data) => {
+        console.log(data);
+        io.emit('game:play', data);
+    });
+});
 
 http.listen(app.get('port'), () => {
     console.log('express started on ' + app.get('port'));
