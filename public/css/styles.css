@@ -1,3 +1,7 @@
+* {
+    box-sizing: border-box;
+}
+
 body {
     margin: 0;
     overflow: hidden;
@@ -13,17 +17,17 @@ body {
 
 /* 2D styles */
 
-.row {
-    border: 1px solid red;
-    display: flex;
+#gameWrapper > div {
+    
 }
 
 .box {
+    display: inline-block;
     border: 1px solid green;
     height: 100px;
-    flex-grow: 1;
+    width: 33.3%;
 }
 
 .selected {
-    background: #ccc; 
+    background: #ccc;
 }

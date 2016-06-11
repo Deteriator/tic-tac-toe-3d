@@ -461,25 +461,26 @@ const init3D = () => {
 
 // RENDER **********************************************************************
 
-
-
-
-
-const renderBox = (currentPlay, id) => {
+const renderBox = (currentPlay, id, domNode) => {
     // with the box id and current
     // if x do this to id
     // if y do that to id
     console.log(currentPlay, id);
-}
 
+    var box = document.createElement('div');
+    // var idString = "r" + rowIndex + "-c" + boxIndex + "-i" + boxId;
+    box.className = "box";
+    box.innerHTML = "box";
+    box.dataset.box = id;
+
+    domNode.appendChild(box);
+}
 
 const render2D = (model, domNode) => {
     var model = model.boxes;
     domNode.innerHTML = '';
-
     model.forEach((currentPlay, index) => {
-        if(!currentPlay) return;
-        renderBox(currentPlay, index);
+        renderBox(currentPlay, index, domNode);
     });
 }
 
@@ -500,46 +501,22 @@ const forEachElementByClass = (className, callback) => {
 
 // EVENTS **********************************************************************
 
-const boxClick = (gameWrapper) => {
+const boxClick = (gameNode) => {
     return (event) => {
         var clickedNode = event.target;
         var clickedId = clickedNode.dataset.box;
-        console.log(gameWrapper);
         updateModel(board, clickedId);
-        render2D(board, gameWrapper);
+        render2D(board, gameNode);
+        forEachElementByClass('box', addListener('click', boxClick(gameNode)));
     }
-}
-
-const initDOMBoard = () => {
-
-    var boardTemplate = [[null,null,null],[null,null,null],[null,null,null]];
-    var boxId = 0;
-
-    // This needs to be informed by the model than
-    boardTemplate.forEach(function(row, rowIndex) {
-        var currentRow = document.createElement('div');
-            currentRow.className = "row"
-        var rowNode = gameWrapper.appendChild(currentRow);
-        row.forEach(function(box, boxIndex){
-            var box = document.createElement('div');
-                var idString = "r" + rowIndex + "-c" + boxIndex + "-i" + boxId;
-                box.id = idString;
-                box.className = "box";
-                box.innerHTML = "box [" + idString + "]";
-                box.dataset.column  = rowIndex;
-                box.dataset.row = boxIndex;
-                box.dataset.box = boxId;
-                boxId += 1;
-            rowNode.appendChild(box);
-        });
-    });
-
 }
 
 const init2D = () => {
     var gameWrapper = document.getElementById('gameWrapper');
-    initDOMBoard();
-    forEachElementByClass('box', addListener('click', boxClick(gameWrapper)));
+    var game2D = document.createElement('div')
+        gameWrapper.appendChild(game2D);
+    render2D(board, game2D);
+    forEachElementByClass('box', addListener('click', boxClick(game2D)));
 }
 
 init2D();
