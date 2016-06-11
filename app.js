@@ -25,7 +25,7 @@ app.use((err, req, res, next) => {
     res.send('500 - Server Error');
 });
 
-// Store all rooms here 
+// Store all rooms here
 const currentRooms = [];
 
 io.on('connection', (socket) => {
@@ -33,23 +33,23 @@ io.on('connection', (socket) => {
     console.log("socket connection established: " + socket.id);
     console.log("current open rooms are: ", currentRooms);
 
+    socket.emit('gamelist:all', currentRooms);
+
     socket.on('2d:click:id', (data) => {
         io.emit('game:play', data);
     });
 
     socket.on('connect:game', (gameID) => {
         console.log('connecting to ' + gameID);
-        io.emit('gamelist:added', gameID);
         socket.join(gameID, () => {
             currentRooms.push(gameID);
+            io.emit('gamelist:added', gameID);
         })
     });
 
     socket.on('disconnect:game', function(gameID) {
         socket.leave(gameID);
     })
-
-    socket
 
 
 });

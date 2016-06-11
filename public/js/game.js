@@ -588,6 +588,16 @@ const renderGameList = () => {
     $gameListUL.append('<li> some open game </li> ')
 }
 
+const generateID = () => {
+    var gameID = "ID-";
+    gameID += Math.round(Math.random() * 128)
+    gameID += "-"
+    gameID += Math.round(Math.random() * 42123123)
+    gameID += "-"
+    gameID += new Date().getTime();
+    return gameID;
+}
+
 const initScreen = () => {
     renderGameTypeScreen();
 
@@ -604,7 +614,7 @@ const initScreen = () => {
 
     $(document).on('click', "#createGame", (e) => {
         // initialise a 3D or 2D game
-        socket.emit('connect:game', 'game1');
+        socket.emit('connect:game', generateID());
         initGame();
     });
 
@@ -612,6 +622,10 @@ const initScreen = () => {
         console.log('gamelist:added,', data)
         board.games.push(data);
     });
+
+    socket.on('gamelist:all', (data) => {
+        board.games = data;
+    })
 }
 
 const initGame = () => {
