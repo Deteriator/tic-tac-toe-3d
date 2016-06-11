@@ -463,17 +463,23 @@ const init3D = () => {
 
 
 
-const updateBox = (currentPlay, id) => {
+
+
+const renderBox = (currentPlay, id) => {
     // with the box id and current
     // if x do this to id
     // if y do that to id
+    console.log(currentPlay, id);
 }
 
-const updateRender2D = (model) => {
-    var updatedModel = model.boxes;
-    updatedModel.forEach((currentPlay, index) => {
+
+const render2D = (model, domNode) => {
+    var model = model.boxes;
+    domNode.innerHTML = '';
+
+    model.forEach((currentPlay, index) => {
         if(!currentPlay) return;
-        updateBox(currentPlay, index);
+        renderBox(currentPlay, index);
     });
 }
 
@@ -483,7 +489,6 @@ const updateRender2D = (model) => {
 
 const addListener = (action, callback) => {
     return (node, i) => {
-
         node.addEventListener(action, callback);
     }
 }
@@ -495,22 +500,22 @@ const forEachElementByClass = (className, callback) => {
 
 // EVENTS **********************************************************************
 
-
-const boxClick = (event) => {
-    var clickedNode = event.target;
-    var clickedId = clickedNode.dataset.box;
-    updateModel(board, clickedId);
-    updateRender2D(board);
+const boxClick = (gameWrapper) => {
+    return (event) => {
+        var clickedNode = event.target;
+        var clickedId = clickedNode.dataset.box;
+        console.log(gameWrapper);
+        updateModel(board, clickedId);
+        render2D(board, gameWrapper);
+    }
 }
 
 const initDOMBoard = () => {
 
     var boardTemplate = [[null,null,null],[null,null,null],[null,null,null]];
-    var gameWrapper = document.getElementById('gameWrapper')
-    var container2D = document.createElement('div');
-        container2D.innerHTML = "Hello!";
     var boxId = 0;
 
+    // This needs to be informed by the model than
     boardTemplate.forEach(function(row, rowIndex) {
         var currentRow = document.createElement('div');
             currentRow.className = "row"
@@ -528,12 +533,13 @@ const initDOMBoard = () => {
             rowNode.appendChild(box);
         });
     });
+
 }
 
 const init2D = () => {
+    var gameWrapper = document.getElementById('gameWrapper');
     initDOMBoard();
-    forEachElementByClass('box', addListener('click', boxClick));
-
+    forEachElementByClass('box', addListener('click', boxClick(gameWrapper)));
 }
 
 init2D();
