@@ -28,7 +28,7 @@ const createBoard = () => {
     gameID      : '',
     gameType    : '',
     games       : [],
-    opponent    : null,
+    opponentID    : null,
     clientID    : null
   }
 }
@@ -655,13 +655,17 @@ const init = () => {
 
     $(document).on('click', ".openGames", (e) => {
         var selectedID = e.target.dataset.id
-        socket.emit('connect:join', selectedID);
+        socket.emit('connect:join', selectedID, (data) => {
+            console.log('whats this about');
+            console.log(data);
+        });
         initGame(selectedID);
     });
 
     socket.on('player:joined', (data) => {
         console.log('a player has joined your game')
         console.log(data);
+        board.opponentID = data;
     })
 
     socket.on('gamelist:added', (data) => {
@@ -673,7 +677,6 @@ const init = () => {
         board.games = data;
     });
 }
-
 
 
 // -----------------------------------------------------------------------------

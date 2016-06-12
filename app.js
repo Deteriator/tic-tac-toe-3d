@@ -80,8 +80,8 @@ io.on('connection', (socket) => {
     socket.on('connect:join', (gameID) => {
         socket.join(gameID, () => {
             var currentRoom = getCurrentRoom(socket.rooms);
-            var playersInRoom = getCurrentPlayers(currentRoom, socket);
-            socket.to(currentRoom).emit('player:joined', playersInRoom);
+            var opponentId = socket.id;
+            socket.to(currentRoom).emit('player:joined', opponentId);
         });
     });
 
