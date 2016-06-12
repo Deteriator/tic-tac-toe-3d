@@ -512,7 +512,6 @@ const renderState = (model, domNode) => {
 }
 
 const renderBox = (currentPlay, id, domNode) => {
-    console.log(currentPlay, id);
     var box = document.createElement('div');
     box.className = "box";
     box.innerHTML = currentPlay ? currentPlay : "box";
@@ -548,7 +547,7 @@ const socketHandler2D = (data, domNode) => {
 }
 
 const boxClick = (model, gameNode) => {
-    console.log(model, gameNode);
+    console.log('adding click listener')
     return (event) => {
         var clickedId = event.target.dataset.box;
         updateModel(model, clickedId);
@@ -563,11 +562,12 @@ const init2D = (gameID) => {
     gameWrapper.innerHTML = "";
     var game2D = document.createElement('div')
         gameWrapper.appendChild(game2D);
-    socket.on('game:play', (data) => {
-        socketHandler2D(data, game2D);
-    })
     render2D(board, game2D);
     forEachElementByClass('box', addListener('click', boxClick(board, game2D)));
+    socket.on('game:play', (data) => {
+        socketHandler2D(data, game2D);
+        forEachElementByClass('box', addListener('click', boxClick(board, game2D)));
+    })
 }
 
 // -----------------------------------------------------------------------------
