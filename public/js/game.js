@@ -447,6 +447,7 @@ const clickHandler3D = (evt) => {
         selectedObject = intersectCube[0].object;
         console.log(selectedCubeId);
         newModel = updateModel(board, selectedCubeId);
+        socket.emit('game:play', selectedCubeId);
     } else if (false) {
         // if clicked on another element, do something
     } else if (false) {
@@ -541,6 +542,11 @@ const forEachElementByClass = (className, callback) => {
 
 // EVENTS **********************************************************************
 
+const socketHandler2D = (data, domNode) => {
+    var newModel = updateModel(board, data);
+    render2D(newModel, domNode);
+}
+
 const boxClick = (model, gameNode) => {
     console.log(model, gameNode);
     return (event) => {
@@ -554,10 +560,12 @@ const boxClick = (model, gameNode) => {
 }
 
 const init2D = (gameID) => {
-
     gameWrapper.innerHTML = "";
     var game2D = document.createElement('div')
         gameWrapper.appendChild(game2D);
+    socket.on('game:play', (data) => {
+        socketHandler2D(data, game2D);
+    })
     render2D(board, game2D);
     forEachElementByClass('box', addListener('click', boxClick(board, game2D)));
 }
