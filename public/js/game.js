@@ -28,6 +28,7 @@ const createBoard = () => {
     gameID      : '',
     gameType    : '',
     games       : [],
+    opponent    : null,
   }
 }
 
@@ -643,6 +644,11 @@ const initScreen = () => {
         socket.emit('connect:join', selectedID);
         initGame(selectedID);
     });
+
+    socket.on('player:joined', (data) => {
+        console.log('a player has joined your game')
+        console.log(data); 
+    })
 
     socket.on('gamelist:added', (data) => {
         console.log('gamelist:added,', data);

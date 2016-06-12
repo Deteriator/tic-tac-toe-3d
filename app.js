@@ -59,7 +59,8 @@ io.on('connection', (socket) => {
     socket.on('game:play', (data) => {
         // only emit plays clients in the same room
         var currentRoom = getCurrentRoom(socket.rooms);
-        io.to(currentRoom).emit('game:play', data);
+        io.to(currentRoom)
+            .emit('game:play', data);
     });
 
     socket.on('connect:host', (gameID) => {
@@ -71,8 +72,12 @@ io.on('connection', (socket) => {
     });
 
     socket.on('connect:join', (gameID) => {
-        socket.join(gameID)
-    })
+        socket.join(gameID, () => {
+            var currentRoom = getCurrentRoom(socket.rooms);
+            var clients = io.sockets.adapter.rooms[currentRoom].sockets;
+            socket.to(currentRoom).emit('player:joined', clients);
+        });
+    }); 
 
     socket.on('disconnect:game', function(gameID) {
         socket.leave(gameID, () => {
