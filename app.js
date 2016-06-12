@@ -53,6 +53,19 @@ const getCurrentPlayers = (currentRoom, socket) => {
     return currentPlayers;
 }
 
+const getOtherPlayer = (currentRoom, playerID, socket) => {
+    var currentPlayers = [], currentClients, playerSocketID;
+    playerSocketID = playerID;
+    console.log('excluding ', playerSocketID)
+    currentClients = io.sockets.adapter.rooms[currentRoom].sockets;
+    for (let key in currentClients) {
+        if(playerSocketID !== key) {
+            currentPlayers.push(key);
+        }
+    }
+    return currentPlayers;
+}
+
 
 io.on('connection', (socket) => {
 
@@ -80,8 +93,11 @@ io.on('connection', (socket) => {
     socket.on('connect:join', (gameID) => {
         socket.join(gameID, () => {
             var currentRoom = getCurrentRoom(socket.rooms);
-            var opponentId = socket.id;
-            socket.to(currentRoom).emit('player:joined', opponentId);
+            var joiningID = socket.id;
+            var hostID = getOtherPlayer(currentRoom, joiningID, socket);
+            socket.emit('player:host', hostID);
+            socket.to(currentRoom).emit('player:joined', joiningID);
+
         });
     });
 

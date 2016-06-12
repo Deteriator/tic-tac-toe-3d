@@ -655,12 +655,14 @@ const init = () => {
 
     $(document).on('click', ".openGames", (e) => {
         var selectedID = e.target.dataset.id
-        socket.emit('connect:join', selectedID, (data) => {
-            console.log('whats this about');
-            console.log(data);
-        });
+        socket.emit('connect:join', selectedID);
         initGame(selectedID);
     });
+
+    socket.on('player:host', (data) => {
+        console.log('you have joined: ')
+        console.log(data)
+    })
 
     socket.on('player:joined', (data) => {
         console.log('a player has joined your game')
