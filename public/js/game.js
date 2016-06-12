@@ -485,7 +485,6 @@ const init3D = () => {
     gameWrapper.appendChild(SCENE.renderer.domElement);
     document.addEventListener('mousedown', clickHandler3D, false);
     createGUIHelper();
-
     socket.on('game:play', (data) => {
         socketHandler3D(data);
     })
@@ -550,11 +549,12 @@ const boxClick = (model, gameNode) => {
         render2D(model, gameNode);
         forEachElementByClass('box',
             addListener('click', boxClick(model, gameNode)));
-        socket.emit('2d:click:id', clickedId);
+        socket.emit('game:play', clickedId);
     }
 }
 
-const init2D = () => {
+const init2D = (gameID) => {
+
     gameWrapper.innerHTML = "";
     var game2D = document.createElement('div')
         gameWrapper.appendChild(game2D);
@@ -627,12 +627,17 @@ const initScreen = () => {
         initGame();
     });
 
+    // JOIN OPEN GAME
+    // - join the room with the current ID
+
     $(document).on('click', ".openGames", (e) => {
-        console.log(e.target.dataset.id); 
+        var selectedID = e.target.dataset.id
+        socket.emit('connect:game', selectedID);
+        initGame(selectedID);
     });
 
     socket.on('gamelist:added', (data) => {
-        console.log('gamelist:added,', data)
+        console.log('gamelist:added,', data);
         board.games.push(data);
     });
 
@@ -641,8 +646,9 @@ const initScreen = () => {
     });
 }
 
-const initGame = () => {
+const initGame = (gameID) => {
     var windowWidth = $(window).width();
+    board.gameID = gameID;
     if(windowWidth <= 800) {
         init2D();
     } else {

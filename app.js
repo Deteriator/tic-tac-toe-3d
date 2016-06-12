@@ -1,3 +1,5 @@
+"use strict";
+
 const express   = require('express');
 const app       = express();
 const http      = require('http').Server(app);
@@ -28,14 +30,38 @@ app.use((err, req, res, next) => {
 // Store all rooms here
 const currentRooms = [];
 
+const getCurrentRoom = (rooms) => {
+
+    var currentRoom = '';
+
+    for (let key in rooms) {
+        if (key.slice(0, 2) === "ID") {
+            currentRoom = key;
+        }
+    }
+
+    if(currentRoom === '') {
+        currentRoom = "could not find room"
+    }
+
+    return currentRoom
+}
+
+
 io.on('connection', (socket) => {
 
     console.log("socket connection established: " + socket.id);
     console.log("current open rooms are: ", currentRooms);
+    console.log("this current socket is in: ", socket.rooms)
 
     socket.emit('gamelist:all', currentRooms);
 
-    socket.on('2d:click:id', (data) => {
+    socket.on('game:play', (data) => {
+        // only emit plays clients in the same room
+        console.log('socket.rooms -------');
+        console.log(getCurrentRoom(socket.rooms));
+        console.log('socket.id -------');
+        console.log(socket.id);
         io.emit('game:play', data);
     });
 
