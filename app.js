@@ -63,7 +63,7 @@ const getOtherPlayer = (currentRoom, playerID, socket) => {
             currentPlayers.push(key);
         }
     }
-    return currentPlayers;
+    return currentPlayers[0];
 }
 
 

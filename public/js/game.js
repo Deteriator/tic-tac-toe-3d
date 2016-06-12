@@ -28,7 +28,7 @@ const createBoard = () => {
     gameID      : '',
     gameType    : '',
     games       : [],
-    opponentID    : null,
+    opponentID  : null,
     clientID    : null
   }
 }
@@ -41,6 +41,12 @@ const resetModel = (model) => {
 
 const updateModel = (model, boxId) => {
     var model = model
+
+    //if multiplayer without another player
+    if (model.gameType === "multi" && model.opponentID === null) {
+        return model
+    }
+
     // Ignore if box already clicked or game not active
     if (model.boxes[boxId] !== null || !model.active) {
       return model
@@ -660,11 +666,14 @@ const init = () => {
     });
 
     socket.on('player:host', (data) => {
-        console.log('you have joined: ')
+        console.log('player:host')
+        console.log('you have joined: ', data);
         console.log(data)
+        board.opponentID = data;
     })
 
     socket.on('player:joined', (data) => {
+        console.log('player:joined')
         console.log('a player has joined your game')
         console.log(data);
         board.opponentID = data;
