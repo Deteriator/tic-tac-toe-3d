@@ -577,18 +577,24 @@ const renderGameTypeScreen = () => {
     $(gameWrapper).append(gameType);
 }
 
+const appendLI = (parent, text, id, className) => {
+    var li;
+    li = $('<li>');
+    li.text(text);
+    li.addClass(className);
+    li[0].dataset.id = id;
+    parent.append(li);
+}
+
 const renderGameList = () => {
     var $gameListUL = $('<ul>')
     $(gameWrapper).html('')
     $(gameWrapper).append('<h2> GAME LIST </h2>')
     $(gameWrapper).append('<span id="createGame"> Start your game </span>')
     $(gameWrapper).append($gameListUL)
-
     board.games.forEach((gameId) => {
-        $gameListUL.append('<li> game id: ' + gameId + ' </li> ');
-    })
-
-
+        appendLI($gameListUL, gameId, gameId, 'openGames');
+    });
 }
 
 const generateID = () => {
@@ -621,6 +627,10 @@ const initScreen = () => {
         initGame();
     });
 
+    $(document).on('click', ".openGames", (e) => {
+        console.log(e.target.dataset.id); 
+    });
+
     socket.on('gamelist:added', (data) => {
         console.log('gamelist:added,', data)
         board.games.push(data);
@@ -628,7 +638,7 @@ const initScreen = () => {
 
     socket.on('gamelist:all', (data) => {
         board.games = data;
-    })
+    });
 }
 
 const initGame = () => {
