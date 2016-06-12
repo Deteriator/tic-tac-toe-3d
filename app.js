@@ -44,7 +44,7 @@ const getCurrentRoom = (rooms) => {
         currentRoom = "could not find room"
     }
 
-    return currentRoom
+    return currentRoom;
 }
 
 
@@ -58,20 +58,21 @@ io.on('connection', (socket) => {
 
     socket.on('game:play', (data) => {
         // only emit plays clients in the same room
-        console.log('socket.rooms -------');
-        console.log(getCurrentRoom(socket.rooms));
-        console.log('socket.id -------');
-        console.log(socket.id);
-        io.emit('game:play', data);
+        var currentRoom = getCurrentRoom(socket.rooms);
+        io.to(currentRoom).emit('game:play', data);
     });
 
-    socket.on('connect:game', (gameID) => {
+    socket.on('connect:host', (gameID) => {
         console.log('connecting to ' + gameID);
         socket.join(gameID, () => {
             currentRooms.push(gameID);
             io.emit('gamelist:added', gameID);
         })
     });
+
+    socket.on('connect:join', (gameID) => {
+        socket.join(gameID)
+    })
 
     socket.on('disconnect:game', function(gameID) {
         socket.leave(gameID, () => {

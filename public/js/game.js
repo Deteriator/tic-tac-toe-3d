@@ -623,7 +623,7 @@ const initScreen = () => {
 
     $(document).on('click', "#createGame", (e) => {
         // initialise a 3D or 2D game
-        socket.emit('connect:game', generateID());
+        socket.emit('connect:host', generateID());
         initGame();
     });
 
@@ -632,7 +632,7 @@ const initScreen = () => {
 
     $(document).on('click', ".openGames", (e) => {
         var selectedID = e.target.dataset.id
-        socket.emit('connect:game', selectedID);
+        socket.emit('connect:join', selectedID);
         initGame(selectedID);
     });
 
