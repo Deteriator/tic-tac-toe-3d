@@ -29,6 +29,7 @@ const createBoard = () => {
     gameType    : '',
     games       : [],
     opponent    : null,
+    clientID    : null
   }
 }
 
@@ -616,7 +617,20 @@ const generateID = () => {
     return gameID;
 }
 
-const initScreen = () => {
+const initGame = (gameID) => {
+    var windowWidth = $(window).width();
+    board.gameID = gameID;
+    if(windowWidth <= 800) {
+        init2D();
+    } else {
+        init3D();
+    }
+}
+
+const init = () => {
+
+    board.clientID = socket.id;
+
     renderGameTypeScreen();
 
     $(document).on('click', '#single', (e) => {
@@ -647,7 +661,7 @@ const initScreen = () => {
 
     socket.on('player:joined', (data) => {
         console.log('a player has joined your game')
-        console.log(data); 
+        console.log(data);
     })
 
     socket.on('gamelist:added', (data) => {
@@ -660,21 +674,15 @@ const initScreen = () => {
     });
 }
 
-const initGame = (gameID) => {
-    var windowWidth = $(window).width();
-    board.gameID = gameID;
-    if(windowWidth <= 800) {
-        init2D();
-    } else {
-        init3D();
-    }
-}
+
 
 // -----------------------------------------------------------------------------
 // *****************************************************************************
 // INIT ************************************************************************
 // *****************************************************************************
 // -----------------------------------------------------------------------------
-
-
-initScreen();
+socket.on("connect", () => {
+    console.log('you are connected as: ', socket.id);
+    board.clientID = socket.id;
+    init();
+})

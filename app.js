@@ -31,20 +31,26 @@ app.use((err, req, res, next) => {
 const currentRooms = [];
 
 const getCurrentRoom = (rooms) => {
-
     var currentRoom = '';
-
     for (let key in rooms) {
         if (key.slice(0, 2) === "ID") {
             currentRoom = key;
         }
     }
-
     if(currentRoom === '') {
         currentRoom = "could not find room"
     }
-
     return currentRoom;
+}
+
+
+const getCurrentPlayers = (currentRoom, socket) => {
+    var currentPlayers = [], currentClients;
+    currentClients = io.sockets.adapter.rooms[currentRoom].sockets;
+    for (let key in currentClients) {
+        currentPlayers.push(key);
+    }
+    return currentPlayers;
 }
 
 
@@ -74,10 +80,10 @@ io.on('connection', (socket) => {
     socket.on('connect:join', (gameID) => {
         socket.join(gameID, () => {
             var currentRoom = getCurrentRoom(socket.rooms);
-            var clients = io.sockets.adapter.rooms[currentRoom].sockets;
-            socket.to(currentRoom).emit('player:joined', clients);
+            var playersInRoom = getCurrentPlayers(currentRoom, socket);
+            socket.to(currentRoom).emit('player:joined', playersInRoom);
         });
-    }); 
+    });
 
     socket.on('disconnect:game', function(gameID) {
         socket.leave(gameID, () => {
