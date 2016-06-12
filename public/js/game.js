@@ -445,7 +445,6 @@ const clickHandler3D = (evt) => {
     // -------------------------------------------------
 
     // if we clicked on the cube object then;
-
     var newModel = board;
 
     var selectedCubeId, selectedObject;
@@ -575,7 +574,7 @@ const init2D = (gameID) => {
     socket.on('game:play', (data) => {
         socketHandler2D(data, game2D);
         forEachElementByClass('box', addListener('click', boxClick(board, game2D)));
-    })
+    });
 }
 
 // -----------------------------------------------------------------------------
@@ -683,6 +682,11 @@ const init = () => {
         console.log('gamelist:added,', data);
         board.games.push(data);
     });
+
+    socket.on('gamelist:removed', (data) => {
+        console.log('gamelist:removed', data); 
+        board.games = data;
+    })
 
     socket.on('gamelist:all', (data) => {
         board.games = data;
