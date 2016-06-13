@@ -213,6 +213,11 @@ const getObjectsByName = (sceneObject, name) => {
 
 // ANIMATION MODEL *************************************************************
 
+// updateAnimationModel()
+// constantly checking the state of the scene to change the board
+// model is thus animation dependent
+//  this means something for th
+
 const updateAnimationModel = (model) => {
 
     var newModel = model;
@@ -243,7 +248,6 @@ const updateAnimationModel = (model) => {
     if (riseCounter === cubeAmount) {
         model.cutscene = false;
         if (!model.cutscene && !model.active) {
-            console.log('up!')
             socket.emit('game:state', true);
         }
         model.active = true;
@@ -600,17 +604,25 @@ const socketHandler2D = (data, domNode) => {
 }
 
 const boxClick = (model, gameNode) => {
-    console.log('adding click listener')
     return (event) => {
+        console.log('boxClickHandler')
         var clickedId = event.target.dataset.box;
         updateModel(model, clickedId);
         render2D(model, gameNode);
         forEachElementByClass('box',
             addListener('click', boxClick(model, gameNode)));
         socket.emit('game:play', clickedId);
-        // onSink(model, () => {
-        //     reset2DModel(model);
-        // });
+        console.log('before on sink ------')
+        console.log(model.boxes);
+        console.log(board.boxes);
+        onSink(model, () => {
+            console.log('on sink callback ------')
+            console.log(reset2DModel(model).boxes);
+        });
+
+        console.log('after on sink ------')
+        console.log(model.boxes);
+        console.log(board.boxes);
     }
 }
 
