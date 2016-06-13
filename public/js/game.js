@@ -17,7 +17,7 @@ const playerO = 'o'
 const playerX = 'x'
 
 // board constructor
-const createBoard = () => {
+const createBoard = (dimension) => {
   return {
     turn        : playerO,
     boxes       : (new Array(9)).fill(null),
@@ -27,13 +27,14 @@ const createBoard = () => {
     winPos      : [],
     gameID      : '',
     gameType    : '',
+    gameDim     : dimension,
     games       : [],
     opponentID  : null,
     clientID    : null
   }
 }
 
-const board = createBoard()
+const board = createBoard();
 
 const resetModel = (model) => {
     model = createBoard()
@@ -63,6 +64,7 @@ const updateModel = (model, boxId) => {
     // ifGameOver deactivate model
     if ( isWin(model).state === 'draw' ) {
         model.active = false
+        // reset2DModel(model)
         return model
     }
 
@@ -72,6 +74,7 @@ const updateModel = (model, boxId) => {
         socket.emit('game:state', model.active);
         model.winPos = isWin(model).winPositions
         model.cutscene = 'sink'
+        // reset2DModel(model);
         return model
     }
 
@@ -429,7 +432,6 @@ const socketHandler3D = (data) => {
     updateRender3D(scene, newModel);
 }
 
-
 const clickHandler3D = (evt) => {
     // vector is created based on the position that
     // we've clicked on, on the screen.
@@ -514,6 +516,36 @@ const init3D = () => {
 // *****************************************************************************
 // -----------------------------------------------------------------------------
 
+const reset2DModel = (model) => {
+    // turn        : playerO,
+    // boxes       : (new Array(9)).fill(null),
+    // active      : true,
+    // cutscene    : false,
+    // end         : false,
+    // winPos      : [],
+
+    // in updateModel()
+    // model.cutscene = 'sink'
+
+    // CUTSCENE: model.cutscene = rise
+    // RESET MODEL: mode.boxes = reset
+    // ACTIVATE: model.cutscene = false
+
+    // GOAL: RESET BOARD
+
+    var newModel = model;
+    if (newModel.gameDim === "2d") {
+        newModel.turn        = playerO
+        newModel.boxes       = (new Array(9)).fill(null)
+        newModel.active      = true
+        newModel.cutscene    = false
+        newModel.end         = false
+        newModel.winPos      = []
+    }
+    return newModel;
+}
+
+
 // RENDER **********************************************************************
 
 const renderState = (model, domNode) => {
@@ -558,6 +590,10 @@ const forEachElementByClass = (className, callback) => {
 
 // EVENTS **********************************************************************
 
+const onSink = (model, callback) => {
+    if(model.cutscene === 'sink') callback(model);
+}
+
 const socketHandler2D = (data, domNode) => {
     var newModel = updateModel(board, data);
     render2D(newModel, domNode);
@@ -572,6 +608,9 @@ const boxClick = (model, gameNode) => {
         forEachElementByClass('box',
             addListener('click', boxClick(model, gameNode)));
         socket.emit('game:play', clickedId);
+        // onSink(model, () => {
+        //     reset2DModel(model);
+        // });
     }
 }
 
@@ -636,8 +675,10 @@ const initGame = (gameID) => {
     var windowWidth = $(window).width();
     board.gameID = gameID;
     if(windowWidth <= 800) {
+        board.gameDim = '2d';
         init2D();
     } else {
+        board.gameDim = '3d';
         init3D();
     }
 }
