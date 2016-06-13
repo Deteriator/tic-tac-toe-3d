@@ -664,11 +664,13 @@ const appendLI = (parent, text, id, className) => {
 }
 
 const renderGameList = () => {
+    var $gameList = $('<div>')
     var $gameListUL = $('<ul>')
     $(gameWrapper).html('')
-    $(gameWrapper).append('<h2> GAME LIST </h2>')
-    $(gameWrapper).append('<span id="createGame"> Start your game </span>')
-    $(gameWrapper).append($gameListUL)
+    $(gameWrapper).append($gameList)
+    $gameList.addClass('gameList')
+    $($gameList).append($gameListUL)
+    $($gameListUL).append('<li id="createGame"> Start your game </li>')
     board.games.forEach((gameId) => {
         appendLI($gameListUL, gameId, gameId, 'openGames');
     });

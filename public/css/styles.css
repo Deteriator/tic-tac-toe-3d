@@ -9,6 +9,11 @@ html, body {
     height: 100%;
 }
 
+ul {
+    margin: 0;
+    padding: 0;
+}
+
 #master {
     margin: 0;
     padding: 0;
@@ -23,7 +28,13 @@ html, body {
     padding: 0px;
 }
 
-/* INIT SCREEN STYLES */
+/*
+################################################################################
+INIT SCREEN STYLES
+################################################################################
+*/
+
+/* GAMETYPE */
 
 .gameType {
     height: 100%;
@@ -36,8 +47,6 @@ html, body {
 .gameType ul {
     display: flex;
     flex-direction: column;
-    margin: 0;
-    padding: 0;
     height: 100%;
 }
 
@@ -53,7 +62,7 @@ html, body {
 
 .gameType ul li:hover {
     background: #C85B80;
-    cursor: pointer; 
+    cursor: pointer;
 }
 
 .gameType ul li #single div {
@@ -70,9 +79,46 @@ html, body {
 
 }
 
+/* GAMELIST */
+
+.gameList {
+    height: 100%;
+}
+
+.gameList ul {
+    max-width: 400px;
+    margin: auto;
+    list-style-type: none;
+    margin-top: 20vh;
+    height: 100%;
+
+}
+
+.gameList ul li {
+    border: 1px solid white;
+    padding: 20px;
+    margin-bottom: 10px;
+}
+
+.gameList ul li:hover {
+    cursor: pointer;
+}
+
+.gameList ul li:first-child {
+    background: white;
+}
 
 
-/* 2D styles */
+
+
+
+
+/*
+################################################################################
+2D STYLES
+################################################################################
+*/
+
 
 #gameWrapper > div {
 
