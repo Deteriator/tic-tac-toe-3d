@@ -43,6 +43,17 @@ const getCurrentRoom = (rooms) => {
     return currentRoom;
 }
 
+const getRooms = (socketRooms) => {
+    var roomsAndClients = socketRooms, rooms = [];
+    for (let key in roomsAndClients) {
+        var first3char = key.slice(0,3);
+        if (first3char === "ID-") {
+            rooms.push(roomsAndClients[key]);
+        }
+    }
+    return rooms;
+}
+
 const getCurrentPlayers = (currentRoom, socket) => {
     var currentPlayers = [], currentClients;
     currentClients = io.sockets.adapter.rooms[currentRoom].sockets;
@@ -98,6 +109,8 @@ io.on('connection', (socket) => {
     socket.on('connect:join', (gameID) => {
         socket.join(gameID, () => {
             var currentRoom = getCurrentRoom(socket.rooms);
+            console.log('connect:join - socket.rooms: ', socket.rooms);
+            console.log('connect:join - io.rooms: ', io.sockets.adapter.rooms)
             var joiningID = socket.id;
             var hostID = getOtherPlayer(currentRoom, joiningID, socket);
             socket.emit('player:host', hostID);
@@ -109,20 +122,18 @@ io.on('connection', (socket) => {
     socket.on('disconnect:game', function(gameID) {
         socket.leave(gameID, () => {
             console.log('leaving');
-
         });
-    })
+    });
 
     socket.on('disconnect', function () {
         console.log('disconnected');
-        currentRooms.forEach((room) => {
-            // possible bug when leaving a room the current socket is not a
-            // part of.
-
-            socket.leave(room);
-        })
+        var openRooms = getRooms(io.sockets.adapter.rooms);
+        console.log(openRooms);
+        console.log(openRooms[0]);
+        console.log('Room: ', openRooms[0].room)
+        console.log('>length: ', openRooms[0].length)
+        console.log(typeof openRooms[0]);
     });
-
 });
 
 http.listen(app.get('port'), () => {
