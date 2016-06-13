@@ -39,6 +39,11 @@ const resetModel = (model) => {
     model = createBoard()
 }
 
+const resetBoxes = (model) => {
+    model.boxes = (new Array(9).fill(null));
+    return model.boxes;
+}
+
 const updateModel = (model, boxId) => {
     var model = model
 
@@ -64,6 +69,7 @@ const updateModel = (model, boxId) => {
     // win condition
     if ( isWin(model).state === 'win' ) {
         model.active = false
+        socket.emit('game:state', model.active);
         model.winPos = isWin(model).winPositions
         model.cutscene = 'sink'
         return model
@@ -233,6 +239,10 @@ const updateAnimationModel = (model) => {
 
     if (riseCounter === cubeAmount) {
         model.cutscene = false;
+        if (!model.cutscene && !model.active) {
+            console.log('up!')
+            socket.emit('game:state', true);
+        }
         model.active = true;
     }
 
@@ -684,7 +694,7 @@ const init = () => {
     });
 
     socket.on('gamelist:removed', (data) => {
-        console.log('gamelist:removed', data); 
+        console.log('gamelist:removed', data);
         board.games = data;
     })
 

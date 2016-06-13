@@ -52,7 +52,6 @@ const getRooms = (socketRooms) => {
         }
     }
     return rooms;
-
 }
 
 const getOpenRooms = (rooms) => {
@@ -110,6 +109,10 @@ io.on('connection', (socket) => {
             .emit('game:play', data);
     });
 
+    socket.on('game:state', (data) => {
+        console.log('game state of', socket.id , 'is', data);
+    });
+
     socket.on('connect:host', (gameID) => {
         console.log('connecting to ' + gameID);
         socket.join(gameID, () => {
@@ -121,8 +124,8 @@ io.on('connection', (socket) => {
     socket.on('connect:join', (gameID) => {
         socket.join(gameID, () => {
             var currentRoom = getCurrentRoom(socket.rooms);
-            console.log('connect:join - socket.rooms: ', socket.rooms);
-            console.log('connect:join - io.rooms: ', io.sockets.adapter.rooms)
+            // console.log('connect:join - socket.rooms: ', socket.rooms);
+            // console.log('connect:join - io.rooms: ', io.sockets.adapter.rooms)
             var joiningID = socket.id;
             var hostID = getOtherPlayer(currentRoom, joiningID, socket);
             socket.emit('player:host', hostID);
@@ -141,6 +144,7 @@ io.on('connection', (socket) => {
         console.log('disconnected');
         var rooms = getRooms(io.sockets.adapter.rooms);
         var openRooms = getOpenRooms(rooms);
+        openRooms.forEach(room => io.emit('gamelist:added', room));
         console.log('rooms: ', rooms);
         console.log('openRooms: ', openRooms);
     });
