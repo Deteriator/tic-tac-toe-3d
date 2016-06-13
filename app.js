@@ -44,14 +44,26 @@ const getCurrentRoom = (rooms) => {
 }
 
 const getRooms = (socketRooms) => {
-    var roomsAndClients = socketRooms, rooms = [];
+    var roomsAndClients = socketRooms, rooms = {};
     for (let key in roomsAndClients) {
         var first3char = key.slice(0,3);
         if (first3char === "ID-") {
-            rooms.push(roomsAndClients[key]);
+            rooms[key] = roomsAndClients[key];
         }
     }
     return rooms;
+
+}
+
+const getOpenRooms = (rooms) => {
+    var openRooms = [];
+    for (let key in rooms) {
+        var occupants = rooms[key].length;
+        if (occupants < 2) {
+            openRooms.push(key);
+        }
+    }
+    return openRooms;
 }
 
 const getCurrentPlayers = (currentRoom, socket) => {
@@ -127,12 +139,10 @@ io.on('connection', (socket) => {
 
     socket.on('disconnect', function () {
         console.log('disconnected');
-        var openRooms = getRooms(io.sockets.adapter.rooms);
-        console.log(openRooms);
-        console.log(openRooms[0]);
-        console.log('Room: ', openRooms[0].room)
-        console.log('>length: ', openRooms[0].length)
-        console.log(typeof openRooms[0]);
+        var rooms = getRooms(io.sockets.adapter.rooms);
+        var openRooms = getOpenRooms(rooms);
+        console.log('rooms: ', rooms);
+        console.log('openRooms: ', openRooms);
     });
 });
 
