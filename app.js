@@ -115,7 +115,7 @@ io.on('connection', (socket) => {
         var gameState = {}
             gameState[socket.id] = data;
         var currentRoom = getCurrentRoom(socket.rooms);
-        io.to(currentRoom)
+        socket.to(currentRoom)
             .emit('game:state', gameState);
 
     });
