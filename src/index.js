@@ -11,6 +11,7 @@ class App extends React.Component {
         return (
             <div>
                 <Game />
+                hi
             </div>
         )
     }

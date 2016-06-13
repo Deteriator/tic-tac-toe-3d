@@ -1,10 +1,17 @@
 * {
     box-sizing: border-box;
+    font-family: helvetica;
 }
 
-body {
+html, body {
+    padding: 0px;
+    margin: 0px;
+    height: 100%;
+}
+
+#master {
     margin: 0;
-    overflow: hidden;
+    padding: 0;
 }
 
 #gameWrapper {
@@ -13,12 +20,62 @@ body {
 	height: 100%;
 	overflow: hidden;
 	background: linear-gradient(#e4e0ba, #f7d9aa);
+    padding: 0px;
 }
+
+/* INIT SCREEN STYLES */
+
+.gameType {
+    height: 100%;
+    font-weight: 100;
+    color: white;
+    letter-spacing: 1px;
+
+}
+
+.gameType ul {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
+.gameType ul li {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+    height: 100%;
+    background: #241036;
+    padding: 20px;
+}
+
+.gameType ul li:hover {
+    background: #C85B80;
+    cursor: pointer; 
+}
+
+.gameType ul li #single div {
+    vertical-align: bottom;
+    align-self: flex-end;
+
+}
+
+.gameType ul #single{
+    border-bottom: 1px solid white;
+}
+
+.gameType ul li #multi {
+
+}
+
+
 
 /* 2D styles */
 
 #gameWrapper > div {
-    
+
 }
 
 .box {

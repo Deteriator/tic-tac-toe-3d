@@ -646,10 +646,11 @@ const init2D = (gameID) => {
 
 const renderGameTypeScreen = () => {
     gameType = $('<div>');
+    gameTypeList = $('<ul>')
     gameType.addClass('gameType');
-    gameType.html('<h2> GAME TYPE DIV </h2> ');
-    gameType.append('<li id="single"> ALONE </li> ');
-    gameType.append('<li id="multi"> TOGETHER </li> ');
+    gameType.append(gameTypeList);
+    gameTypeList.append('<li id="single"> <div> LONESOME </div> </li> ');
+    gameTypeList.append('<li id="multi"> <div> COMRADE  </div> </li> ');
     $(gameWrapper).append(gameType);
 }
 
