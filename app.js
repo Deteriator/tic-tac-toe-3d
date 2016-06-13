@@ -111,6 +111,13 @@ io.on('connection', (socket) => {
 
     socket.on('game:state', (data) => {
         console.log('game state of', socket.id , 'is', data);
+        //broadcast the state to the other client connected in the same room
+        var gameState = {}
+            gameState[socket.id] = data;
+        var currentRoom = getCurrentRoom(socket.rooms);
+        io.to(currentRoom)
+            .emit('game:state', gameState);
+
     });
 
     socket.on('connect:host', (gameID) => {

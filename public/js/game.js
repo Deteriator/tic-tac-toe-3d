@@ -742,6 +742,10 @@ const init = () => {
     socket.on('gamelist:all', (data) => {
         board.games = data;
     });
+
+    socket.on('game:state', (data) => {
+        console.log('recieved oponent game state: ', data);
+    })
 }
 
 
