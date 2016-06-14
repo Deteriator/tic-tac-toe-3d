@@ -28,7 +28,7 @@ app.use((err, req, res, next) => {
 });
 
 // Store all rooms here
-const currentRooms = [];
+var currentRooms = [];
 
 const getCurrentRoom = (rooms) => {
     var currentRoom = '';
@@ -73,6 +73,9 @@ const getCurrentPlayers = (currentRoom, socket) => {
     }
     return currentPlayers;
 }
+
+// getOtherPlayer()
+// gets the other players ID
 
 const getOtherPlayer = (currentRoom, playerID, socket) => {
     var currentPlayers = [], currentClients, playerSocketID;
@@ -148,12 +151,31 @@ io.on('connection', (socket) => {
 
     socket.on('disconnect', function () {
         console.log('disconnected');
+
         var rooms = getRooms(io.sockets.adapter.rooms);
         var openRooms = getOpenRooms(rooms);
-        openRooms.forEach((room) => {
-            io.emit('gamelist:added', room)
-            currentRooms.push(room);
-        });
+        if(openRooms.length) {
+            openRooms.forEach((room) => {
+                // ADDINIG WHEN ANY PLAYER DISCONNECTS
+                io.emit('gamelist:added', room)
+                var otherPlayer = getOtherPlayer(room, socket.id, socket)
+                console.log('getOtherPlayer: ', otherPlayer);
+
+                if (otherPlayer) {
+                    console.log('ADDING TO CURRENT ROOMS');
+                    currentRooms.push(room);
+                } else {
+                    let currentRoomIndex = currentRooms.indexOf(room);
+                    currentRooms.slice(currentRoomIndex, currentRoomIndex + 1);
+                    console.log(currentRooms);
+                }
+                // IF THERE IS ONLY ONE PERSON LEFT WE SHOULD NOT PUSH
+
+            });
+        } else {
+            currentRooms = []; 
+        }
+
         console.log('rooms: ', rooms);
         console.log('openRooms: ', openRooms);
     });
