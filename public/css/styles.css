@@ -126,15 +126,15 @@ INIT SCREEN STYLES
 
 .box {
     display: inline-block;
-    border: 1px solid green;
     height: 100px;
     width: 33.3%;
+    padding: 3px;
 
 }
 
 .box .child {
     background: rgb(207, 109, 78);
-    margin: 10px; 
+    height: 100%;
 }
 
 .selected {
