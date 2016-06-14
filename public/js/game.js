@@ -760,7 +760,9 @@ const init = () => {
     })
 
     socket.on('gamelist:all', (data) => {
+        console.log('socket - gamelist:all: ', data);
         board.games = data;
+        console.log(board.games);
     });
 
     socket.on('game:state', (data) => {

@@ -65,6 +65,7 @@ const getOpenRooms = (rooms) => {
     return openRooms;
 }
 
+
 const getCurrentPlayers = (currentRoom, socket) => {
     var currentPlayers = [], currentClients;
     currentClients = io.sockets.adapter.rooms[currentRoom].sockets;
@@ -153,13 +154,18 @@ io.on('connection', (socket) => {
         console.log('disconnected');
 
         var rooms = getRooms(io.sockets.adapter.rooms);
-        var openRooms = getOpenRooms(rooms);
+        var openRooms = getOpenRooms(rooms); // instead of getting all rooms
         if(openRooms.length) {
             openRooms.forEach((room) => {
                 // ADDINIG WHEN ANY PLAYER DISCONNECTS
                 io.emit('gamelist:added', room)
                 var otherPlayer = getOtherPlayer(room, socket.id, socket)
                 console.log('getOtherPlayer: ', otherPlayer);
+
+
+                // Instead of looping through all rooms
+                // loop through the rooms the current socket is inside
+                console.log('checking if can get currentRooms: ', io.sockets.adapter.rooms[room].sockets)
 
                 if (otherPlayer) {
                     console.log('ADDING TO CURRENT ROOMS');
@@ -173,7 +179,7 @@ io.on('connection', (socket) => {
 
             });
         } else {
-            currentRooms = []; 
+            currentRooms = [];
         }
 
         console.log('rooms: ', rooms);
