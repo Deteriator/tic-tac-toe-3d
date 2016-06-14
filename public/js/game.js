@@ -701,7 +701,7 @@ const initGame = (gameID) => {
 const init = () => {
 
     board.clientID = socket.id;
-    
+
     renderGameTypeScreen();
 
     $(document).on('click', '#single', (e) => {
@@ -744,9 +744,14 @@ const init = () => {
         board.opponentID = data;
     })
 
+    // GAME LIST EVENTS
+
+
     socket.on('gamelist:added', (data) => {
+        console.log('socket - gamelist:added')
         console.log('gamelist:added,', data);
         board.games.push(data);
+        console.log(board.games);
     });
 
     socket.on('gamelist:removed', (data) => {

@@ -150,7 +150,10 @@ io.on('connection', (socket) => {
         console.log('disconnected');
         var rooms = getRooms(io.sockets.adapter.rooms);
         var openRooms = getOpenRooms(rooms);
-        openRooms.forEach(room => io.emit('gamelist:added', room));
+        openRooms.forEach((room) => {
+            io.emit('gamelist:added', room)
+            currentRooms.push(room);
+        });
         console.log('rooms: ', rooms);
         console.log('openRooms: ', openRooms);
     });
