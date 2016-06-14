@@ -701,7 +701,7 @@ const initGame = (gameID) => {
 const init = () => {
 
     board.clientID = socket.id;
-
+    
     renderGameTypeScreen();
 
     $(document).on('click', '#single', (e) => {
