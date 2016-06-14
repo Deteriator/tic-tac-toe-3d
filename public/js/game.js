@@ -564,12 +564,20 @@ const renderState = (model, domNode) => {
     gameWrapper.appendChild(gameState);
 }
 
+const appendChildDiv = (parent, htmlContent) => {
+    var child = document.createElement('div');
+    child.className = "child";
+    child.innerHTML = htmlContent;
+    parent.appendChild(child);
+}
+
 const renderBox = (currentPlay, id, domNode) => {
     var box = document.createElement('div');
+    var htmlContent = currentPlay ? currentPlay : "box";
     box.className = "box";
-    box.innerHTML = currentPlay ? currentPlay : "box";
     box.dataset.box = id;
     domNode.appendChild(box);
+    appendChildDiv(box, htmlContent);
 }
 
 const render2D = (model, domNode) => {

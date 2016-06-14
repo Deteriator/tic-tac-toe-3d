@@ -129,6 +129,12 @@ INIT SCREEN STYLES
     border: 1px solid green;
     height: 100px;
     width: 33.3%;
+
+}
+
+.box .child {
+    background: rgb(207, 109, 78);
+    margin: 10px; 
 }
 
 .selected {
