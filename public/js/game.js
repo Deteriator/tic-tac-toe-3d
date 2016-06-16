@@ -259,7 +259,7 @@ const updateAnimationModel = (model) => {
 // RENDER **********************************************************************
 
 const addCamera = () => {
-    SCENE.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100)
+    SCENE.camera = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 0.1, 800)
     SCENE.camera.position.x = -30;
     SCENE.camera.position.y = 60;
     SCENE.camera.position.z = 30;
@@ -784,4 +784,11 @@ socket.on("connect", () => {
     console.log('you are connected as: ', socket.id);
     board.clientID = socket.id;
     init();
+
+    // DEV STUFF ********************************
+
+    // LAUNCH GAME ON STARTUP
+    socket.emit('connect:host', generateID());
+    initGame();
+
 })
