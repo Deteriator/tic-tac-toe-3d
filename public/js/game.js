@@ -613,24 +613,19 @@ const socketHandler2D = (data, domNode) => {
 
 const boxClick = (model, gameNode) => {
     return (event) => {
-        console.log('boxClickHandler')
-        var clickedId = event.target.dataset.box;
+        var clickedId = event.currentTarget.dataset.box;
+        console.log('clicked: ', clickedId);
+        console.log('before update model: ', model);
         updateModel(model, clickedId);
+        console.log('after update model: ', model);
         render2D(model, gameNode);
         forEachElementByClass('box',
             addListener('click', boxClick(model, gameNode)));
         socket.emit('game:play', clickedId);
-        console.log('before on sink ------')
-        console.log(model.boxes);
-        console.log(board.boxes);
         onSink(model, () => {
             console.log('on sink callback ------')
             console.log(reset2DModel(model).boxes);
         });
-
-        console.log('after on sink ------')
-        console.log(model.boxes);
-        console.log(board.boxes);
     }
 }
 
@@ -642,7 +637,8 @@ const init2D = (gameID) => {
     forEachElementByClass('box', addListener('click', boxClick(board, game2D)));
     socket.on('game:play', (data) => {
         socketHandler2D(data, game2D);
-        forEachElementByClass('box', addListener('click', boxClick(board, game2D)));
+        forEachElementByClass('box',
+            addListener('click', boxClick(board, game2D)));
     });
 }
 
