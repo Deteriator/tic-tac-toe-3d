@@ -178,6 +178,7 @@ const color = {
   pink        : 0xF5986E,
   brownDark   : 0x23190f,
   blue        : 0x68c3c0,
+  green       : 0xBED730,
 }
 
 // DEV *************************************************************************
@@ -190,9 +191,9 @@ var camControls = new function () {
 }
 
 var objControls = new function () {
-    this.scaleX = 1
-    this.scaleY = 1
-    this.scaleZ = 1
+    // this.scaleX = 1
+    // this.scaleY = 1
+    // this.scaleZ = 1
     this.positionX = 1
     this.positionY = 1
     this.positionZ = 1
@@ -215,10 +216,12 @@ const createGUIHelper = () => {
 
     var cube1Folder = gui.addFolder('Cube_1');
 
-    [ [ 'scaleX', 0, 5, .001 ]
-    , [ 'scaleY', 0, 5, .001 ]
-    , [ 'scaleZ', 0, 5, .001 ]
-    , [ 'positionX', -100, 100, .001 ]
+    [
+    //   [ 'scaleX', 0, 5, .001 ]
+    // , [ 'scaleY', 0, 5, .001 ]
+    // , [ 'scaleZ', 0, 5, .001 ]
+    // ,
+      [ 'positionX', -100, 100, .001 ]
     , [ 'positionY', -100, 100, .001 ]
     , [ 'positionZ', -100, 100, .001 ]
     ]
@@ -238,9 +241,9 @@ const devAnimations = () => {
     SCENE.camera.position.y = camControls.camY;
     SCENE.camera.position.z = camControls.camZ;
 
-    OBJ.water.scale.x = objControls.scaleX;
-    OBJ.water.scale.y = objControls.scaleY;
-    OBJ.water.scale.z = objControls.scaleZ;
+    // OBJ.water.scale.x = objControls.scaleX;
+    // OBJ.water.scale.y = objControls.scaleY;
+    // OBJ.water.scale.z = objControls.scaleZ;
 
     OBJ.water.position.x = objControls.positionX;
     OBJ.water.position.y = objControls.positionY;
@@ -359,17 +362,17 @@ const addLight = () => {
     scene.add(spotLight);
 }
 
-const addWater = () => {
-    var geo = new THREE.BoxGeometry(40, 40, 40);
-    var mat = new THREE.MeshLambertMaterial({color: color.red});
+const addGround = () => {
+    var geo = new THREE.BoxGeometry(100, 100, 100);
+    var mat = new THREE.MeshLambertMaterial({color: color.green});
 
     OBJ.water = new THREE.Mesh(geo, mat)
 
     OBJ.water.castShadow = true;
 
-    OBJ.water.position.x = -40;
-    OBJ.water.position.y = -40;
-    OBJ.water.position.z = -4.5;
+    OBJ.water.position.x = 1.5;
+    OBJ.water.position.y = -51;
+    OBJ.water.position.z = -7.4;
 
     scene.add(OBJ.water);
 }
@@ -552,7 +555,7 @@ var renderScene3D = () => {
     addRenderer();
     addPlane();
     addGrid3D();
-    addWater();
+    addGround();
     loop3D();
     getObjectsByName(scene, 'cube');
 }
