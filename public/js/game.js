@@ -182,14 +182,26 @@ const color = {
 
 // DEV *************************************************************************
 
-const controls = new function () {
+var camControls = new function () {
     this.rotationSpeed = 0
     this.camX = -30
     this.camY = 60
     this.camZ = 30
 }
 
+var objControls = new function () {
+    this.scaleX = 1
+    this.scaleY = 1
+    this.scaleZ = 1
+    this.positionX = 1
+    this.positionY = 1
+    this.positionZ = 1
+
+}
+
+
 const createGUIHelper = () => {
+
     const gui = new dat.GUI();
 
     [ [ 'rotationSpeed', 0, 1 ]
@@ -198,9 +210,42 @@ const createGUIHelper = () => {
     , [ 'camZ', 0, 100 ]
     ]
     .forEach( ([prop, low, high]) => {
-        gui.add( controls, prop, low, high );
-    })
+        gui.add( camControls, prop, low, high );
+    });
+
+    var cube1Folder = gui.addFolder('Cube_1');
+
+    [ [ 'scaleX', 0, 5, .001 ]
+    , [ 'scaleY', 0, 5, .001 ]
+    , [ 'scaleZ', 0, 5, .001 ]
+    , [ 'positionX', -100, 100, .001 ]
+    , [ 'positionY', -100, 100, .001 ]
+    , [ 'positionZ', -100, 100, .001 ]
+    ]
+    .forEach( ([prop, low, high]) => {
+        cube1Folder.add( objControls, prop, low, high );
+    });
+
 };
+
+const devAnimations = () => {
+
+    OBJ.cube.rotation.x += camControls.rotationSpeed;
+    OBJ.cube.rotation.z += camControls.rotationSpeed;
+    OBJ.cube.position.x += camControls.rotationSpeed;
+
+    SCENE.camera.position.x = camControls.camX;
+    SCENE.camera.position.y = camControls.camY;
+    SCENE.camera.position.z = camControls.camZ;
+
+    OBJ.water.scale.x = objControls.scaleX;
+    OBJ.water.scale.y = objControls.scaleY;
+    OBJ.water.scale.z = objControls.scaleZ;
+
+    OBJ.water.position.x = objControls.positionX;
+    OBJ.water.position.y = objControls.positionY;
+    OBJ.water.position.z = objControls.positionZ;
+}
 
 // UTIL ************************************************************************
 
@@ -312,6 +357,21 @@ const addLight = () => {
     spotLight.position.set( -40, 60, -10 );
     spotLight.castShadow = true;
     scene.add(spotLight);
+}
+
+const addWater = () => {
+    var geo = new THREE.BoxGeometry(40, 40, 40);
+    var mat = new THREE.MeshLambertMaterial({color: color.red});
+
+    OBJ.water = new THREE.Mesh(geo, mat)
+
+    OBJ.water.castShadow = true;
+
+    OBJ.water.position.x = -40;
+    OBJ.water.position.y = -40;
+    OBJ.water.position.z = -4.5;
+
+    scene.add(OBJ.water);
 }
 
 const updateColor = (object) => {
@@ -480,12 +540,7 @@ const clickHandler3D = (evt) => {
 };
 
 var loop3D = () => {
-    OBJ.cube.rotation.x += controls.rotationSpeed;
-    OBJ.cube.rotation.z += controls.rotationSpeed;
-    OBJ.cube.position.x += controls.rotationSpeed;
-    SCENE.camera.position.x = controls.camX;
-    SCENE.camera.position.y = controls.camY;
-    SCENE.camera.position.z = controls.camZ;
+    devAnimations();
     updateAnimation(board);
     requestAnimationFrame(loop3D);
     SCENE.renderer.render(scene, SCENE.camera);
@@ -497,6 +552,7 @@ var renderScene3D = () => {
     addRenderer();
     addPlane();
     addGrid3D();
+    addWater();
     loop3D();
     getObjectsByName(scene, 'cube');
 }
@@ -786,7 +842,6 @@ socket.on("connect", () => {
     init();
 
     // DEV STUFF ********************************
-
     // LAUNCH GAME ON STARTUP
     socket.emit('connect:host', generateID());
     initGame();
