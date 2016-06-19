@@ -447,25 +447,24 @@ const addObjectToScene = (scene, state, name, object) => {
 
 
 const createWater = () => {
-    
-}
 
-const addWater = () => {
-
-    var geo = new THREE.SphereGeometry(40, 40, 40);
+    var water;
+    var geom = new THREE.SphereGeometry(40, 6, 6);
     var mat = new THREE.MeshLambertMaterial({color: color.blue});
-    geo.applyMatrix(new THREE.Matrix4().makeRotationX(-Math.PI/2));
-    geo.mergeVertices();
 
-    var l = geo.vertices.length;
+    geom.applyMatrix(new THREE.Matrix4().makeRotationX(-Math.PI/2));
+    geom.mergeVertices();
 
-    OBJ.water = new THREE.Mesh(geo, mat)
-    OBJ.water.castShadow = true;
-    OBJ.water.position.x = 1.5;
-    OBJ.water.position.y = -51;
-    OBJ.water.position.z = -7.4;
+    var l = geom.vertices.length;
+    // debugger;
 
-    scene.add(OBJ.water);
+    water = new THREE.Mesh(geom, mat);
+    water.castShadow = true;
+    water.position.x = 1.5;
+    water.position.y = -51;
+    water.position.z = -7.4;
+
+    return water;
 }
 
 // ANIMATION *******************************************************************
@@ -662,7 +661,7 @@ var renderScene3D = () => {
     addPlane();
     addGrid3D();
     addObjectToScene(scene, OBJ, 'sky', createSky())
-    addWater();
+    addObjectToScene(scene, OBJ, 'water', createWater())
     loop3D();
     getObjectsByName(scene, 'cube');
 }
