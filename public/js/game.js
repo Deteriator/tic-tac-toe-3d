@@ -448,9 +448,20 @@ const addObjectToScene = (scene, state, name, object) => {
 
 const createWater = () => {
 
-    var water;
-    var geom = new THREE.SphereGeometry(40, 6, 6);
-    var mat = new THREE.MeshLambertMaterial({color: color.blue});
+    var geom = new THREE.SphereGeometry(40, 9, 9);
+    var mat = new THREE.MeshPhongMaterial(
+        { color : color.blue
+        , transparent: false
+        , opacity: 0.6
+        , shading: THREE.FlatShading
+        }
+    );
+
+    var water = new THREE.Mesh(geom, mat);
+
+    water.receiveShadow = true;
+
+    // rotate geomtry on the x-axis
 
     geom.applyMatrix(new THREE.Matrix4().makeRotationX(-Math.PI/2));
     geom.mergeVertices();
@@ -458,13 +469,36 @@ const createWater = () => {
     var l = geom.vertices.length;
     // debugger;
 
-    water = new THREE.Mesh(geom, mat);
     water.castShadow = true;
     water.position.x = 1.5;
     water.position.y = -51;
     water.position.z = -7.4;
 
+    water.waves = []
+
+    geom.verticies.map((v) => {
+        {
+            
+        }
+    })
+
+    water.moveWaves = function () {
+
+        var verts = this.geometry.vertices;
+
+        for (let i = 0; i < verts.length; i += 1) {
+            var v = verts[i];
+
+
+
+        }
+
+
+    }
+
     return water;
+
+
 }
 
 // ANIMATION *******************************************************************
@@ -537,6 +571,12 @@ const rotateSky = (sky) => {
     sky.rotation.y += 0.0007;
 }
 
+const roatateWater = (water) => {
+    water.rotation.z += 0.007;
+    water.rotation.x += 0.007;
+    water.rotation.y += 0.007;
+}
+
 const changeCubeColor = (sceneObject, model) => {
     sceneObject.children.forEach(function(object) {
         if(object.name.slice(0, 4) === "cube") {
@@ -562,6 +602,7 @@ const animateObjects = (sceneObject, model, callback) => {
 
 const updateAnimation = (model) => {
     var newModel = updateAnimationModel(model);
+    roatateWater(OBJ.water);
     rotateSky(OBJ.sky);
     animateObjects(getObjectsByName(scene, 'cube'), model, rotateCube);
     animateObjects(getObjectsByName(scene, 'cube'), model, sinkCube);
@@ -658,7 +699,7 @@ var renderScene3D = () => {
     addCamera();
     addOrbitControls();
     addRenderer();
-    addPlane();
+    // addPlane();
     addGrid3D();
     addObjectToScene(scene, OBJ, 'sky', createSky())
     addObjectToScene(scene, OBJ, 'water', createWater())
