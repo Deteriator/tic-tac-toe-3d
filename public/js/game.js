@@ -316,6 +316,8 @@ const addCamera = () => {
 
 const addOrbitControls = () => {
     SCENE.orbitControls = new THREE.OrbitControls(SCENE.camera);
+    SCENE.orbitControls.autoRotate = true;
+    SCENE.clock = new THREE.Clock();
 };
 
 const addRenderer = () => {
@@ -411,6 +413,13 @@ const addGround = () => {
     OBJ.water.position.y = -51;
     OBJ.water.position.z = -7.4;
     scene.add(OBJ.water);
+}
+
+// ANIMATION *******************************************************************
+
+const updateControls = (clock, controls) => {
+    var delta = clock.getDelta();
+    controls.update(delta);
 }
 
 const updateColor = (object) => {
@@ -580,6 +589,7 @@ const clickHandler3D = (evt) => {
 
 var loop3D = () => {
     devAnimations();
+    updateControls(SCENE.clock, SCENE.orbitControls);
     updateAnimation(board);
     requestAnimationFrame(loop3D);
     SCENE.renderer.render(scene, SCENE.camera);
