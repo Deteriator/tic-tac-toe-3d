@@ -363,11 +363,11 @@ const addLight = () => {
 }
 
 const addCloud = () => {
-    var c = Cloud(); 
+    var c = Cloud();
     scene.add(c);
 }
 
-var Cloud = () => {
+const Cloud = () => {
     var mesh = new THREE.Object3D();
     var geom = new THREE.BoxGeometry(20,20,20);
     var mat = new THREE.MeshPhongMaterial({color: color.white});
