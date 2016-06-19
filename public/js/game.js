@@ -407,7 +407,7 @@ const createSky = () => {
 
     var mesh = new THREE.Object3D();
 
-    var nClouds = 20;
+    var nClouds = 90;
 
     var stepAngle = Math.PI*2 / nClouds;
 
@@ -416,13 +416,20 @@ const createSky = () => {
         var cloud = createCloud();
 
         var angle = stepAngle * i;
-        var height = 10 + Math.random() * 200; // play with these
+        var height = 300 + Math.random() * 200; // play with these
         var scale = 1 + Math.random() * 2;
 
-        cloud.position.y = Math.sin(angle) * height;
-        cloud.position.x = Math.cos(angle) * height;
-        cloud.rotation.z = angle + Math.PI / 2;
-        cloud.position.z = -20-Math.random() * 400; // play with these
+        // cloud.position.y = Math.sin(angle) * height;
+        // cloud.position.x = Math.cos(angle) * height;
+        // cloud.rotation.z = angle + Math.PI / 2;
+        // cloud.position.z = -200 - Math.random() * 400; // play with these'
+
+        cloud.position.x = Math.sin(angle) * height;
+        cloud.position.z = Math.cos(angle) * height;
+        cloud.rotation.y = angle + Math.PI / 8;
+        cloud.position.y =  200 - Math.random() * 400; // play with these'
+
+
         cloud.scale.set(scale, scale, scale);
 
         mesh.add(cloud);
