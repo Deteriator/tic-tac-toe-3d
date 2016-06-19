@@ -410,7 +410,7 @@ const createSky = () => {
 
     var mesh = new THREE.Object3D();
 
-    var nClouds = 300;
+    var nClouds = 600;
 
     var stepAngle = Math.PI*2 / nClouds;
 
@@ -476,9 +476,9 @@ const createWater = () => {
 
     water.waves = []
 
-    geom.verticies.map((v) => {
+    geom.vertices.map((v) => {
         {
-            
+
         }
     })
 
@@ -488,8 +488,6 @@ const createWater = () => {
 
         for (let i = 0; i < verts.length; i += 1) {
             var v = verts[i];
-
-
 
         }
 
@@ -568,7 +566,7 @@ const sinkCube = (model, cube) => {
 }
 
 const rotateSky = (sky) => {
-    sky.rotation.y += 0.0007;
+    sky.rotation.y += 0.002;
 }
 
 const roatateWater = (water) => {
