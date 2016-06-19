@@ -236,18 +236,18 @@ const devAnimations = () => {
     OBJ.cube.rotation.x += camControls.rotationSpeed;
     OBJ.cube.rotation.z += camControls.rotationSpeed;
     OBJ.cube.position.x += camControls.rotationSpeed;
-
-    SCENE.camera.position.x = camControls.camX;
-    SCENE.camera.position.y = camControls.camY;
-    SCENE.camera.position.z = camControls.camZ;
+    //
+    // SCENE.camera.position.x = camControls.camX;
+    // SCENE.camera.position.y = camControls.camY;
+    // SCENE.camera.position.z = camControls.camZ;
 
     // OBJ.water.scale.x = objControls.scaleX;
     // OBJ.water.scale.y = objControls.scaleY;
     // OBJ.water.scale.z = objControls.scaleZ;
 
-    OBJ.water.position.x = objControls.positionX;
-    OBJ.water.position.y = objControls.positionY;
-    OBJ.water.position.z = objControls.positionZ;
+    // OBJ.water.position.x = objControls.positionX;
+    // OBJ.water.position.y = objControls.positionY;
+    // OBJ.water.position.z = objControls.positionZ;
 }
 
 // UTIL ************************************************************************
@@ -308,9 +308,9 @@ const updateAnimationModel = (model) => {
 
 const addCamera = () => {
     SCENE.camera = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 0.1, 800)
-    SCENE.camera.position.x = -30;
-    SCENE.camera.position.y = 60;
-    SCENE.camera.position.z = 30;
+    SCENE.camera.position.x = -35;
+    SCENE.camera.position.y = 63;
+    SCENE.camera.position.z = 54;
     SCENE.camera.lookAt(scene.position);
 };
 
@@ -362,18 +362,52 @@ const addLight = () => {
     scene.add(spotLight);
 }
 
+const addCloud = () => {
+    var c = Cloud(); 
+    scene.add(c);
+}
+
+var Cloud = () => {
+    var mesh = new THREE.Object3D();
+    var geom = new THREE.BoxGeometry(20,20,20);
+    var mat = new THREE.MeshPhongMaterial({color: color.white});
+
+    // duplicate the geometry a random number of times
+	var nBlocs = 3+Math.floor(Math.random()*3);
+	for (var i=0; i<nBlocs; i++ ){
+
+		// create the mesh by cloning the geometry
+		var m = new THREE.Mesh(geom, mat);
+
+		// set the position and the rotation of each cube randomly
+		m.position.x = i*15;
+		m.position.y = Math.random()*10;
+		m.position.z = Math.random()*10;
+		m.rotation.z = Math.random()*Math.PI*2;
+		m.rotation.y = Math.random()*Math.PI*2;
+
+		// set the size of the cube randomly
+		var s = .1 + Math.random()*.9;
+		m.scale.set(s,s,s);
+
+		// allow each cube to cast and to receive shadows
+		m.castShadow = true;
+		m.receiveShadow = true;
+
+		// add the cube to the container we first created
+		mesh.add(m);
+	}
+    return mesh;
+}
+
 const addGround = () => {
     var geo = new THREE.BoxGeometry(100, 100, 100);
     var mat = new THREE.MeshLambertMaterial({color: color.green});
-
     OBJ.water = new THREE.Mesh(geo, mat)
-
     OBJ.water.castShadow = true;
-
     OBJ.water.position.x = 1.5;
     OBJ.water.position.y = -51;
     OBJ.water.position.z = -7.4;
-
     scene.add(OBJ.water);
 }
 
@@ -555,6 +589,7 @@ var renderScene3D = () => {
     addRenderer();
     addPlane();
     addGrid3D();
+    addCloud();
     addGround();
     loop3D();
     getObjectsByName(scene, 'cube');
@@ -749,15 +784,24 @@ const generateID = () => {
     return gameID;
 }
 
-const initGame = (gameID) => {
+const initGame = (gameID, state) => {
     var windowWidth = $(window).width();
     board.gameID = gameID;
-    if(windowWidth <= 800) {
-        board.gameDim = '2d';
-        init2D();
-    } else {
+
+    if (state === undefined) {
+        if(windowWidth <= 800) {
+            board.gameDim = '2d';
+            init2D();
+        } else {
+            board.gameDim = '3d';
+            init3D();
+        }
+    } else if (state === '3d') {
         board.gameDim = '3d';
         init3D();
+    } else if (state === '2d') {
+        board.gameDim = '2d';
+        init2D();
     }
 }
 
@@ -847,6 +891,6 @@ socket.on("connect", () => {
     // DEV STUFF ********************************
     // LAUNCH GAME ON STARTUP
     socket.emit('connect:host', generateID());
-    initGame();
+    initGame('DEV', '3d');
 
 })
