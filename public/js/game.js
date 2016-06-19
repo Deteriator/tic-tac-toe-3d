@@ -432,7 +432,6 @@ const createSky = () => {
         cloud.rotation.y = angle + Math.PI / 8;
         cloud.position.y =  -500 + Math.random() * 1000; // play with these'
 
-
         cloud.scale.set(scale, scale, scale);
 
         mesh.add(cloud);
@@ -446,14 +445,26 @@ const addObjectToScene = (scene, state, name, object) => {
     scene.add(state[name]);
 }
 
-const addGround = () => {
-    var geo = new THREE.BoxGeometry(100, 100, 100);
-    var mat = new THREE.MeshLambertMaterial({color: color.green});
+
+const createWater = () => {
+    
+}
+
+const addWater = () => {
+
+    var geo = new THREE.SphereGeometry(40, 40, 40);
+    var mat = new THREE.MeshLambertMaterial({color: color.blue});
+    geo.applyMatrix(new THREE.Matrix4().makeRotationX(-Math.PI/2));
+    geo.mergeVertices();
+
+    var l = geo.vertices.length;
+
     OBJ.water = new THREE.Mesh(geo, mat)
     OBJ.water.castShadow = true;
     OBJ.water.position.x = 1.5;
     OBJ.water.position.y = -51;
     OBJ.water.position.z = -7.4;
+
     scene.add(OBJ.water);
 }
 
@@ -651,7 +662,7 @@ var renderScene3D = () => {
     addPlane();
     addGrid3D();
     addObjectToScene(scene, OBJ, 'sky', createSky())
-    addGround();
+    addWater();
     loop3D();
     getObjectsByName(scene, 'cube');
 }
