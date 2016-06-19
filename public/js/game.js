@@ -314,6 +314,10 @@ const addCamera = () => {
     SCENE.camera.lookAt(scene.position);
 };
 
+const addOrbitControls = () => {
+    SCENE.orbitControls = new THREE.OrbitControls(SCENE.camera);
+};
+
 const addRenderer = () => {
     SCENE.renderer = new THREE.WebGLRenderer({alpha: true, antialias: true});
     SCENE.renderer.setSize(window.innerWidth, window.innerHeight);
@@ -375,17 +379,14 @@ const Cloud = () => {
     // duplicate the geometry a random number of times
 	var nBlocs = 3+Math.floor(Math.random()*3);
 	for (var i=0; i<nBlocs; i++ ){
-
 		// create the mesh by cloning the geometry
 		var m = new THREE.Mesh(geom, mat);
-
 		// set the position and the rotation of each cube randomly
 		m.position.x = i*15;
 		m.position.y = Math.random()*10;
 		m.position.z = Math.random()*10;
 		m.rotation.z = Math.random()*Math.PI*2;
 		m.rotation.y = Math.random()*Math.PI*2;
-
 		// set the size of the cube randomly
 		var s = .1 + Math.random()*.9;
 		m.scale.set(s,s,s);
@@ -397,6 +398,7 @@ const Cloud = () => {
 		// add the cube to the container we first created
 		mesh.add(m);
 	}
+
     return mesh;
 }
 
@@ -586,6 +588,7 @@ var loop3D = () => {
 var renderScene3D = () => {
     addLight();
     addCamera();
+    addOrbitControls();
     addRenderer();
     addPlane();
     addGrid3D();
