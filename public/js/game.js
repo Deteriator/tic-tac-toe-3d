@@ -383,13 +383,16 @@ const createCloud = () => {
 		// create the mesh by cloning the geometry
 		var m = new THREE.Mesh(geom, mat);
 		// set the position and the rotation of each cube randomly
-		m.position.x = i*15;
-		m.position.y = Math.random()*10;
-		m.position.z = Math.random()*10;
+
+        var f = .3;
+
+		m.position.x = i*15 * f;
+		m.position.y = Math.random()*10 * f;
+		m.position.z = Math.random()*10 * f;
 		m.rotation.z = Math.random()*Math.PI*2;
 		m.rotation.y = Math.random()*Math.PI*2;
 		// set the size of the cube randomly
-		var s = .1 + Math.random()*.9;
+		var s = .1 + Math.random()*.9 * f;
 		m.scale.set(s,s,s);
 
 		// allow each cube to cast and to receive shadows
@@ -407,7 +410,7 @@ const createSky = () => {
 
     var mesh = new THREE.Object3D();
 
-    var nClouds = 90;
+    var nClouds = 300;
 
     var stepAngle = Math.PI*2 / nClouds;
 
@@ -416,7 +419,7 @@ const createSky = () => {
         var cloud = createCloud();
 
         var angle = stepAngle * i;
-        var height = 300 + Math.random() * 200; // play with these
+        var height = 200 + Math.random() * 200; // play with these
         var scale = 1 + Math.random() * 2;
 
         // cloud.position.y = Math.sin(angle) * height;
@@ -427,7 +430,7 @@ const createSky = () => {
         cloud.position.x = Math.sin(angle) * height;
         cloud.position.z = Math.cos(angle) * height;
         cloud.rotation.y = angle + Math.PI / 8;
-        cloud.position.y =  200 - Math.random() * 400; // play with these'
+        cloud.position.y =  -500 + Math.random() * 1000; // play with these'
 
 
         cloud.scale.set(scale, scale, scale);
@@ -520,6 +523,10 @@ const sinkCube = (model, cube) => {
     }
 }
 
+const rotateSky = (sky) => {
+    sky.rotation.y += 0.0007;
+}
+
 const changeCubeColor = (sceneObject, model) => {
     sceneObject.children.forEach(function(object) {
         if(object.name.slice(0, 4) === "cube") {
@@ -545,8 +552,10 @@ const animateObjects = (sceneObject, model, callback) => {
 
 const updateAnimation = (model) => {
     var newModel = updateAnimationModel(model);
+    rotateSky(OBJ.sky);
     animateObjects(getObjectsByName(scene, 'cube'), model, rotateCube);
     animateObjects(getObjectsByName(scene, 'cube'), model, sinkCube);
+
 };
 
 const updateRender3D = (sceneObject, model) => {
@@ -650,7 +659,7 @@ var renderScene3D = () => {
 const init3D = () => {
     gameWrapper.innerHTML = "";
     scene = new THREE.Scene();
-    scene.fog = new THREE.Fog( 0xf7d9aa, 0.015, 800 );
+    scene.fog = new THREE.Fog( 0xf7d9aa, 0.015, 400 );
     renderScene3D();
     gameWrapper.appendChild(SCENE.renderer.domElement);
     document.addEventListener('mousedown', clickHandler3D, false);
