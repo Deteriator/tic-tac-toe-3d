@@ -316,7 +316,7 @@ const addCamera = () => {
 
 const addOrbitControls = () => {
     SCENE.orbitControls = new THREE.OrbitControls(SCENE.camera);
-    SCENE.orbitControls.autoRotate = true;
+    // SCENE.orbitControls.autoRotate = true;
     SCENE.clock = new THREE.Clock();
 };
 
@@ -369,11 +369,10 @@ const addLight = () => {
 }
 
 const addCloud = () => {
-    var c = Cloud();
-    scene.add(c);
+    return createCloud();
 }
 
-const Cloud = () => {
+const createCloud = () => {
     var mesh = new THREE.Object3D();
     var geom = new THREE.BoxGeometry(20,20,20);
     var mat = new THREE.MeshPhongMaterial({color: color.white});
@@ -402,6 +401,39 @@ const Cloud = () => {
 	}
 
     return mesh;
+}
+
+const createSky = () => {
+
+    var mesh = new THREE.Object3D();
+
+    var nClouds = 20;
+
+    var stepAngle = Math.PI*2 / nClouds;
+
+    for (let i = 0; i < nClouds; i += 1) {
+
+        var cloud = createCloud();
+
+        var angle = stepAngle * i;
+        var height = 10 + Math.random() * 200; // play with these
+        var scale = 1 + Math.random() * 2;
+
+        cloud.position.y = Math.sin(angle) * height;
+        cloud.position.x = Math.cos(angle) * height;
+        cloud.rotation.z = angle + Math.PI / 2;
+        cloud.position.z = -20-Math.random() * 400; // play with these
+        cloud.scale.set(scale, scale, scale);
+
+        mesh.add(cloud);
+    }
+
+    return mesh;
+}
+
+const addObjectToScene = (scene, state, name, object) => {
+    state[name] = object;
+    scene.add(state[name]);
 }
 
 const addGround = () => {
@@ -602,7 +634,7 @@ var renderScene3D = () => {
     addRenderer();
     addPlane();
     addGrid3D();
-    addCloud();
+    addObjectToScene(scene, OBJ, 'sky', createSky())
     addGround();
     loop3D();
     getObjectsByName(scene, 'cube');
@@ -611,7 +643,7 @@ var renderScene3D = () => {
 const init3D = () => {
     gameWrapper.innerHTML = "";
     scene = new THREE.Scene();
-    scene.fog = new THREE.Fog( 0xf7d9aa, 0.015, 160 );
+    scene.fog = new THREE.Fog( 0xf7d9aa, 0.015, 800 );
     renderScene3D();
     gameWrapper.appendChild(SCENE.renderer.domElement);
     document.addEventListener('mousedown', clickHandler3D, false);
