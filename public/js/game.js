@@ -178,18 +178,31 @@ const color = {
   pink        : 0xF5986E,
   brownDark   : 0x23190f,
   blue        : 0x68c3c0,
+  green       : 0xBED730,
 }
 
 // DEV *************************************************************************
 
-const controls = new function () {
+var camControls = new function () {
     this.rotationSpeed = 0
     this.camX = -30
     this.camY = 60
     this.camZ = 30
 }
 
+var objControls = new function () {
+    // this.scaleX = 1
+    // this.scaleY = 1
+    // this.scaleZ = 1
+    this.positionX = 1
+    this.positionY = 1
+    this.positionZ = 1
+
+}
+
+
 const createGUIHelper = () => {
+
     const gui = new dat.GUI();
 
     [ [ 'rotationSpeed', 0, 1 ]
@@ -198,9 +211,44 @@ const createGUIHelper = () => {
     , [ 'camZ', 0, 100 ]
     ]
     .forEach( ([prop, low, high]) => {
-        gui.add( controls, prop, low, high );
-    })
+        gui.add( camControls, prop, low, high );
+    });
+
+    var cube1Folder = gui.addFolder('Cube_1');
+
+    [
+    //   [ 'scaleX', 0, 5, .001 ]
+    // , [ 'scaleY', 0, 5, .001 ]
+    // , [ 'scaleZ', 0, 5, .001 ]
+    // ,
+      [ 'positionX', -100, 100, .001 ]
+    , [ 'positionY', -100, 100, .001 ]
+    , [ 'positionZ', -100, 100, .001 ]
+    ]
+    .forEach( ([prop, low, high]) => {
+        cube1Folder.add( objControls, prop, low, high );
+    });
+
 };
+
+const devAnimations = () => {
+
+    OBJ.cube.rotation.x += camControls.rotationSpeed;
+    OBJ.cube.rotation.z += camControls.rotationSpeed;
+    OBJ.cube.position.x += camControls.rotationSpeed;
+    //
+    // SCENE.camera.position.x = camControls.camX;
+    // SCENE.camera.position.y = camControls.camY;
+    // SCENE.camera.position.z = camControls.camZ;
+
+    // OBJ.water.scale.x = objControls.scaleX;
+    // OBJ.water.scale.y = objControls.scaleY;
+    // OBJ.water.scale.z = objControls.scaleZ;
+
+    // OBJ.water.position.x = objControls.positionX;
+    // OBJ.water.position.y = objControls.positionY;
+    // OBJ.water.position.z = objControls.positionZ;
+}
 
 // UTIL ************************************************************************
 
@@ -260,10 +308,16 @@ const updateAnimationModel = (model) => {
 
 const addCamera = () => {
     SCENE.camera = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 0.1, 800)
-    SCENE.camera.position.x = -30;
-    SCENE.camera.position.y = 60;
-    SCENE.camera.position.z = 30;
+    SCENE.camera.position.x = -35;
+    SCENE.camera.position.y = 63;
+    SCENE.camera.position.z = 54;
     SCENE.camera.lookAt(scene.position);
+};
+
+const addOrbitControls = () => {
+    SCENE.orbitControls = new THREE.OrbitControls(SCENE.camera);
+    // SCENE.orbitControls.autoRotate = true;
+    SCENE.clock = new THREE.Clock();
 };
 
 const addRenderer = () => {
@@ -316,6 +370,144 @@ const addLight = () => {
     spotLight.position.set( -40, 60, -10 );
     spotLight.castShadow = true;
     scene.add(spotLight);
+}
+
+const addCloud = () => {
+    return createCloud();
+}
+
+const createCloud = () => {
+    var mesh = new THREE.Object3D();
+    var geom = new THREE.BoxGeometry(20,20,20);
+    var mat = new THREE.MeshPhongMaterial({color: color.white});
+
+    // duplicate the geometry a random number of times
+	var nBlocs = 3+Math.floor(Math.random()*3);
+	for (var i=0; i<nBlocs; i++ ){
+		// create the mesh by cloning the geometry
+		var m = new THREE.Mesh(geom, mat);
+		// set the position and the rotation of each cube randomly
+
+        var f = .3;
+
+		m.position.x = i*15 * f;
+		m.position.y = Math.random()*10 * f;
+		m.position.z = Math.random()*10 * f;
+		m.rotation.z = Math.random()*Math.PI*2;
+		m.rotation.y = Math.random()*Math.PI*2;
+		// set the size of the cube randomly
+		var s = .1 + Math.random()*.9 * f;
+		m.scale.set(s,s,s);
+
+		// allow each cube to cast and to receive shadows
+		m.castShadow = true;
+		m.receiveShadow = true;
+
+		// add the cube to the container we first created
+		mesh.add(m);
+	}
+
+    return mesh;
+}
+
+const createSky = () => {
+
+    var mesh = new THREE.Object3D();
+
+    var nClouds = 600;
+
+    var stepAngle = Math.PI*2 / nClouds;
+
+    for (let i = 0; i < nClouds; i += 1) {
+
+        var cloud = createCloud();
+
+        var angle = stepAngle * i;
+        var height = 200 + Math.random() * 200; // play with these
+        var scale = 1 + Math.random() * 2;
+
+        // cloud.position.y = Math.sin(angle) * height;
+        // cloud.position.x = Math.cos(angle) * height;
+        // cloud.rotation.z = angle + Math.PI / 2;
+        // cloud.position.z = -200 - Math.random() * 400; // play with these'
+
+        cloud.position.x = Math.sin(angle) * height;
+        cloud.position.z = Math.cos(angle) * height;
+        cloud.rotation.y = angle + Math.PI / 8;
+        cloud.position.y =  -500 + Math.random() * 1000; // play with these'
+
+        cloud.scale.set(scale, scale, scale);
+
+        mesh.add(cloud);
+    }
+
+    return mesh;
+}
+
+const addObjectToScene = (scene, state, name, object) => {
+    state[name] = object;
+    scene.add(state[name]);
+}
+
+
+const createWater = () => {
+
+    var geom = new THREE.SphereGeometry(40, 9, 9);
+    var mat = new THREE.MeshPhongMaterial(
+        { color : color.blue
+        , transparent: false
+        , opacity: 0.6
+        , shading: THREE.FlatShading
+        }
+    );
+
+    var water = new THREE.Mesh(geom, mat);
+
+    water.receiveShadow = true;
+
+    // rotate geomtry on the x-axis
+
+    geom.applyMatrix(new THREE.Matrix4().makeRotationX(-Math.PI/2));
+    geom.mergeVertices();
+
+    var l = geom.vertices.length;
+    // debugger;
+
+    water.castShadow = true;
+    water.position.x = 1.5;
+    water.position.y = -51;
+    water.position.z = -7.4;
+
+    water.waves = []
+
+    geom.vertices.map((v) => {
+        {
+
+        }
+    })
+
+    water.moveWaves = function () {
+
+        var verts = this.geometry.vertices;
+
+        for (let i = 0; i < verts.length; i += 1) {
+            var v = verts[i];
+
+        }
+
+
+    }
+
+    return water;
+
+
+}
+
+// ANIMATION *******************************************************************
+
+const updateControls = (clock, controls) => {
+    var delta = clock.getDelta();
+    controls.update(delta);
 }
 
 const updateColor = (object) => {
@@ -377,6 +569,16 @@ const sinkCube = (model, cube) => {
     }
 }
 
+const rotateSky = (sky) => {
+    sky.rotation.y += 0.002;
+}
+
+const roatateWater = (water) => {
+    water.rotation.z += 0.007;
+    water.rotation.x += 0.007;
+    water.rotation.y += 0.007;
+}
+
 const changeCubeColor = (sceneObject, model) => {
     sceneObject.children.forEach(function(object) {
         if(object.name.slice(0, 4) === "cube") {
@@ -402,8 +604,11 @@ const animateObjects = (sceneObject, model, callback) => {
 
 const updateAnimation = (model) => {
     var newModel = updateAnimationModel(model);
+    roatateWater(OBJ.water);
+    rotateSky(OBJ.sky);
     animateObjects(getObjectsByName(scene, 'cube'), model, rotateCube);
     animateObjects(getObjectsByName(scene, 'cube'), model, sinkCube);
+
 };
 
 const updateRender3D = (sceneObject, model) => {
@@ -484,12 +689,8 @@ const clickHandler3D = (evt) => {
 };
 
 var loop3D = () => {
-    OBJ.cube.rotation.x += controls.rotationSpeed;
-    OBJ.cube.rotation.z += controls.rotationSpeed;
-    OBJ.cube.position.x += controls.rotationSpeed;
-    SCENE.camera.position.x = controls.camX;
-    SCENE.camera.position.y = controls.camY;
-    SCENE.camera.position.z = controls.camZ;
+    devAnimations();
+    updateControls(SCENE.clock, SCENE.orbitControls);
     updateAnimation(board);
     requestAnimationFrame(loop3D);
     SCENE.renderer.render(scene, SCENE.camera);
@@ -498,9 +699,12 @@ var loop3D = () => {
 var renderScene3D = () => {
     addLight();
     addCamera();
+    addOrbitControls();
     addRenderer();
-    addPlane();
+    // addPlane();
     addGrid3D();
+    addObjectToScene(scene, OBJ, 'sky', createSky())
+    addObjectToScene(scene, OBJ, 'water', createWater())
     loop3D();
     getObjectsByName(scene, 'cube');
 }
@@ -508,7 +712,7 @@ var renderScene3D = () => {
 const init3D = () => {
     gameWrapper.innerHTML = "";
     scene = new THREE.Scene();
-    scene.fog = new THREE.Fog( 0xf7d9aa, 0.015, 160 );
+    scene.fog = new THREE.Fog( 0xf7d9aa, 0.015, 400 );
     renderScene3D();
     gameWrapper.appendChild(SCENE.renderer.domElement);
     document.addEventListener('mousedown', clickHandler3D, false);
@@ -694,15 +898,24 @@ const generateID = () => {
     return gameID;
 }
 
-const initGame = (gameID) => {
+const initGame = (gameID, state) => {
     var windowWidth = $(window).width();
     board.gameID = gameID;
-    if(windowWidth <= 800) {
-        board.gameDim = '2d';
-        init2D();
-    } else {
+
+    if (state === undefined) {
+        if(windowWidth <= 800) {
+            board.gameDim = '2d';
+            init2D();
+        } else {
+            board.gameDim = '3d';
+            init3D();
+        }
+    } else if (state === '3d') {
         board.gameDim = '3d';
         init3D();
+    } else if (state === '2d') {
+        board.gameDim = '2d';
+        init2D();
     }
 }
 
@@ -790,9 +1003,8 @@ socket.on("connect", () => {
     init();
 
     // DEV STUFF ********************************
-
     // LAUNCH GAME ON STARTUP
     socket.emit('connect:host', generateID());
-    initGame();
+    initGame('DEV', '3d');
 
 })
