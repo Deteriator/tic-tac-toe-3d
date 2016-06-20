@@ -285,6 +285,10 @@ const addPlane = () => {
     scene.add(plane);
 };
 
+const addWater = () => {
+
+}
+
 const addGrid3D = () => {
     var cubeId = 0;
     for (var h = 0; h < 3; h += 1) {
