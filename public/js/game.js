@@ -474,25 +474,34 @@ const createWater = () => {
     water.position.y = -51;
     water.position.z = -7.4;
 
-    water.waves = []
-
-    geom.vertices.map((v) => {
-        {
-
+    water.waves = geom.vertices.map((v) => {
+        return {
+            y: v.y,
+            x: v.x,
+            z: v.z,
+            ang: Math.random() * Math.PI * 2,
+            amp: 5 + Math.random() * Math.PI * 2,
+            speed: 0.016 + Math.random() * 0.032,
         }
-    })
+    });
 
     water.moveWaves = function () {
 
-        var verts = this.geometry.vertices;
+        var verts = water.geometry.vertices;
 
-        for (let i = 0; i < verts.length; i += 1) {
-            var v = verts[i];
+        verts.forEach(function (vert, i) {
+            // console.log(water.waves[i]);
+            var vprops = water.waves[i];
+            vert.x = vprops.x + Math.cos(vprops.ang)*vprops.amp;
+		    vert.y = vprops.y + Math.sin(vprops.ang)*vprops.amp;
+            vprops.ang += vprops.speed;
 
-        }
+        })
 
-
+        this.geometry.verticesNeedUpdate=true;
     }
+
+
 
     return water;
 
@@ -689,6 +698,7 @@ var loop3D = () => {
     updateControls(SCENE.clock, SCENE.orbitControls);
     updateAnimation(board);
     requestAnimationFrame(loop3D);
+    OBJ.water.moveWaves()
     SCENE.renderer.render(scene, SCENE.camera);
 }
 
