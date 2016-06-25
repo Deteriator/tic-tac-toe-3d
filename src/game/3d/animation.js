@@ -2,7 +2,9 @@
 
 import { OBJ, SCENE, ANIM, scene, color, camControls, objControls, createGUIHelper, devAnimations, getObjectsByName, updateAnimationModel } from './model.js';
 
-// console.log('/3d/animation.js: ' , OBJ, SCENE, ANIM, scene, color, camControls, objControls, createGUIHelper, devAnimations, getObjectsByName, updateAnimationModel);
+import { addCamera, addOrbitControls, addRenderer, addPlane, addGrid3D, addCube, addLight, addCloud, createCloud, createSky, addObjectToScene, createWater } from './render.js'
+
+// console.log('/3d/animation.js: ' , addCamera, addOrbitControls, addRenderer, addPlane, addGrid3D, addCube, addLight, addCloud, createCloud, createSky, addObjectToScene, createWater);
 
 // ANIMATION *******************************************************************
 

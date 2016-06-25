@@ -1,8 +1,10 @@
+import { OBJ, SCENE, ANIM, scene, color, camControls, objControls, createGUIHelper, devAnimations, getObjectsByName, updateAnimationModel } from './model.js';
 
+// console.log('/3d/render.js: ' , OBJ, SCENE, ANIM, scene, color, camControls, objControls, createGUIHelper, devAnimations, getObjectsByName, updateAnimationModel);
 
 // RENDER **********************************************************************
 
-const addCamera = () => {
+export const addCamera = () => {
     SCENE.camera = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 0.1, 800)
     SCENE.camera.position.x = -35;
     SCENE.camera.position.y = 63;
@@ -10,19 +12,19 @@ const addCamera = () => {
     SCENE.camera.lookAt(scene.position);
 };
 
-const addOrbitControls = () => {
+export const addOrbitControls = () => {
     SCENE.orbitControls = new THREE.OrbitControls(SCENE.camera);
     // SCENE.orbitControls.autoRotate = true;
     SCENE.clock = new THREE.Clock();
 };
 
-const addRenderer = () => {
+export const addRenderer = () => {
     SCENE.renderer = new THREE.WebGLRenderer({alpha: true, antialias: true});
     SCENE.renderer.setSize(window.innerWidth, window.innerHeight);
     SCENE.renderer.shadowMap.enabled = true;
 };
 
-const addPlane = () => {
+export const addPlane = () => {
     var planeGeo = new THREE.PlaneGeometry(50, 50);
     var planeMat = new THREE.MeshLambertMaterial({color: color.blue});
     var plane = new THREE.Mesh(planeGeo, planeMat);
@@ -35,7 +37,7 @@ const addPlane = () => {
     scene.add(plane);
 };
 
-const addGrid3D = () => {
+export const addGrid3D = () => {
     var cubeId = 0;
     for (var h = 0; h < 3; h += 1) {
         for (var w = 0; w < 3; w += 1) {
@@ -45,7 +47,7 @@ const addGrid3D = () => {
     }
 };
 
-const addCube = (w, h, cubeId) => {
+export const addCube = (w, h, cubeId) => {
     var cubeGeo = new THREE.BoxGeometry(5, 5, 5);
     var cubeMat = new THREE.MeshLambertMaterial({color: color.red});
     OBJ.cube = new THREE.Mesh(cubeGeo, cubeMat);
@@ -57,18 +59,18 @@ const addCube = (w, h, cubeId) => {
     scene.add(OBJ.cube);
 }
 
-const addLight = () => {
+export const addLight = () => {
     var spotLight = new THREE.SpotLight( 0xffffff );
     spotLight.position.set( -40, 60, -10 );
     spotLight.castShadow = true;
     scene.add(spotLight);
 }
 
-const addCloud = () => {
+export const addCloud = () => {
     return createCloud();
 }
 
-const createCloud = () => {
+export const createCloud = () => {
     var mesh = new THREE.Object3D();
     var geom = new THREE.BoxGeometry(20,20,20);
     var mat = new THREE.MeshPhongMaterial({color: color.white});
@@ -102,7 +104,7 @@ const createCloud = () => {
     return mesh;
 }
 
-const createSky = () => {
+export const createSky = () => {
 
     var mesh = new THREE.Object3D();
 
@@ -136,13 +138,13 @@ const createSky = () => {
     return mesh;
 }
 
-const addObjectToScene = (scene, state, name, object) => {
+export const addObjectToScene = (scene, state, name, object) => {
     state[name] = object;
     scene.add(state[name]);
 }
 
 
-const createWater = () => {
+export const createWater = () => {
 
     var geom = new THREE.SphereGeometry(60, 20, 20);
     var mat = new THREE.MeshPhongMaterial(

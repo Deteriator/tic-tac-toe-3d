@@ -32,7 +32,7 @@ import './game/util.js';
 import './game/model.js';
 
 import './game/3d/model.js';
-// import './game/3d/render.js';
+import './game/3d/render.js';
 import './game/3d/animation.js';
 // import './game/3d/events.js';
 //
