@@ -1,12 +1,9 @@
-import { socket, ArrforEachProto, createNode, gameWrapper } from './util.js'
+import { ArrforEachProto, createNode, gameWrapper } from './util.js'
 
 console.log(socket);
 
-const playerO = 'o'
-const playerX = 'x'
-
-// board constructor
-const createBoard = (dimension) => {
+// board export constructor
+export const createBoard = (dimension) => {
   return {
     turn        : playerO,
     boxes       : (new Array(9)).fill(null),
@@ -24,18 +21,18 @@ const createBoard = (dimension) => {
   }
 }
 
-const board = createBoard();
+board = createBoard();
 
-const resetModel = (model) => {
+export const resetModel = (model) => {
     model = createBoard()
 }
 
-const resetBoxes = (model) => {
+export const resetBoxes = (model) => {
     model.boxes = (new Array(9).fill(null));
     return model.boxes;
 }
 
-const updateModel = (model, boxId) => {
+export const updateModel = (model, boxId) => {
     var model = model
 
     //if multiplayer without another player
@@ -78,7 +75,7 @@ const updateModel = (model, boxId) => {
     return model;
 }
 
-const isWin = (model) => {
+export const isWin = (model) => {
     var drawCounter = 0;
     var topLeft = model.boxes[0];
     var topMid = model.boxes[1];

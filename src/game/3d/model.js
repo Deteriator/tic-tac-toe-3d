@@ -7,7 +7,7 @@ import { socket, ArrforEachProto, createNode, gameWrapper } from '../util.js'
 export const OBJ = {}
 export const SCENE = {}
 export const ANIM = {}
-export var scene;
+// export var scene;
 
 export const color = {
   red         : 0xf25346,

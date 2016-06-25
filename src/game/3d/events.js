@@ -1,9 +1,23 @@
+
+import { OBJ, SCENE, ANIM, color, camControls, objControls, createGUIHelper, devAnimations, getObjectsByName, updateAnimationModel } from './model.js';
+
+import { addCamera, addOrbitControls, addRenderer, addPlane, addGrid3D, addCube, addLight, addCloud, createCloud, createSky, addObjectToScene, createWater } from './render.js'
+
+import { updateControls, updateColor, rotateCube, sinkCube, rotateSky, rotateWater, changeCubeColor, animateObjects, updateAnimation, updateRender3d } from './animation.js'
+
+// console.log('/3d/events.js: ',updateControls, updateColor, rotateCube, sinkCube, rotateSky, rotateWater, changeCubeColor, animateObjects, updateAnimation, updateRender3d );
+
+
 // EVENTS **********************************************************************
 
 // What we need to do is listen for click events from the DOM version
 //
 
-const socketHandler3D = (data) => {
+LOLS.sickmate = 'lol';
+
+console.log(LOLS);
+
+export const socketHandler3D = (data) => {
 
     // origin client event
         // mark x on thing
@@ -28,7 +42,7 @@ const socketHandler3D = (data) => {
     updateRender3D(scene, newModel);
 }
 
-const clickHandler3D = (evt) => {
+export const clickHandler3D = (evt) => {
     // vector is created based on the position that
     // we've clicked on, on the screen.
 
@@ -71,7 +85,7 @@ const clickHandler3D = (evt) => {
     updateRender3D(scene, newModel);
 };
 
-var loop3D = () => {
+export var loop3D = () => {
     devAnimations();
     updateControls(SCENE.clock, SCENE.orbitControls);
     updateAnimation(board);
@@ -80,7 +94,7 @@ var loop3D = () => {
     SCENE.renderer.render(scene, SCENE.camera);
 }
 
-var renderScene3D = () => {
+export var renderScene3D = () => {
     addLight();
     addCamera();
     addOrbitControls();
@@ -93,7 +107,7 @@ var renderScene3D = () => {
     getObjectsByName(scene, 'cube');
 }
 
-const init3D = () => {
+export const init3D = () => {
     gameWrapper.innerHTML = "";
     scene = new THREE.Scene();
     scene.fog = new THREE.Fog( 0xf7d9aa, 0.015, 400 );

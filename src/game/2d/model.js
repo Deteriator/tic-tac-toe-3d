@@ -1,4 +1,4 @@
-const reset2DModel = (model) => {
+export const reset2DModel = (model) => {
     // turn        : playerO,
     // boxes       : (new Array(9)).fill(null),
     // active      : true,

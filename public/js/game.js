@@ -773,7 +773,7 @@ const reset2DModel = (model) => {
 
 const renderState = (model, domNode) => {
     var gameState = document.createElement('div');
-        gameStateString = " "
+        var gameStateString = " "
         gameStateString += model.turn
         gameStateString += ', ' + model.active
         gameStateString += ', ' + model.cutscene
@@ -1013,9 +1013,5 @@ socket.on("connect", () => {
     board.clientID = socket.id;
     init();
 
-    // DEV STUFF ********************************
-    // // LAUNCH GAME ON STARTUP
-    // socket.emit('connect:host', generateID());
-    // initGame('DEV', '3d');
 
 })

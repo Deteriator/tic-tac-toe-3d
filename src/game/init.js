@@ -1,6 +1,12 @@
+import { socketHandler3D, clickHandler3D, loop3D, renderScene3D, init3D } from './3d/events.js'
+import { onSink, socketHandler2D, boxClick, init2D } from './2d/events.js'
+import $ from '../lib/jquery.js'
+
+
+
 const renderGameTypeScreen = () => {
-    gameType = $('<div>');
-    gameTypeList = $('<ul>')
+    var gameType = $('<div>');
+    var gameTypeList = $('<ul>')
     gameType.addClass('gameType');
     gameType.append(gameTypeList);
     gameTypeList.append('<li id="single"> <div> LONESOME </div> </li> ');
@@ -62,6 +68,8 @@ const initGame = (gameID, state) => {
 }
 
 const init = () => {
+
+    console.log('init() fired');
 
     board.clientID = socket.id;
 
@@ -148,5 +156,6 @@ socket.on("connect", () => {
     // // LAUNCH GAME ON STARTUP
     // socket.emit('connect:host', generateID());
     // initGame('DEV', '3d');
+    console.log('connected');
 
 })

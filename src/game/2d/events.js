@@ -1,13 +1,18 @@
-const onSink = (model, callback) => {
+import {createBoard, resetModel, resetBoxes, updateModel, isWin} from '../model.js'
+import {reset2DModel} from './model.js'
+
+// console.log('/2d/events.js: ', createBoard, resetModel, resetBoxes, updateModel, isWin);
+
+export const onSink = (model, callback) => {
     if(model.cutscene === 'sink') callback(model);
 }
 
-const socketHandler2D = (data, domNode) => {
+export const socketHandler2D = (data, domNode) => {
     var newModel = updateModel(board, data);
     render2D(newModel, domNode);
 }
 
-const boxClick = (model, gameNode) => {
+export const boxClick = (model, gameNode) => {
     return (event) => {
         var clickedId = event.currentTarget.dataset.box;
         console.log('clicked: ', clickedId);
@@ -25,7 +30,7 @@ const boxClick = (model, gameNode) => {
     }
 }
 
-const init2D = (gameID) => {
+export const init2D = (gameID) => {
     gameWrapper.innerHTML = "";
     var game2D = document.createElement('div')
         gameWrapper.appendChild(game2D);
