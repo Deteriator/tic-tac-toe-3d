@@ -168,7 +168,7 @@ const isWin = (model) => {
 
 const OBJ = {}
 const SCENE = {}
-const RENDER = {}
+const ANIM = {}
 var scene;
 
 const color = {
@@ -258,6 +258,15 @@ const getObjectsByName = (sceneObject, name) => {
       return item.name.split('-')[0] === name
     })
 }
+
+// ANIM STATE  *************************************************************
+
+ANIM.water = {
+    ampX: 0,
+    ampY: 0,
+    speed: 0
+}
+
 
 // ANIMATION MODEL *************************************************************
 
@@ -485,13 +494,13 @@ const createWater = () => {
         }
     });
 
-    water.moveWaves = function () {
+    water.moveWaves = function (spec) {
         water.geometry.vertices.forEach(function (vert, i) {
             // console.log(water.waves[i]);
             var vprops = water.waves[i];
-            vert.x = vprops.x + Math.cos(vprops.ang) * vprops.amp;
-		    vert.y = vprops.y + Math.sin(vprops.ang) * vprops.amp;
-            vprops.ang += vprops.speed;
+            vert.x = vprops.x + Math.cos(vprops.ang) * ( vprops.amp + spec.ampX);
+		    vert.y = vprops.y + Math.sin(vprops.ang) * ( vprops.amp + spec.ampY);
+            vprops.ang += vprops.speed + spec.speed;
         })
         water.geometry.verticesNeedUpdate=true;
     }
@@ -521,6 +530,7 @@ const rotateCube = (model, object) => {
 };
 
 const sinkCube = (model, cube) => {
+
     if(model.cutscene === 'sink') {
         var winPosArr = model.winPos;
         if(winPosArr.length >= 3) {
@@ -543,7 +553,7 @@ const sinkCube = (model, cube) => {
             } else {
                 // SINK WIN CUBES
                 if (cube.position.y >= -4) {
-                    cube.position.y -= 0.1 * Math.random();
+                    cube.position.y -= 0.09 * Math.random();
                 }
             }
         }
@@ -569,9 +579,9 @@ const rotateSky = (sky) => {
 }
 
 const roatateWater = (water) => {
-    water.rotation.z += 0.001;
-    water.rotation.x += 0.001;
-    water.rotation.y += 0.001;
+    // water.rotation.z += 0.001;
+    // water.rotation.x += 0.001;
+    water.rotation.y += 0.008;
 }
 
 const changeCubeColor = (sceneObject, model) => {
@@ -688,7 +698,7 @@ var loop3D = () => {
     updateControls(SCENE.clock, SCENE.orbitControls);
     updateAnimation(board);
     requestAnimationFrame(loop3D);
-    OBJ.water.moveWaves()
+    OBJ.water.moveWaves(ANIM.water)
     SCENE.renderer.render(scene, SCENE.camera);
 }
 
