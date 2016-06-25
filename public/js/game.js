@@ -256,7 +256,7 @@ const devAnimations = () => {
 const getObjectsByName = (sceneObject, name) => {
     return sceneObject.children.filter(item => {
       if (!item.name) { return false }
-      return item.name.split('-')[0] === name
+      return item.name.split('-')[0] === name;
     })
 }
 
@@ -769,7 +769,6 @@ const reset2DModel = (model) => {
     return newModel;
 }
 
-
 // RENDER **********************************************************************
 
 const renderState = (model, domNode) => {
@@ -1015,8 +1014,8 @@ socket.on("connect", () => {
     init();
 
     // DEV STUFF ********************************
-    // LAUNCH GAME ON STARTUP
-    socket.emit('connect:host', generateID());
-    initGame('DEV', '3d');
+    // // LAUNCH GAME ON STARTUP
+    // socket.emit('connect:host', generateID());
+    // initGame('DEV', '3d');
 
 })

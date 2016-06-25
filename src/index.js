@@ -1,3 +1,4 @@
+import './game/test.js'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { hashHistory, Router, Route, Redirect, Link } from 'react-router';
@@ -27,4 +28,4 @@ const Game = () => {
 ReactDOM.render(<App/> , document.getElementById('master'))
 
 // using react would be
-    //
+//
