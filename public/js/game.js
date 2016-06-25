@@ -300,6 +300,10 @@ const updateAnimationModel = (model) => {
     if(sinkCounter === cubeAmount) {
         model.cutscene = 'rise';
         model.boxes = [null, null, null, null, null, null, null, null, null];
+        ANIM.water = {  ampX: 1
+                     ,  ampY: 1
+                     , speed: 0.2
+                    };
     }
 
     if (riseCounter === cubeAmount) {
@@ -308,6 +312,10 @@ const updateAnimationModel = (model) => {
             socket.emit('game:state', true);
         }
         model.active = true;
+        ANIM.water = {  ampX: 0
+                     ,  ampY: 0
+                     , speed: 0
+                    };
     }
 
     return newModel;
