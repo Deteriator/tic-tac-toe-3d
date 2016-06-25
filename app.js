@@ -124,15 +124,30 @@ io.on('connection', (socket) => {
         var gameState = {}
             gameState.state = data;
         var currentRoom = getCurrentRoom(socket.rooms);
+
         socket.to(currentRoom)
             .emit('game:state', gameState);
     });
 
     socket.on('connect:host', (gameID) => {
         console.log('connecting to ' + gameID);
+        var rooms = getRooms(io.sockets.adapter.rooms);
+        console.log('rooms: ', rooms);
+        var openRooms = getOpenRooms(rooms); // instead of getting all rooms
+        console.log('openRooms: ', openRooms);
         socket.join(gameID, () => {
-            addUniqueToArray(currentRooms, gameID);
-            io.emit('gamelist:added', gameID);
+
+            if (Object.keys(rooms).length === 0) {
+                console.log('sending gameID')
+                addUniqueToArray(currentRooms, gameID);
+                io.emit('gamelist:added', [gameID]);
+            } else {
+                console.log('sending found ID');
+                addUniqueToArray(currentRooms, gameID);
+                io.emit('gamelist:added', openRooms);
+            }
+
+
         })
     });
 
@@ -162,10 +177,12 @@ io.on('connection', (socket) => {
         var openRooms = getOpenRooms(rooms); // instead of getting all rooms
         if(openRooms.length) {
 
+
+
             openRooms.forEach((room) => {
 
                 // ADDINIG WHEN ANY PLAYER DISCONNECTS
-                io.emit('gamelist:added', room)
+                io.emit('gamelist:added', openRooms);
                 var otherPlayer = getOtherPlayer(room, socket.id, socket)
                 console.log('getOtherPlayer: ', otherPlayer);
 

@@ -33,6 +33,7 @@ const createBoard = (dimension) => {
     clientID    : null,
     water       : { ampX: 0, ampY: 0, speed: 0 },
     firstTurn   : 1,
+    screen     : '',
   }
 }
 
@@ -924,7 +925,7 @@ const generateID = () => {
 const initGame = (gameID, state) => {
     var windowWidth = $(window).width();
     board.gameID = gameID;
-
+    board.screen = 'game';
     if (state === undefined) {
         if(windowWidth <= 800) {
             board.gameDim = '2d';
@@ -940,12 +941,15 @@ const initGame = (gameID, state) => {
         board.gameDim = '2d';
         init2D();
     }
+
+
 }
 
 const init = () => {
 
     board.clientID = socket.id;
 
+    board.screen = 'type';
     renderGameTypeScreen();
 
     $(document).on('click', '#single', (e) => {
@@ -957,6 +961,7 @@ const init = () => {
         board.gameType = "multi";
         // render game list screen
         renderGameList();
+        board.screen = 'list';
     });
 
     $(document).on('click', "#createGame", (e) => {
@@ -989,20 +994,19 @@ const init = () => {
     })
 
     // GAME LIST EVENTS
-
-
     socket.on('gamelist:added', (data) => {
-        console.log('socket - gamelist:added')
         console.log('gamelist:added,', data);
-        board.games = []; 
-        board.games.push(data);
-        console.log(board.games);
+        board.games = data;
+        if (board.screen === 'list') {
+            console.log('rendering new list');
+            renderGameList();
+        }
     });
 
-    socket.on('gamelist:removed', (data) => {
-        console.log('gamelist:removed', data);
-        board.games.slice(board.games.indexOf(data), board.games.indexOf(data) + 1);
-    })
+    // socket.on('gamelist:removed', (data) => {
+    //     console.log('gamelist:removed', data);
+    //     board.games.slice(board.games.indexOf(data), board.games.indexOf(data) + 1);
+    // })
 
     socket.on('gamelist:all', (data) => {
         console.log('socket - gamelist:all: ', data);
