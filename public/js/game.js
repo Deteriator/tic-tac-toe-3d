@@ -994,13 +994,14 @@ const init = () => {
     socket.on('gamelist:added', (data) => {
         console.log('socket - gamelist:added')
         console.log('gamelist:added,', data);
+        board.games = []; 
         board.games.push(data);
         console.log(board.games);
     });
 
     socket.on('gamelist:removed', (data) => {
         console.log('gamelist:removed', data);
-        board.games = data;
+        board.games.slice(board.games.indexOf(data), board.games.indexOf(data) + 1);
     })
 
     socket.on('gamelist:all', (data) => {
