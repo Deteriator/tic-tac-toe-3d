@@ -1003,12 +1003,13 @@ const init = () => {
 
     socket.on('game:state', (data) => {
         console.log('recieved oponent game state: ', data);
-        var gameNode = document.getElementById('inner2D'); 
+        var gameNode = document.getElementById('inner2D');
         if (data.state === true) {
             onSink(board, () => {
                 console.log('on sink callback ------')
                 console.log(reset2DModel(board).boxes);
                 render2D(board, gameNode);
+                forEachElementByClass('box', addListener('click', boxClick(board, gameNode)));
             });
         }
     })
