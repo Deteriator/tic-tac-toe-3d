@@ -30,7 +30,8 @@ const createBoard = (dimension) => {
     gameDim     : dimension,
     games       : [],
     opponentID  : null,
-    clientID    : null
+    clientID    : null,
+    water       : { ampX: 0, ampY: 0, speed: 0 }
   }
 }
 
@@ -261,11 +262,7 @@ const getObjectsByName = (sceneObject, name) => {
 
 // ANIM STATE  *************************************************************
 
-ANIM.water = {
-    ampX: 0,
-    ampY: 0,
-    speed: 0
-}
+
 
 
 // ANIMATION MODEL *************************************************************
@@ -300,7 +297,8 @@ const updateAnimationModel = (model) => {
     if(sinkCounter === cubeAmount) {
         model.cutscene = 'rise';
         model.boxes = [null, null, null, null, null, null, null, null, null];
-        ANIM.water = {  ampX: 1
+
+        model.water = {  ampX: 1
                      ,  ampY: 1
                      , speed: 0.2
                     };
@@ -312,7 +310,7 @@ const updateAnimationModel = (model) => {
             socket.emit('game:state', true);
         }
         model.active = true;
-        ANIM.water = {  ampX: 0
+        model.water = {  ampX: 0
                      ,  ampY: 0
                      , speed: 0
                     };
@@ -706,7 +704,7 @@ var loop3D = () => {
     updateControls(SCENE.clock, SCENE.orbitControls);
     updateAnimation(board);
     requestAnimationFrame(loop3D);
-    OBJ.water.moveWaves(ANIM.water)
+    OBJ.water.moveWaves(board.water)
     SCENE.renderer.render(scene, SCENE.camera);
 }
 
