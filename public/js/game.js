@@ -741,6 +741,8 @@ const init3D = () => {
 // *****************************************************************************
 // -----------------------------------------------------------------------------
 
+var winAnimation2D;
+
 const reset2DModel = (model) => {
     // turn        : playerO,
     // boxes       : (new Array(9)).fill(null),
@@ -808,6 +810,12 @@ const render2D = (model, domNode) => {
         renderBox(currentPlay, index, domNode);
     });
     renderState(model, domNode);
+    if (model.active === false) {
+        console.log('initialising interval');
+        winAnimation2D = setInterval(() => {
+            console.log('sup');
+        }, 500);
+    }
 }
 
 const addListener = (action, callback) => {
@@ -1003,15 +1011,18 @@ const init = () => {
 
     socket.on('game:state', (data) => {
         console.log('recieved oponent game state: ', data);
-        var gameNode = document.getElementById('inner2D');
-        if (data.state === true) {
-            onSink(board, () => {
+        if (board.gameDim === "2d") {
+            var gameNode = document.getElementById('inner2D');
+            if (data.state === true) {
                 console.log('on sink callback ------')
                 console.log(reset2DModel(board).boxes);
+                clearInterval(winAnimation2D);
                 render2D(board, gameNode);
                 forEachElementByClass('box', addListener('click', boxClick(board, gameNode)));
-            });
+            }
+
         }
+
     })
 }
 
