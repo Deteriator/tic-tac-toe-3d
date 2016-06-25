@@ -194,9 +194,9 @@ var objControls = new function () {
     // this.scaleX = 1
     // this.scaleY = 1
     // this.scaleZ = 1
-    this.positionX = 1
-    this.positionY = 1
-    this.positionZ = 1
+    this.positionX = -9.7
+    this.positionY = -53.7
+    this.positionZ = 5.9
 
 }
 
@@ -245,9 +245,9 @@ const devAnimations = () => {
     // OBJ.water.scale.y = objControls.scaleY;
     // OBJ.water.scale.z = objControls.scaleZ;
 
-    // OBJ.water.position.x = objControls.positionX;
-    // OBJ.water.position.y = objControls.positionY;
-    // OBJ.water.position.z = objControls.positionZ;
+    OBJ.water.position.x = objControls.positionX;
+    OBJ.water.position.y = objControls.positionY;
+    OBJ.water.position.z = objControls.positionZ;
 }
 
 // UTIL ************************************************************************
@@ -448,7 +448,7 @@ const addObjectToScene = (scene, state, name, object) => {
 
 const createWater = () => {
 
-    var geom = new THREE.SphereGeometry(40, 9, 9);
+    var geom = new THREE.SphereGeometry(60, 20, 20);
     var mat = new THREE.MeshPhongMaterial(
         { color : color.blue
         , transparent: false
@@ -470,7 +470,7 @@ const createWater = () => {
     // debugger;
 
     water.castShadow = true;
-    water.position.x = 1.5;
+    water.position.x = 0;
     water.position.y = -51;
     water.position.z = -7.4;
 
@@ -480,32 +480,22 @@ const createWater = () => {
             x: v.x,
             z: v.z,
             ang: Math.random() * Math.PI * 2,
-            amp: 5 + Math.random() * Math.PI * 2,
+            amp: 1 + Math.random() * Math.PI * 2,
             speed: 0.016 + Math.random() * 0.032,
         }
     });
 
     water.moveWaves = function () {
-
-        var verts = water.geometry.vertices;
-
-        verts.forEach(function (vert, i) {
+        water.geometry.vertices.forEach(function (vert, i) {
             // console.log(water.waves[i]);
             var vprops = water.waves[i];
-            vert.x = vprops.x + Math.cos(vprops.ang)*vprops.amp;
-		    vert.y = vprops.y + Math.sin(vprops.ang)*vprops.amp;
+            vert.x = vprops.x + Math.cos(vprops.ang) * vprops.amp;
+		    vert.y = vprops.y + Math.sin(vprops.ang) * vprops.amp;
             vprops.ang += vprops.speed;
-
         })
-
-        this.geometry.verticesNeedUpdate=true;
+        water.geometry.verticesNeedUpdate=true;
     }
-
-
-
     return water;
-
-
 }
 
 // ANIMATION *******************************************************************
@@ -579,9 +569,9 @@ const rotateSky = (sky) => {
 }
 
 const roatateWater = (water) => {
-    water.rotation.z += 0.007;
-    water.rotation.x += 0.007;
-    water.rotation.y += 0.007;
+    water.rotation.z += 0.001;
+    water.rotation.x += 0.001;
+    water.rotation.y += 0.001;
 }
 
 const changeCubeColor = (sceneObject, model) => {
