@@ -653,7 +653,7 @@ const socketHandler3D = (data) => {
     // 2 DESKTOP CLIENTS
 
     // >2 connected client
-    var newModel = updateModel(board, data);
+    var newModel = updateModel(board, data.play);
     updateRender3D(scene, newModel);
 }
 
@@ -691,7 +691,7 @@ const clickHandler3D = (evt) => {
         selectedObject = intersectCube[0].object;
         console.log(selectedCubeId);
         newModel = updateModel(board, selectedCubeId);
-        socket.emit('game:play', selectedCubeId);
+        socket.emit('game:play', { id: board.clientID, play: selectedCubeId});
     } else if (false) {
         // if clicked on another element, do something
     } else if (false) {
@@ -829,11 +829,11 @@ const onSink = (model, callback) => {
 
 const socketHandler2D = (model, data, domNode) => {
     // if a new game is started then dont accept
-    if (model.firstTurn >= 1) {
-        var newModel = updateModel(model, data);
+    if (data.id !== board.clientID) {
+        var newModel = updateModel(model, data.play);
         render2D(model, domNode);
     }
-    model.firstTurn += 1;
+    // model.firstTurn += 1;
 }
 
 const boxClick = (model, gameNode) => {
@@ -846,7 +846,7 @@ const boxClick = (model, gameNode) => {
         render2D(model, gameNode);
         forEachElementByClass('box',
             addListener('click', boxClick(model, gameNode)));
-        socket.emit('game:play', clickedId);
+        socket.emit('game:play', { id: model.clientID, play: clickedId});
     }
 }
 
