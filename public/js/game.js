@@ -31,7 +31,8 @@ const createBoard = (dimension) => {
     games       : [],
     opponentID  : null,
     clientID    : null,
-    water       : { ampX: 0, ampY: 0, speed: 0 }
+    water       : { ampX: 0, ampY: 0, speed: 0 },
+    firstTurn   : 1,
   }
 }
 
@@ -307,7 +308,7 @@ const updateAnimationModel = (model) => {
     if (riseCounter === cubeAmount) {
         model.cutscene = false;
         if (!model.cutscene && !model.active) {
-            socket.emit('game:state', true);
+            socket.emit('game:state', true); // what?
         }
         model.active = true;
         model.water = {  ampX: 0
@@ -765,6 +766,7 @@ const reset2DModel = (model) => {
         newModel.cutscene    = false
         newModel.end         = false
         newModel.winPos      = []
+        newModel.firstTurn   = 0
     }
     return newModel;
 }
@@ -825,9 +827,13 @@ const onSink = (model, callback) => {
     if(model.cutscene === 'sink') callback(model);
 }
 
-const socketHandler2D = (data, domNode) => {
-    var newModel = updateModel(board, data);
-    render2D(newModel, domNode);
+const socketHandler2D = (model, data, domNode) => {
+    // if a new game is started then dont accept
+    if (model.firstTurn >= 1) {
+        var newModel = updateModel(model, data);
+        render2D(model, domNode);
+    }
+    model.firstTurn += 1;
 }
 
 const boxClick = (model, gameNode) => {
@@ -841,21 +847,19 @@ const boxClick = (model, gameNode) => {
         forEachElementByClass('box',
             addListener('click', boxClick(model, gameNode)));
         socket.emit('game:play', clickedId);
-        onSink(model, () => {
-            console.log('on sink callback ------')
-            console.log(reset2DModel(model).boxes);
-        });
     }
 }
 
 const init2D = (gameID) => {
     gameWrapper.innerHTML = "";
     var game2D = document.createElement('div')
+        game2D.id = 'inner2D'
         gameWrapper.appendChild(game2D);
     render2D(board, game2D);
     forEachElementByClass('box', addListener('click', boxClick(board, game2D)));
     socket.on('game:play', (data) => {
-        socketHandler2D(data, game2D);
+        console.log('game:play data received')
+        socketHandler2D(board, data, game2D);
         forEachElementByClass('box',
             addListener('click', boxClick(board, game2D)));
     });
@@ -999,6 +1003,14 @@ const init = () => {
 
     socket.on('game:state', (data) => {
         console.log('recieved oponent game state: ', data);
+        var gameNode = document.getElementById('inner2D'); 
+        if (data.state === true) {
+            onSink(board, () => {
+                console.log('on sink callback ------')
+                console.log(reset2DModel(board).boxes);
+                render2D(board, gameNode);
+            });
+        }
     })
 }
 
@@ -1013,5 +1025,11 @@ socket.on("connect", () => {
     board.clientID = socket.id;
     init();
 
+    // // DEV STUFF ********************************
+    // // LAUNCH GAME ON STARTUP
+    // socket.emit('connect:host', generateID());
+
+    // initGame('DEV', '3d');
+    // initGame('DEV', '2d');
 
 })
