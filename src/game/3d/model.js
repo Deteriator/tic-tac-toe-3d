@@ -1,9 +1,15 @@
-const OBJ = {}
-const SCENE = {}
-const ANIM = {}
-var scene;
+import { socket, ArrforEachProto, createNode, gameWrapper } from '../util.js'
 
-const color = {
+// console.log('/model.js/: ', socket, ArrforEachProto, createNode, gameWrapper);
+
+
+
+export const OBJ = {}
+export const SCENE = {}
+export const ANIM = {}
+export var scene;
+
+export const color = {
   red         : 0xf25346,
   white       : 0xd8d0d1,
   brown       : 0x59332e,
@@ -15,14 +21,14 @@ const color = {
 
 // DEV *************************************************************************
 
-var camControls = new function () {
+export var camControls = new function () {
     this.rotationSpeed = 0
     this.camX = -30
     this.camY = 60
     this.camZ = 30
 }
 
-var objControls = new function () {
+export var objControls = new function () {
     // this.scaleX = 1
     // this.scaleY = 1
     // this.scaleZ = 1
@@ -33,7 +39,7 @@ var objControls = new function () {
 }
 
 
-const createGUIHelper = () => {
+export const createGUIHelper = () => {
 
     const gui = new dat.GUI();
 
@@ -63,7 +69,7 @@ const createGUIHelper = () => {
 
 };
 
-const devAnimations = () => {
+export const devAnimations = () => {
 
     OBJ.cube.rotation.x += camControls.rotationSpeed;
     OBJ.cube.rotation.z += camControls.rotationSpeed;
@@ -84,7 +90,7 @@ const devAnimations = () => {
 
 // UTIL ************************************************************************
 
-const getObjectsByName = (sceneObject, name) => {
+export const getObjectsByName = (sceneObject, name) => {
     return sceneObject.children.filter(item => {
       if (!item.name) { return false }
       return item.name.split('-')[0] === name;
@@ -103,7 +109,7 @@ const getObjectsByName = (sceneObject, name) => {
 // model is thus animation dependent
 //  this means something for th
 
-const updateAnimationModel = (model) => {
+export const updateAnimationModel = (model) => {
 
     var newModel = model;
     var cubeAmount = getObjectsByName(scene, 'cube').length;

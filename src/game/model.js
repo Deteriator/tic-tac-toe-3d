@@ -1,8 +1,6 @@
 import { socket, ArrforEachProto, createNode, gameWrapper } from './util.js'
 
-console.log('ArrforEachProto: ', ArrforEachProto);
-console.log('createNode: ', createNode);
-console.log('gameWrapper: ', ArrforEachProto); 
+console.log(socket);
 
 const playerO = 'o'
 const playerX = 'x'

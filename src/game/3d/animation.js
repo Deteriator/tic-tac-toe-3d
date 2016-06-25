@@ -1,15 +1,21 @@
+
+
+import { OBJ, SCENE, ANIM, scene, color, camControls, objControls, createGUIHelper, devAnimations, getObjectsByName, updateAnimationModel } from './model.js';
+
+// console.log('/3d/animation.js: ' , OBJ, SCENE, ANIM, scene, color, camControls, objControls, createGUIHelper, devAnimations, getObjectsByName, updateAnimationModel);
+
 // ANIMATION *******************************************************************
 
-const updateControls = (clock, controls) => {
+export const updateControls = (clock, controls) => {
     var delta = clock.getDelta();
     controls.update(delta);
 }
 
-const updateColor = (object) => {
+export const updateColor = (object) => {
     object.material.color = new THREE.Color(color.brown);
 };
 
-const rotateCube = (model, object) => {
+export const rotateCube = (model, object) => {
         var cubeId = object.name.slice(5, object.name.length);
         var cubeData = model.boxes[cubeId];
         if(cubeData !== null) {
@@ -20,7 +26,7 @@ const rotateCube = (model, object) => {
         }
 };
 
-const sinkCube = (model, cube) => {
+export const sinkCube = (model, cube) => {
 
     if(model.cutscene === 'sink') {
         var winPosArr = model.winPos;
@@ -65,17 +71,17 @@ const sinkCube = (model, cube) => {
     }
 }
 
-const rotateSky = (sky) => {
+export const rotateSky = (sky) => {
     sky.rotation.y += 0.002;
 }
 
-const roatateWater = (water) => {
+export const roatateWater = (water) => {
     // water.rotation.z += 0.001;
     // water.rotation.x += 0.001;
     water.rotation.y += 0.008;
 }
 
-const changeCubeColor = (sceneObject, model) => {
+export const changeCubeColor = (sceneObject, model) => {
     sceneObject.children.forEach(function(object) {
         if(object.name.slice(0, 4) === "cube") {
             var cubeId = object.name.slice(5, object.name.length);
@@ -92,13 +98,13 @@ const changeCubeColor = (sceneObject, model) => {
     });
 };
 
-const animateObjects = (sceneObject, model, callback) => {
+export const animateObjects = (sceneObject, model, callback) => {
     sceneObject.forEach((object) => {
         callback(model, object);
     })
 };
 
-const updateAnimation = (model) => {
+export const updateAnimation = (model) => {
     var newModel = updateAnimationModel(model);
     roatateWater(OBJ.water);
     rotateSky(OBJ.sky);
@@ -107,6 +113,6 @@ const updateAnimation = (model) => {
 
 };
 
-const updateRender3D = (sceneObject, model) => {
+export const updateRender3D = (sceneObject, model) => {
     changeCubeColor(sceneObject, model);
 }
