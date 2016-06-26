@@ -705,6 +705,14 @@ const clickHandler3D = (evt) => {
     updateRender3D(scene, newModel);
 };
 
+const handleWindowResize (scene) => {
+    HEIGHT = window.innerHeight;
+    WIDTH = window.innerWidth;
+    renderer.setSize(WIDTH, HEIGHT);
+    camera.aspect = WIDTH / HEIGHT;
+    camera.updateProjectionMatrix();
+}
+
 var loop3D = () => {
     devAnimations();
     updateControls(SCENE.clock, SCENE.orbitControls);
@@ -795,14 +803,15 @@ const renderState = (model, domNode) => {
 const appendChildDiv = (parent, className, htmlContent) => {
     var child = document.createElement('div');
     child.className = className;
-    child.innerHTML = htmlContent;
+    // child.innerHTML = htmlContent;
     return parent.appendChild(child);
 }
 
 const renderBox = (currentPlay, id, domNode) => {
     var box = document.createElement('div');
     var htmlContent = currentPlay ? currentPlay : "box";
-    box.className = "box";
+    var state = 'state-' + htmlContent;
+    box.className = "box " + state;
     box.dataset.box = id;
     domNode.appendChild(box);
     appendChildDiv(appendChildDiv(box, 'child', ''), 'innerChild', htmlContent);
