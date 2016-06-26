@@ -30,7 +30,10 @@ const createBoard = (dimension) => {
     gameDim     : dimension,
     games       : [],
     opponentID  : null,
-    clientID    : null
+    clientID    : null,
+    water       : { ampX: 0, ampY: 0, speed: 0 },
+    firstTurn   : 1,
+    screen     : '',
   }
 }
 
@@ -168,7 +171,7 @@ const isWin = (model) => {
 
 const OBJ = {}
 const SCENE = {}
-const RENDER = {}
+const ANIM = {}
 var scene;
 
 const color = {
@@ -194,9 +197,9 @@ var objControls = new function () {
     // this.scaleX = 1
     // this.scaleY = 1
     // this.scaleZ = 1
-    this.positionX = 1
-    this.positionY = 1
-    this.positionZ = 1
+    this.positionX = -9.7
+    this.positionY = -53.7
+    this.positionZ = 5.9
 
 }
 
@@ -245,9 +248,9 @@ const devAnimations = () => {
     // OBJ.water.scale.y = objControls.scaleY;
     // OBJ.water.scale.z = objControls.scaleZ;
 
-    // OBJ.water.position.x = objControls.positionX;
-    // OBJ.water.position.y = objControls.positionY;
-    // OBJ.water.position.z = objControls.positionZ;
+    OBJ.water.position.x = objControls.positionX;
+    OBJ.water.position.y = objControls.positionY;
+    OBJ.water.position.z = objControls.positionZ;
 }
 
 // UTIL ************************************************************************
@@ -255,9 +258,14 @@ const devAnimations = () => {
 const getObjectsByName = (sceneObject, name) => {
     return sceneObject.children.filter(item => {
       if (!item.name) { return false }
-      return item.name.split('-')[0] === name
+      return item.name.split('-')[0] === name;
     })
 }
+
+// ANIM STATE  *************************************************************
+
+
+
 
 // ANIMATION MODEL *************************************************************
 
@@ -291,14 +299,23 @@ const updateAnimationModel = (model) => {
     if(sinkCounter === cubeAmount) {
         model.cutscene = 'rise';
         model.boxes = [null, null, null, null, null, null, null, null, null];
+
+        model.water = {  ampX: 1
+                     ,  ampY: 1
+                     , speed: 0.2
+                    };
     }
 
     if (riseCounter === cubeAmount) {
         model.cutscene = false;
         if (!model.cutscene && !model.active) {
-            socket.emit('game:state', true);
+            socket.emit('game:state', true); // what?
         }
         model.active = true;
+        model.water = {  ampX: 0
+                     ,  ampY: 0
+                     , speed: 0
+                    };
     }
 
     return newModel;
@@ -452,7 +469,7 @@ const addObjectToScene = (scene, state, name, object) => {
 
 const createWater = () => {
 
-    var geom = new THREE.SphereGeometry(40, 9, 9);
+    var geom = new THREE.SphereGeometry(60, 20, 20);
     var mat = new THREE.MeshPhongMaterial(
         { color : color.blue
         , transparent: false
@@ -474,33 +491,32 @@ const createWater = () => {
     // debugger;
 
     water.castShadow = true;
-    water.position.x = 1.5;
+    water.position.x = 0;
     water.position.y = -51;
     water.position.z = -7.4;
 
-    water.waves = []
-
-    geom.vertices.map((v) => {
-        {
-
+    water.waves = geom.vertices.map((v) => {
+        return {
+            y: v.y,
+            x: v.x,
+            z: v.z,
+            ang: Math.random() * Math.PI * 2,
+            amp: 1 + Math.random() * Math.PI * 2,
+            speed: 0.016 + Math.random() * 0.032,
         }
-    })
+    });
 
-    water.moveWaves = function () {
-
-        var verts = this.geometry.vertices;
-
-        for (let i = 0; i < verts.length; i += 1) {
-            var v = verts[i];
-
-        }
-
-
+    water.moveWaves = function (spec) {
+        water.geometry.vertices.forEach(function (vert, i) {
+            // console.log(water.waves[i]);
+            var vprops = water.waves[i];
+            vert.x = vprops.x + Math.cos(vprops.ang) * ( vprops.amp + spec.ampX);
+		    vert.y = vprops.y + Math.sin(vprops.ang) * ( vprops.amp + spec.ampY);
+            vprops.ang += vprops.speed + spec.speed;
+        })
+        water.geometry.verticesNeedUpdate=true;
     }
-
     return water;
-
-
 }
 
 // ANIMATION *******************************************************************
@@ -526,6 +542,7 @@ const rotateCube = (model, object) => {
 };
 
 const sinkCube = (model, cube) => {
+
     if(model.cutscene === 'sink') {
         var winPosArr = model.winPos;
         if(winPosArr.length >= 3) {
@@ -548,7 +565,7 @@ const sinkCube = (model, cube) => {
             } else {
                 // SINK WIN CUBES
                 if (cube.position.y >= -4) {
-                    cube.position.y -= 0.1 * Math.random();
+                    cube.position.y -= 0.09 * Math.random();
                 }
             }
         }
@@ -574,9 +591,9 @@ const rotateSky = (sky) => {
 }
 
 const roatateWater = (water) => {
-    water.rotation.z += 0.007;
-    water.rotation.x += 0.007;
-    water.rotation.y += 0.007;
+    // water.rotation.z += 0.001;
+    // water.rotation.x += 0.001;
+    water.rotation.y += 0.008;
 }
 
 const changeCubeColor = (sceneObject, model) => {
@@ -641,7 +658,7 @@ const socketHandler3D = (data) => {
     // 2 DESKTOP CLIENTS
 
     // >2 connected client
-    var newModel = updateModel(board, data);
+    var newModel = updateModel(board, data.play);
     updateRender3D(scene, newModel);
 }
 
@@ -679,7 +696,7 @@ const clickHandler3D = (evt) => {
         selectedObject = intersectCube[0].object;
         console.log(selectedCubeId);
         newModel = updateModel(board, selectedCubeId);
-        socket.emit('game:play', selectedCubeId);
+        socket.emit('game:play', { id: board.clientID, play: selectedCubeId});
     } else if (false) {
         // if clicked on another element, do something
     } else if (false) {
@@ -693,6 +710,7 @@ var loop3D = () => {
     updateControls(SCENE.clock, SCENE.orbitControls);
     updateAnimation(board);
     requestAnimationFrame(loop3D);
+    OBJ.water.moveWaves(board.water)
     SCENE.renderer.render(scene, SCENE.camera);
 }
 
@@ -728,6 +746,8 @@ const init3D = () => {
 // *****************************************************************************
 // -----------------------------------------------------------------------------
 
+var winAnimation2D;
+
 const reset2DModel = (model) => {
     // turn        : playerO,
     // boxes       : (new Array(9)).fill(null),
@@ -753,16 +773,16 @@ const reset2DModel = (model) => {
         newModel.cutscene    = false
         newModel.end         = false
         newModel.winPos      = []
+        newModel.firstTurn   = 0
     }
     return newModel;
 }
-
 
 // RENDER **********************************************************************
 
 const renderState = (model, domNode) => {
     var gameState = document.createElement('div');
-        gameStateString = " "
+        var gameStateString = " "
         gameStateString += model.turn
         gameStateString += ', ' + model.active
         gameStateString += ', ' + model.cutscene
@@ -795,6 +815,12 @@ const render2D = (model, domNode) => {
         renderBox(currentPlay, index, domNode);
     });
     renderState(model, domNode);
+    if (model.active === false) {
+        console.log('initialising interval');
+        winAnimation2D = setInterval(() => {
+            console.log('sup');
+        }, 500);
+    }
 }
 
 const addListener = (action, callback) => {
@@ -814,9 +840,13 @@ const onSink = (model, callback) => {
     if(model.cutscene === 'sink') callback(model);
 }
 
-const socketHandler2D = (data, domNode) => {
-    var newModel = updateModel(board, data);
-    render2D(newModel, domNode);
+const socketHandler2D = (model, data, domNode) => {
+    // if a new game is started then dont accept
+    if (data.id !== board.clientID) {
+        var newModel = updateModel(model, data.play);
+        render2D(model, domNode);
+    }
+    // model.firstTurn += 1;
 }
 
 const boxClick = (model, gameNode) => {
@@ -829,22 +859,20 @@ const boxClick = (model, gameNode) => {
         render2D(model, gameNode);
         forEachElementByClass('box',
             addListener('click', boxClick(model, gameNode)));
-        socket.emit('game:play', clickedId);
-        onSink(model, () => {
-            console.log('on sink callback ------')
-            console.log(reset2DModel(model).boxes);
-        });
+        socket.emit('game:play', { id: model.clientID, play: clickedId});
     }
 }
 
 const init2D = (gameID) => {
     gameWrapper.innerHTML = "";
     var game2D = document.createElement('div')
+        game2D.id = 'inner2D'
         gameWrapper.appendChild(game2D);
     render2D(board, game2D);
     forEachElementByClass('box', addListener('click', boxClick(board, game2D)));
     socket.on('game:play', (data) => {
-        socketHandler2D(data, game2D);
+        console.log('game:play data received')
+        socketHandler2D(board, data, game2D);
         forEachElementByClass('box',
             addListener('click', boxClick(board, game2D)));
     });
@@ -901,7 +929,7 @@ const generateID = () => {
 const initGame = (gameID, state) => {
     var windowWidth = $(window).width();
     board.gameID = gameID;
-
+    board.screen = 'game';
     if (state === undefined) {
         if(windowWidth <= 800) {
             board.gameDim = '2d';
@@ -917,12 +945,15 @@ const initGame = (gameID, state) => {
         board.gameDim = '2d';
         init2D();
     }
+
+
 }
 
 const init = () => {
 
     board.clientID = socket.id;
 
+    board.screen = 'type';
     renderGameTypeScreen();
 
     $(document).on('click', '#single', (e) => {
@@ -934,6 +965,7 @@ const init = () => {
         board.gameType = "multi";
         // render game list screen
         renderGameList();
+        board.screen = 'list';
     });
 
     $(document).on('click', "#createGame", (e) => {
@@ -966,19 +998,19 @@ const init = () => {
     })
 
     // GAME LIST EVENTS
-
-
     socket.on('gamelist:added', (data) => {
-        console.log('socket - gamelist:added')
         console.log('gamelist:added,', data);
-        board.games.push(data);
-        console.log(board.games);
+        board.games = data;
+        if (board.screen === 'list') {
+            console.log('rendering new list');
+            renderGameList();
+        }
     });
 
-    socket.on('gamelist:removed', (data) => {
-        console.log('gamelist:removed', data);
-        board.games = data;
-    })
+    // socket.on('gamelist:removed', (data) => {
+    //     console.log('gamelist:removed', data);
+    //     board.games.slice(board.games.indexOf(data), board.games.indexOf(data) + 1);
+    // })
 
     socket.on('gamelist:all', (data) => {
         console.log('socket - gamelist:all: ', data);
@@ -988,6 +1020,18 @@ const init = () => {
 
     socket.on('game:state', (data) => {
         console.log('recieved oponent game state: ', data);
+        if (board.gameDim === "2d") {
+            var gameNode = document.getElementById('inner2D');
+            if (data.state === true) {
+                console.log('on sink callback ------')
+                console.log(reset2DModel(board).boxes);
+                clearInterval(winAnimation2D);
+                render2D(board, gameNode);
+                forEachElementByClass('box', addListener('click', boxClick(board, gameNode)));
+            }
+
+        }
+
     })
 }
 
@@ -1002,9 +1046,11 @@ socket.on("connect", () => {
     board.clientID = socket.id;
     init();
 
-    // DEV STUFF ********************************
-    // LAUNCH GAME ON STARTUP
-    socket.emit('connect:host', generateID());
-    initGame('DEV', '3d');
+    // // DEV STUFF ********************************
+    // // LAUNCH GAME ON STARTUP
+    // socket.emit('connect:host', generateID());
+
+    // initGame('DEV', '3d');
+    // initGame('DEV', '2d');
 
 })

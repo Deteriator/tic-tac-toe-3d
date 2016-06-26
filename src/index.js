@@ -26,5 +26,21 @@ const Game = () => {
 
 ReactDOM.render(<App/> , document.getElementById('master'))
 
-// using react would be
-    //
+// ------------------------------------------------------------------
+
+//
+// // GAME-- -------------------------
+// import './game/util.js';
+// import './game/model.js';
+//
+//     // 3D -------------------------
+//     import './game/3d/model.js';
+//     import './game/3d/render.js';
+//     import './game/3d/animation.js';
+//     import './game/3d/events.js';
+//     // 2D -------------------------
+//     import './game/2d/model.js';
+//     import './game/2d/render.js';
+//     import './game/2d/events.js';
+//
+// import './game/init.js';

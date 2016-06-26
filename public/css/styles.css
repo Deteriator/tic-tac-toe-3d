@@ -135,6 +135,12 @@ INIT SCREEN STYLES
 .box .child {
     background: rgb(207, 109, 78);
     height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 3em;
+    color: white;
 }
 
 .selected {

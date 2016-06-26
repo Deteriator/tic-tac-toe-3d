@@ -30,6 +30,11 @@ app.use((err, req, res, next) => {
 // Store all rooms here
 var currentRooms = [];
 
+const addUniqueToArray = (array, thing) => {
+    if(array.indexOf(thing) === -1) return array.push(thing);
+    return array;
+}
+
 const getCurrentRoom = (rooms) => {
     var currentRoom = '';
     for (let key in rooms) {
@@ -117,17 +122,32 @@ io.on('connection', (socket) => {
         console.log('game state of', socket.id , 'is', data);
         //broadcast the state to the other client connected in the same room
         var gameState = {}
-            gameState[socket.id] = data;
+            gameState.state = data;
         var currentRoom = getCurrentRoom(socket.rooms);
+
         socket.to(currentRoom)
             .emit('game:state', gameState);
     });
 
     socket.on('connect:host', (gameID) => {
         console.log('connecting to ' + gameID);
+        var rooms = getRooms(io.sockets.adapter.rooms);
+        console.log('rooms: ', rooms);
+        var openRooms = getOpenRooms(rooms); // instead of getting all rooms
+        console.log('openRooms: ', openRooms);
         socket.join(gameID, () => {
-            currentRooms.push(gameID);
-            io.emit('gamelist:added', gameID);
+
+            if (Object.keys(rooms).length === 0) {
+                console.log('sending gameID')
+                addUniqueToArray(currentRooms, gameID);
+                io.emit('gamelist:added', [gameID]);
+            } else {
+                console.log('sending found ID');
+                addUniqueToArray(currentRooms, gameID);
+                io.emit('gamelist:added', openRooms);
+            }
+
+
         })
     });
 
@@ -156,9 +176,13 @@ io.on('connection', (socket) => {
         var rooms = getRooms(io.sockets.adapter.rooms);
         var openRooms = getOpenRooms(rooms); // instead of getting all rooms
         if(openRooms.length) {
+
+
+
             openRooms.forEach((room) => {
+
                 // ADDINIG WHEN ANY PLAYER DISCONNECTS
-                io.emit('gamelist:added', room)
+                io.emit('gamelist:added', openRooms);
                 var otherPlayer = getOtherPlayer(room, socket.id, socket)
                 console.log('getOtherPlayer: ', otherPlayer);
 
@@ -169,14 +193,13 @@ io.on('connection', (socket) => {
 
                 if (otherPlayer) {
                     console.log('ADDING TO CURRENT ROOMS');
-                    currentRooms.push(room);
+                    addUniqueToArray(currentRooms, room);
                 } else {
                     let currentRoomIndex = currentRooms.indexOf(room);
                     currentRooms.slice(currentRoomIndex, currentRoomIndex + 1);
                     console.log(currentRooms);
                 }
                 // IF THERE IS ONLY ONE PERSON LEFT WE SHOULD NOT PUSH
-
             });
         } else {
             currentRooms = [];
