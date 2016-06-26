@@ -705,12 +705,14 @@ const clickHandler3D = (evt) => {
     updateRender3D(scene, newModel);
 };
 
-const handleWindowResize (scene) => {
-    HEIGHT = window.innerHeight;
-    WIDTH = window.innerWidth;
-    renderer.setSize(WIDTH, HEIGHT);
-    camera.aspect = WIDTH / HEIGHT;
-    camera.updateProjectionMatrix();
+const handleWindowResize = (renderer, camera) => {
+    return () => {
+        var height = window.innerHeight;
+        var width = window.innerWidth;
+        renderer.setSize(width, height);
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+    }
 }
 
 var loop3D = () => {
@@ -742,6 +744,7 @@ const init3D = () => {
     renderScene3D();
     gameWrapper.appendChild(SCENE.renderer.domElement);
     document.addEventListener('mousedown', clickHandler3D, false);
+    window.addEventListener('resize', handleWindowResize(SCENE.renderer, SCENE.camera), false);
     createGUIHelper();
     socket.on('game:play', (data) => {
         socketHandler3D(data);
