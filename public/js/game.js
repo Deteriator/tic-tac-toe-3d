@@ -5,8 +5,6 @@ const ArrforEachProto = Array.prototype.forEach;
 const createNode = document.createElement;
 const gameWrapper = document.getElementById('gameWrapper');
 
-
-
 // -----------------------------------------------------------------------------
 // *****************************************************************************
 // MODEL ***********************************************************************
@@ -745,7 +743,7 @@ const init3D = () => {
     gameWrapper.appendChild(SCENE.renderer.domElement);
     document.addEventListener('mousedown', clickHandler3D, false);
     window.addEventListener('resize', handleWindowResize(SCENE.renderer, SCENE.camera), false);
-    createGUIHelper();
+    // createGUIHelper();
     socket.on('game:play', (data) => {
         socketHandler3D(data);
     })
@@ -826,12 +824,11 @@ const render2D = (model, domNode) => {
     currentPositions.forEach((currentPlay, index) => {
         renderBox(currentPlay, index, domNode);
     });
-    renderState(model, domNode);
     if (model.active === false) {
         console.log('initialising interval');
-        winAnimation2D = setInterval(() => {
-            console.log('sup');
-        }, 500);
+        // winAnimation2D = setInterval(() => {
+        //     console.log('sup');
+        // }, 500);
     }
 }
 
@@ -869,6 +866,7 @@ const boxClick = (model, gameNode) => {
         updateModel(model, clickedId);
         console.log('after update model: ', model);
         render2D(model, gameNode);
+        // renderState(model, gameNode);
         forEachElementByClass('box',
             addListener('click', boxClick(model, gameNode)));
         socket.emit('game:play', { id: model.clientID, play: clickedId});
