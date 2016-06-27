@@ -743,7 +743,7 @@ const init3D = () => {
     gameWrapper.appendChild(SCENE.renderer.domElement);
     document.addEventListener('mousedown', clickHandler3D, false);
     window.addEventListener('resize', handleWindowResize(SCENE.renderer, SCENE.camera), false);
-    // createGUIHelper();
+    createGUIHelper();
     socket.on('game:play', (data) => {
         socketHandler3D(data);
     })
@@ -1058,9 +1058,9 @@ socket.on("connect", () => {
 
     // // DEV STUFF ********************************
     // // LAUNCH GAME ON STARTUP
-    // socket.emit('connect:host', generateID());
+    socket.emit('connect:host', generateID());
 
-    // initGame('DEV', '3d');
+    initGame('DEV', '3d');
     // initGame('DEV', '2d');
 
 })

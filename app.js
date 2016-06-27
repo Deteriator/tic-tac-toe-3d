@@ -130,6 +130,9 @@ io.on('connection', (socket) => {
     });
 
     socket.on('connect:host', (gameID) => {
+
+        // WHAT DOES THIS EVEN DO MATE?
+
         console.log('connecting to ' + gameID);
         var rooms = getRooms(io.sockets.adapter.rooms);
         console.log('rooms: ', rooms);
