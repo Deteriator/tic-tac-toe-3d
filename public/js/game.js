@@ -201,10 +201,18 @@ var objControls = new function () {
 
 }
 
+var colorControls = new function () {
+    this.color = '#f25346';
+}
+
 
 const createGUIHelper = () => {
 
     const gui = new dat.GUI();
+
+    var colorFolder = gui.addFolder('color');
+
+    colorFolder.addColor(colorControls, 'color');
 
     [ [ 'rotationSpeed', 0, 1 ]
     , [ 'camX', -100, 0 ]
@@ -230,13 +238,17 @@ const createGUIHelper = () => {
         cube1Folder.add( objControls, prop, low, high );
     });
 
+
+
 };
 
 const devAnimations = () => {
 
     OBJ.cube.rotation.x += camControls.rotationSpeed;
     OBJ.cube.rotation.z += camControls.rotationSpeed;
-    OBJ.cube.position.x += camControls.rotationSpeed;
+    // OBJ.cube.position.x += camControls.rotationSpeed;
+
+    OBJ.cube.material.color.setStyle(colorControls.color);
     //
     // SCENE.camera.position.x = camControls.camX;
     // SCENE.camera.position.y = camControls.camY;
@@ -330,7 +342,7 @@ const addCamera = () => {
 };
 
 const addOrbitControls = () => {
-    SCENE.orbitControls = new THREE.OrbitControls(SCENE.camera);
+    SCENE.orbitControls = new THREE.OrbitControls(SCENE.camera, document.getElementById('gameWrapper'));
     // SCENE.orbitControls.autoRotate = true;
     SCENE.clock = new THREE.Clock();
 };
@@ -601,7 +613,7 @@ const changeCubeColor = (sceneObject, model) => {
             var cubeData = model.boxes[cubeId];
             if(cubeData !== null) {
                 if(cubeData === playerX) {
-                    object.material.color = new THREE.Color(color.pink);
+                    object.material.color = new THREE.Color(color.blue);
                 } else {
                     object.material.color = new THREE.Color(color.brown);
                 }
