@@ -86,6 +86,10 @@ const updateModel = (model, boxId) => {
         model.turn = playerX
     }
 
+    if (model.opponentID === null) {
+        // maybe do something here for the 2-d multiplayer
+    }
+
     return model;
 }
 

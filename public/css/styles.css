@@ -143,16 +143,6 @@ INIT SCREEN STYLES
     color: white;
 }
 
-const color = {
-  red         : 0xf25346,
-  white       : 0xd8d0d1,
-  brown       : 0x59332e,
-  pink        : 0xF5986E,
-  brownDark   : 0x23190f,
-  blue        : 0x68c3c0,
-  green       : 0xBED730,
-}
-
 .selected {
     background: #ccc;
 }
@@ -162,7 +152,7 @@ const color = {
 }
 
 .state-x .child{
-    background: #F5986E;
+    background: #68c3c0;
 }
 
 .state-box {
