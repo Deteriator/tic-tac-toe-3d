@@ -335,9 +335,9 @@ const updateAnimationModel = (model) => {
 
 const addCamera = () => {
     SCENE.camera = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 0.1, 800)
-    SCENE.camera.position.x = -35;
-    SCENE.camera.position.y = 63;
-    SCENE.camera.position.z = 54;
+    SCENE.camera.position.x = -30;
+    SCENE.camera.position.y = 60;
+    SCENE.camera.position.z = 30;
     SCENE.camera.lookAt(scene.position);
 };
 
@@ -501,9 +501,9 @@ const createWater = () => {
     // debugger;
 
     water.castShadow = true;
-    water.position.x = 0;
-    water.position.y = -51;
-    water.position.z = -7.4;
+    water.position.x = -9.7;
+    water.position.y = -53.7;
+    water.position.z = 5.9;
 
     water.waves = geom.vertices.map((v) => {
         return {
@@ -569,13 +569,13 @@ const sinkCube = (model, cube) => {
             // THE 'NON WIN CUBES'
             if(matchLength === winPosArr.length) {
                 if (cube.position.y >= -4) {
-                    cube.position.y -= 0.1 * Math.random() + 0.1;
+                    cube.position.y -= 0.2 * Math.random() + 0.4;
                 }
             // THE WIN CUBES
             } else {
                 // SINK WIN CUBES
                 if (cube.position.y >= -4) {
-                    cube.position.y -= 0.09 * Math.random();
+                    cube.position.y -= 0.08 * Math.random();
                 }
             }
         }
@@ -726,7 +726,7 @@ const handleWindowResize = (renderer, camera) => {
 }
 
 var loop3D = () => {
-    devAnimations();
+    // devAnimations();
     updateControls(SCENE.clock, SCENE.orbitControls);
     updateAnimation(board);
     requestAnimationFrame(loop3D);
@@ -755,7 +755,7 @@ const init3D = () => {
     gameWrapper.appendChild(SCENE.renderer.domElement);
     document.addEventListener('mousedown', clickHandler3D, false);
     window.addEventListener('resize', handleWindowResize(SCENE.renderer, SCENE.camera), false);
-    createGUIHelper();
+    // createGUIHelper();
     socket.on('game:play', (data) => {
         socketHandler3D(data);
     })
@@ -981,6 +981,7 @@ const init = () => {
     $(document).on('click', '#single', (e) => {
         board.gameType = "single";
         // INIT game with single player
+        initGame();
     });
 
     $(document).on('click', '#multi', (e) => {
@@ -1070,9 +1071,9 @@ socket.on("connect", () => {
 
     // // DEV STUFF ********************************
     // // LAUNCH GAME ON STARTUP
-    socket.emit('connect:host', generateID());
-
-    initGame('DEV', '3d');
+    // socket.emit('connect:host', generateID());
+    //
+    // initGame('DEV', '3d');
     // initGame('DEV', '2d');
 
 })
