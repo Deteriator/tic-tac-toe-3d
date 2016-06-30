@@ -2,8 +2,7 @@
 
 My first Three.js game!
 
-Design inspired by: [Karim Maaloul's 'Aviator' Animation](http://tympanus.net/codrops/2016/04/26/the-aviator-animating-basic-3d-scene-threejs/)
-
+https://tictactoe3d.herokuapp.com/
 
 ### Run it
 
@@ -12,9 +11,12 @@ Make sure you have node installed on your computer first. Then run these command
 ```
 npm install
 gulp
-node app.js
+npm start
 ```
 
+---
+
+Design inspired by: [Karim Maaloul's 'Aviator' Animation](http://tympanus.net/codrops/2016/04/26/the-aviator-animating-basic-3d-scene-threejs/)
 
 ---
 
