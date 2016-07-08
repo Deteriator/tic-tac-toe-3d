@@ -400,6 +400,10 @@ const addLight = () => {
     var spotLight = new THREE.SpotLight( 0xffffff );
     spotLight.position.set( -40, 60, -10 );
     spotLight.castShadow = true;
+    spotLight.shadow.mapSize.width = 2048;
+    spotLight.shadow.mapSize.height = 2048;
+    spotLight.shadow.camera.near = 1;
+    spotLight.shadow.camera.far = 50;
     scene.add(spotLight);
 }
 
